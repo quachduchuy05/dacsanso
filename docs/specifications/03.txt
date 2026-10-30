@@ -1,0 +1,287 @@
+# DAC-TA_FR-BCTK-01_Dashboard-thong-ke.docx
+Nguồn: https://docs.google.com/document/d/1IdTBFFFFGkab61mnqK2TiAzddt2iRnU-/edit?usp=drivesdk&ouid=118008469128637664818&rtpof=true&sd=true
+
+ĐẶC TẢ YÊU CẦU PHẦN MỀM
+FR BCTK 01  DASHBOARD THỐNG KÊ VẬN HÀNH
+Thông tin tài liệu
+1. Mục đích và phạm vi
+1.1 Mục đích
+Dashboard cung cấp cái nhìn tổng quan về tình hình vận hành hệ thống đặc sản, giúp Admin giám sát quy mô, chất lượng vận hành, đơn hàng, chăm sóc khách hàng và hỗ trợ cơ quan QLNN theo dõi các chỉ tiêu được cấp quyền.
+1.2 Trong phạm vi
+Hiển thị các chỉ số tổng quan theo thời gian và phạm vi dữ liệu.
+Lọc dữ liệu, xem xu hướng và mở danh sách chi tiết từ chỉ số.
+Phân quyền chỉ số và phạm vi dữ liệu theo vai trò.
+Đồng bộ bộ lọc khi chuyển sang chức năng xuất báo cáo FR-BCTK-03.
+1.3 Ngoài phạm vi
+Báo cáo doanh thu và đối soát chi tiết: FR-BCTK-02.
+Tạo tệp xuất: FR-BCTK-03.
+Sửa dữ liệu nguồn trực tiếp trên dashboard.
+Dự báo hoặc gợi ý bằng AI.
+2. Thuật ngữ
+3. Tác nhân và phân quyền
+Chi tiết ma trận quyền theo nhóm Admin và từng đơn vị QLNN: [CẦN CHỐT].
+4. Giả định và phụ thuộc
+Người dùng đã đăng nhập và có quyền truy cập chức năng.
+Dữ liệu HTX, sản phẩm, đơn hàng, khiếu nại và người dùng có mã định danh duy nhất.
+Trạng thái nghiệp vụ và mốc thời gian được lấy từ hệ thống nguồn.
+Múi giờ hiển thị: Asia/Ho_Chi_Minh; mốc lưu trữ dùng UTC.
+Phụ thuộc FR-BCTK-03 khi xuất báo cáo và FR-HT-03 khi ghi nhật ký.
+5. Ca sử dụng
+UC-BCTK-01-01 – Xem dashboard
+Tác nhân: Admin, QLNN
+Kích hoạt: Người dùng mở màn hình Dashboard thống kê.
+Tiền điều kiện: Đã đăng nhập; có quyền xem ít nhất một nhóm chỉ số.
+Hậu điều kiện: Dashboard hiển thị dữ liệu đúng quyền và bộ lọc; hành vi truy cập được ghi nhận.
+Luồng chính
+1. Hệ thống xác định vai trò và phạm vi dữ liệu.
+2. Hệ thống nạp bộ lọc mặc định.
+3. Hệ thống tổng hợp các chỉ số được phép xem.
+4. Hệ thống hiển thị giá trị, biến động so với kỳ so sánh và thời điểm cập nhật dữ liệu.
+5. Người dùng xem các thẻ số liệu và biểu đồ xu hướng.
+Luồng thay thế/ngoại lệ
+A1. Không có dữ liệu: hiển thị giá trị 0 khi chỉ số xác định được mẫu số; nếu không xác định được mẫu số, hiển thị “Không đủ dữ liệu”.
+A2. Người dùng không có quyền với nhóm chỉ số: không hiển thị nhóm đó.
+E1. Dịch vụ tổng hợp lỗi: hiển thị thông báo BCTK01-E01 và cho phép tải lại.
+UC-BCTK-01-02 – Lọc và xem chi tiết
+Tác nhân: Admin, QLNN
+Kích hoạt: Người dùng thay đổi bộ lọc hoặc chọn một chỉ số.
+Tiền điều kiện: UC-BCTK-01-01 hoàn tất.
+Luồng chính
+1. Người dùng chọn thời gian và các điều kiện lọc được cấp quyền.
+2. Hệ thống kiểm tra tính hợp lệ và phạm vi quyền.
+3. Hệ thống cập nhật toàn bộ thẻ số liệu, biểu đồ và kỳ so sánh.
+4. Khi người dùng chọn một chỉ số, hệ thống mở danh sách chi tiết với cùng bộ lọc.
+Ngoại lệ
+E1. Ngày bắt đầu sau ngày kết thúc: từ chối truy vấn và hiển thị BCTK01-V01.
+E2. Bộ lọc vượt phạm vi quyền: từ chối truy vấn và hiển thị BCTK01-A01.
+6. Yêu cầu chức năng
+7. Danh mục chỉ số và quy tắc tính
+7.1 HTX và sản phẩm
+7.2 Đơn hàng
+Tập đo của M-DH-04 và M-DH-05 dùng theo ngày tạo đơn hay ngày chuyển trạng thái: [CẦN CHỐT].
+7.3 Chăm sóc khách hàng
+7.4 Người dùng
+Danh sách “sự kiện hoạt động hợp lệ” và trạng thái “đơn hợp lệ”: [CẦN CHỐT].
+8. Dữ liệu vào, kiểm tra hợp lệ và kết quả
+Kết quả phải gồm: mã chỉ số, giá trị, đơn vị, giá trị kỳ so sánh, tỷ lệ biến động, chuỗi dữ liệu biểu đồ, bộ lọc áp dụng và data_as_of.
+9. Quy tắc nghiệp vụ
+BR-BCTK01-01: Mọi phép đếm phải khử trùng theo mã định danh nghiệp vụ.
+BR-BCTK01-02: Tỷ lệ phần trăm làm tròn đến 2 chữ số; mẫu số bằng 0 hiển thị “Không đủ dữ liệu”.
+BR-BCTK01-03: Dữ liệu chi tiết phải khớp với giá trị tổng hợp tại cùng data_as_of.
+BR-BCTK01-04: Không được suy ra hoặc trả về dữ liệu ngoài phạm vi quyền qua tổng hợp, URL hoặc API.
+BR-BCTK01-05: Thời điểm đầu/cuối ngày được hiểu theo Asia/Ho_Chi_Minh.
+10. Yêu cầu phi chức năng
+11. Thông báo
+12. Tiêu chí nghiệm thu
+13. Truy vết
+14. Vấn đề cần chốt
+1. Ma trận chỉ số và phạm vi dữ liệu cụ thể của từng nhóm Admin/QLNN.
+2. Trạng thái và mốc thời gian dùng cho các chỉ số đơn hàng, HTX, sản phẩm.
+3. Định nghĩa người dùng hoạt động, đơn hợp lệ và SLA chăm sóc khách hàng.
+4. Chu kỳ làm mới dữ liệu, SLA hiệu năng và giới hạn kỳ báo cáo.
+5. Có cho phép so sánh cùng kỳ năm trước hay chỉ kỳ liền trước.
+Thuộc tính
+Giá trị
+Mã tài liệu
+SRS-FR-BCTK-01
+Phiên bản
+0.1 – Bản chuẩn hóa chờ phê duyệt
+Ngày cập nhật
+14/10/2026
+Phân hệ
+Báo cáo – Thống kê
+Yêu cầu nguồn
+FR-BCTK-01
+Đối tượng sử dụng
+Admin, Cơ quan quản lý nhà nước (QLNN)
+Thuật ngữ
+Định nghĩa
+HTX
+Hợp tác xã/đơn vị bán hàng trên hệ thống
+QLNN
+Cơ quan quản lý nhà nước
+Kỳ báo cáo
+Khoảng thời gian từ ngày bắt đầu đến hết ngày kết thúc
+Kỳ so sánh
+Khoảng thời gian liền trước có cùng độ dài với kỳ báo cáo
+Đơn hoàn tất
+Đơn đạt trạng thái hoàn tất theo vòng đời đơn hàng đã được phê duyệt
+Tỷ lệ chuyển đổi
+Tỷ lệ giữa số đối tượng đạt kết quả và tổng số đối tượng thuộc mẫu đo
+Dữ liệu cập nhật lúc
+Thời điểm dữ liệu dashboard được tổng hợp gần nhất
+Tác nhân
+Quyền
+Admin
+Xem toàn bộ chỉ số được cấp; lọc; xem chi tiết; chuyển sang xuất báo cáo
+Cơ quan QLNN
+Chỉ xem các chỉ số và địa bàn/phạm vi được cấu hình; không xem dữ liệu ngoài phạm vi
+Hệ thống
+Tổng hợp dữ liệu, kiểm tra quyền, ghi nhật ký truy cập và trả kết quả
+Mã
+Yêu cầu
+FR-BCTK-01.01
+Hệ thống phải hiển thị dashboard theo đúng vai trò và phạm vi dữ liệu của người dùng.
+FR-BCTK-01.02
+Hệ thống phải hỗ trợ lọc theo khoảng thời gian và các chiều dữ liệu được cấu hình.
+FR-BCTK-01.03
+Hệ thống phải hiển thị giá trị hiện tại, giá trị kỳ so sánh và tỷ lệ biến động khi đủ dữ liệu.
+FR-BCTK-01.04
+Hệ thống phải hiển thị biểu đồ xu hướng theo ngày/tuần/tháng phù hợp với độ dài kỳ báo cáo.
+FR-BCTK-01.05
+Hệ thống phải cho phép mở danh sách chi tiết từ chỉ số khi người dùng có quyền.
+FR-BCTK-01.06
+Hệ thống phải áp dụng đồng nhất một bộ lọc cho tất cả thành phần trên màn hình.
+FR-BCTK-01.07
+Hệ thống phải hiển thị thời điểm dữ liệu được cập nhật gần nhất.
+FR-BCTK-01.08
+Hệ thống phải chuyển nguyên vẹn bộ lọc và loại báo cáo sang FR-BCTK-03.
+FR-BCTK-01.09
+Hệ thống phải ghi nhật ký truy cập, lọc và mở chi tiết theo FR-HT-03.
+Mã
+Chỉ số
+Công thức/điều kiện
+M-HTX-01
+Tổng HTX
+Số HTX tồn tại trong phạm vi tại cuối kỳ
+M-HTX-02
+HTX đang hoạt động
+Số HTX có trạng thái “Đang hoạt động” tại cuối kỳ
+M-HTX-03
+HTX mới
+Số HTX có ngày được duyệt thuộc kỳ báo cáo
+M-SP-01
+Tổng sản phẩm
+Số sản phẩm tồn tại trong phạm vi tại cuối kỳ
+M-SP-02
+Sản phẩm đang bán
+Số sản phẩm ở trạng thái cho phép bán tại cuối kỳ
+M-SP-03
+Sản phẩm mới
+Số sản phẩm được duyệt lần đầu trong kỳ
+Mã
+Chỉ số
+Công thức/điều kiện
+M-DH-01
+Tổng đơn phát sinh
+Số đơn có thời điểm tạo thuộc kỳ
+M-DH-02
+Đơn hoàn tất
+Số đơn đạt trạng thái hoàn tất trong kỳ
+M-DH-03
+Đơn bị hủy
+Số đơn chuyển sang trạng thái hủy trong kỳ
+M-DH-04
+Tỷ lệ hoàn tất
+M-DH-02 / tổng số đơn thuộc tập đo × 100%
+M-DH-05
+Tỷ lệ hủy
+M-DH-03 / tổng số đơn thuộc tập đo × 100%
+Mã
+Chỉ số
+Công thức/điều kiện
+M-CS-01
+Yêu cầu hỗ trợ mới
+Số yêu cầu được tạo trong kỳ
+M-CS-02
+Yêu cầu đã xử lý
+Số yêu cầu đạt trạng thái hoàn tất trong kỳ
+M-CS-03
+Thời gian xử lý trung bình
+Trung bình (thời điểm hoàn tất − thời điểm tiếp nhận) của yêu cầu hoàn tất trong kỳ
+M-CS-04
+Yêu cầu quá SLA
+Số yêu cầu chưa hoàn tất trong thời hạn SLA tương ứng
+Mã
+Chỉ số
+Công thức/điều kiện
+M-ND-01
+Người dùng đăng ký mới
+Số tài khoản có thời điểm tạo thuộc kỳ
+M-ND-02
+Người dùng hoạt động
+Số tài khoản có ít nhất một sự kiện hoạt động hợp lệ trong kỳ
+M-ND-03
+Khách hàng mua hàng
+Số khách hàng có ít nhất một đơn hợp lệ trong kỳ
+Trường
+Bắt buộc
+Quy tắc
+from_at
+Có
+Ngày/giờ bắt đầu, không lớn hơn to_at
+to_at
+Có
+Ngày/giờ kết thúc, không lớn hơn thời điểm hiện tại trừ khi cho phép kỳ mở
+granularity
+Không
+day/week/month; hệ thống có thể tự chọn
+htx_id
+Không
+Chỉ Admin hoặc QLNN có phạm vi tương ứng được dùng
+location_id
+Không
+Phải thuộc phạm vi quản lý
+comparison
+Không
+previous_period mặc định; tùy chọn khác [CẦN CHỐT]
+Mã
+Yêu cầu
+NFR-BCTK01-01
+95% lượt tải dashboard hoàn tất trong ≤ 3 giây với kỳ ≤ 12 tháng và tải thông thường [CẦN CHỐT SLA].
+NFR-BCTK01-02
+Dữ liệu chậm không quá 5 phút so với nguồn [CẦN CHỐT].
+NFR-BCTK01-03
+100% yêu cầu API phải kiểm tra xác thực và phân quyền phía máy chủ.
+NFR-BCTK01-04
+Số liệu hiển thị và số liệu xuất phải dùng cùng định nghĩa và cùng data_as_of.
+NFR-BCTK01-05
+Giao diện phải hỗ trợ bàn phím và độ tương phản văn bản tối thiểu 4.5:1.
+Mã
+Nội dung
+BCTK01-V01
+Khoảng thời gian không hợp lệ. Vui lòng kiểm tra ngày bắt đầu và ngày kết thúc.
+BCTK01-A01
+Bạn không có quyền xem dữ liệu trong phạm vi đã chọn.
+BCTK01-E01
+Chưa thể tải dữ liệu thống kê. Vui lòng thử lại.
+Mã
+Given
+When
+Then
+AC-BCTK01-01
+Admin có quyền toàn hệ thống
+Mở dashboard
+Các nhóm chỉ số được cấp hiển thị đúng dữ liệu toàn hệ thống
+AC-BCTK01-02
+Người dùng QLNN chỉ quản lý địa bàn A
+Mở hoặc gọi API với địa bàn B
+Không nhận được dữ liệu địa bàn B
+AC-BCTK01-03
+Kỳ báo cáo có dữ liệu và kỳ trước có dữ liệu
+Chọn bộ lọc
+Hiển thị đúng giá trị, so sánh và xu hướng
+AC-BCTK01-04
+Mẫu số của một tỷ lệ bằng 0
+Tải dashboard
+Hiển thị “Không đủ dữ liệu”, không phát sinh lỗi chia cho 0
+AC-BCTK01-05
+Một chỉ số có danh sách chi tiết
+Chọn chỉ số
+Danh sách chi tiết dùng đúng bộ lọc và tổng số khớp chỉ số
+AC-BCTK01-06
+Bộ lọc có ngày bắt đầu sau ngày kết thúc
+Áp dụng
+Hệ thống từ chối và hiển thị BCTK01-V01
+AC-BCTK01-07
+Người dùng chọn xuất báo cáo
+Chuyển sang FR-BCTK-03
+Loại báo cáo và bộ lọc được giữ nguyên
+Yêu cầu nguồn
+Ca sử dụng
+Yêu cầu chi tiết
+Tiêu chí nghiệm thu
+FR-BCTK-01
+UC-BCTK-01-01, UC-BCTK-01-02
+FR-BCTK-01.01 → FR-BCTK-01.09
+AC-BCTK01-01 → AC-BCTK01-07

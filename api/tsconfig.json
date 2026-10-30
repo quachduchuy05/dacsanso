@@ -1,0 +1,9 @@
+{
+  // Dùng khi Vercel dịch hàm trong thư mục api/: không nạp kiểu của Vite (vite/client) như app,
+  // tránh báo lỗi TS2688 trong log build. Kiểm tra kiểu đầy đủ vẫn chạy bằng `npm run lint` ở thư mục gốc.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": []
+  },
+  "include": ["**/*.ts"]
+}

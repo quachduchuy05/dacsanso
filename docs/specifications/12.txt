@@ -1,0 +1,338 @@
+# Đặc tả UC TK - Nguyễn Khải
+Nguồn: https://docs.google.com/document/d/1EtLW_BH6Ktafo2wnT4R7eoDyJpJ9SZuLhU6HyVGXjOQ/edit?usp=drivesdk
+
+﻿1. Danh sách yêu cầu chức năng – FR-TK
+Mã
+	Tên yêu cầu chức năng
+	Mô tả
+	Actor chính
+	Ưu tiên
+	FR-TK-06
+	Cập nhật hồ sơ HTX, giấy tờ pháp lý
+	Cho phép HTX xem và cập nhật hồ sơ, giấy tờ pháp lý/chứng nhận thuộc HTX mình; hệ thống kiểm tra dữ liệu bắt buộc trước khi gửi duyệt.
+	HTX
+	Must
+	FR-TK-07
+	Gửi duyệt hồ sơ, theo dõi tình trạng duyệt hồ sơ
+	Cho phép HTX gửi hồ sơ để Admin xem xét và theo dõi trạng thái xử lý hồ sơ, bao gồm Chờ duyệt, Đã duyệt, Từ chối và Cần bổ sung. Khi hồ sơ bị từ chối hoặc được yêu cầu bổ sung, HTX có thể xem lý do, cập nhật hồ sơ theo quy định và gửi lại khi hệ thống cho phép.
+	HTX
+	Must
+	FR-TK-08
+	Tiếp nhận hồ sơ HTX
+	Cho phép Admin xem danh sách hồ sơ HTX đã gửi, mở thông tin và giấy tờ kèm theo để tiếp nhận, kiểm tra và xử lý.
+	Admin
+	Must
+	FR-TK-09
+	Duyệt, từ chối HTX
+	Cho phép Admin phê duyệt hoặc từ chối hồ sơ HTX; khi từ chối phải nhập lý do, hệ thống lưu kết quả và thông báo cho HTX.
+	Admin
+	Must
+	FR-TK-10
+	Cấp tài khoản Admin, Cơ quan quản lý
+	Cho phép Admin có thẩm quyền tạo/cấp tài khoản cho vai trò Admin hoặc Cơ quan quản lý nhà nước và gán vai trò tương ứng.
+	Admin
+	Must
+	FR-TK-11
+	Phân quyền theo vai trò
+	Cho phép Admin có thẩm quyền gán và quản lý quyền chức năng theo vai trò; hệ thống từ chối thao tác ngoài quyền được cấp.
+	Admin
+	Must
+	
+
+2. Danh sách Use Case – UC-TK
+Mã UC
+	Tên Use Case
+	Actor chính
+	FR liên quan
+	UC-TK-06
+	Cập nhật hồ sơ HTX, giấy tờ pháp lý
+	HTX
+	FR-TK-06
+	UC-TK-07
+	Gửi duyệt hồ sơ, theo dõi tình trạng duyệt hồ sơ
+	HTX
+	FR-TK-07
+	UC-TK-08
+	Tiếp nhận hồ sơ HTX
+	Admin
+	FR-TK-08
+	UC-TK-09
+	Duyệt, từ chối HTX
+	Admin
+	FR-TK-09
+	UC-TK-10
+	Cấp tài khoản Admin, Cơ quan quản lý
+	Admin
+	FR-TK-10
+	UC-TK-11
+	Phân quyền theo vai trò
+	Admin
+	FR-TK-11
+	
+
+3. Business Rules – BR-TK
+Mã Business Rule
+	Quy định
+	BR-TK-01
+	HTX chỉ được xem và cập nhật hồ sơ, giấy tờ thuộc phạm vi quản lý của chính HTX đó.
+	BR-TK-02
+	Hồ sơ phải có đầy đủ thông tin bắt buộc và giấy tờ pháp lý theo quy định trước khi gửi duyệt.
+	BR-TK-03
+	Hồ sơ ở trạng thái Chờ duyệt không được chỉnh sửa; việc bổ sung/chỉnh sửa chỉ thực hiện khi hệ thống cho phép theo kết quả xử lý.
+	BR-TK-04
+	Admin phải kiểm tra thông tin và giấy tờ của HTX trước khi quyết định phê duyệt hoặc từ chối hồ sơ.
+	BR-TK-05
+	Khi từ chối hồ sơ hoặc yêu cầu HTX bổ sung thông tin, giấy tờ, Admin phải ghi nhận lý do xử lý; hệ thống phải lưu kết quả và thông báo cho HTX.
+	BR-TK-06
+	Tài khoản Admin và Cơ quan quản lý nhà nước được cấp bởi Admin có thẩm quyền, không tự đăng ký.
+	BR-TK-07
+	Mỗi tài khoản phải được gán vai trò phù hợp; quyền truy cập và thao tác được kiểm soát theo vai trò đã cấp.
+	BR-TK-08
+	Người dùng không được thực hiện chức năng hoặc truy cập dữ liệu ngoài phạm vi quyền được cấp.
+	
+
+4. Đặc tả UC
+UC-TK-06 – Cập nhật hồ sơ HTX, giấy tờ pháp lý
+Tên UC
+	UC-TK-06 – Cập nhật hồ sơ HTX, giấy tờ pháp lý
+	Danh sách chức năng
+	Cập nhật hồ sơ HTX, giấy tờ pháp lý – FR-TK-06
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là HTX, tôi muốn xem và cập nhật hồ sơ cùng giấy tờ pháp lý của HTX mình để bảo đảm thông tin đăng ký đầy đủ và chính xác.
+	Điều kiện trước
+	1. HTX đã đăng nhập hệ thống.
+2. HTX có quyền truy cập hồ sơ thuộc phạm vi quản lý của mình.
+	Kích hoạt UC
+	HTX chọn chức năng Hồ sơ HTX.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX mở chức năng Hồ sơ HTX.
+2. Hệ thống hiển thị thông tin hồ sơ và giấy tờ hiện có.
+3. HTX cập nhật các trường được phép chỉnh sửa và tải lên giấy tờ pháp lý/chứng nhận theo yêu cầu.
+4. HTX chọn lưu hoặc tiếp tục gửi hồ sơ duyệt.
+5. Hệ thống kiểm tra dữ liệu bắt buộc và định dạng tệp.
+6. Hệ thống lưu thay đổi hợp lệ và thông báo kết quả.
+	Luồng thay thế
+	A1 – Thiếu dữ liệu: hệ thống đánh dấu trường còn thiếu và yêu cầu HTX bổ sung trước khi gửi duyệt.
+A2 – Hồ sơ bị từ chối/cần bổ sung: HTX xem lý do, cập nhật thông tin hoặc giấy tờ rồi thực hiện gửi lại.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Hồ sơ đang Chờ duyệt: hệ thống khóa chỉnh sửa và thông báo trạng thái hồ sơ.
+E2 – Hồ sơ không thuộc HTX: hệ thống từ chối truy cập/chỉnh sửa.
+E3 – Tệp không hợp lệ: hệ thống không lưu tệp và thông báo yêu cầu định dạng phù hợp.
+	Điều kiện sau
+	Thông tin và giấy tờ hợp lệ được lưu trong hồ sơ HTX; nếu chưa gửi duyệt thì hồ sơ chưa chuyển sang trạng thái Chờ duyệt.
+	Yêu cầu/Business Rule
+	BR-TK-01: HTX chỉ được xem và cập nhật hồ sơ, giấy tờ thuộc phạm vi quản lý của chính HTX đó.
+BR-TK-02: Hồ sơ phải có đầy đủ thông tin bắt buộc và giấy tờ pháp lý theo quy định trước khi gửi duyệt.
+BR-TK-03: Hồ sơ ở trạng thái Chờ duyệt không được chỉnh sửa; việc bổ sung/chỉnh sửa chỉ thực hiện khi hệ thống cho phép theo kết quả xử lý.
+	Giao diện
+	Màn hình Hồ sơ HTX: hiển thị thông tin, giấy tờ đã nộp, trạng thái và chức năng cập nhật/lưu.
+	 
+UC-TK-07 – Gửi duyệt hồ sơ, theo dõi tình trạng duyệt hồ sơ
+Tên UC
+	UC-TK-07 – Gửi duyệt hồ sơ, theo dõi tình trạng duyệt hồ sơ
+	Danh sách chức năng
+	Gửi duyệt hồ sơ, theo dõi tình trạng duyệt hồ sơ – FR-TK-07
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống; Admin
+	Mô tả
+	Là HTX, tôi muốn gửi hồ sơ để Admin xem xét và theo dõi tình trạng xử lý để biết hồ sơ đã được duyệt, bị từ chối hay cần bổ sung.
+	Điều kiện trước
+	1. HTX đã có hồ sơ và giấy tờ cần thiết.
+2. Hồ sơ đáp ứng các trường bắt buộc để gửi duyệt.
+	Kích hoạt UC
+	HTX chọn Gửi duyệt hồ sơ hoặc mở mục Trạng thái hồ sơ.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX mở hồ sơ đã hoàn thiện.
+2. HTX chọn Gửi duyệt.
+3. Hệ thống kiểm tra tính đầy đủ và hợp lệ của thông tin, giấy tờ.
+4. Nếu hợp lệ, hệ thống lưu hồ sơ và chuyển trạng thái sang Chờ duyệt.
+5. Hệ thống đưa hồ sơ vào danh sách chờ xử lý của Admin.
+6. HTX mở trang trạng thái hồ sơ để xem tình trạng xử lý hiện tại.
+7. Khi có kết quả, hệ thống cập nhật trạng thái và hiển thị lý do từ chối/yêu cầu bổ sung nếu có.
+	Luồng thay thế
+	A1 – Hồ sơ cần bổ sung: hệ thống hiển thị thông tin còn thiếu; HTX bổ sung và gửi lại.
+A2 – Hồ sơ đã bị từ chối: HTX xem lý do, cập nhật hồ sơ và gửi lại sau khi hoàn thiện.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Hồ sơ đang Chờ duyệt: hệ thống không tạo lần gửi trùng và hiển thị trạng thái hiện tại.
+E2 – Thiếu thông tin/giấy tờ: hệ thống không cho gửi duyệt.
+E3 – Lỗi lưu hồ sơ: hệ thống thông báo gửi chưa thành công.
+	Điều kiện sau
+	Hồ sơ được lưu với trạng thái Chờ duyệt hoặc giữ nguyên trạng thái trước đó nếu không đáp ứng điều kiện gửi.
+	Yêu cầu/Business Rule
+	BR-TK-02: Hồ sơ phải có đầy đủ thông tin bắt buộc và giấy tờ pháp lý theo quy định trước khi gửi duyệt.
+BR-TK-03: Hồ sơ ở trạng thái Chờ duyệt không được chỉnh sửa; việc bổ sung/chỉnh sửa chỉ thực hiện khi hệ thống cho phép theo kết quả xử lý.
+BR-TK-05: Khi từ chối hồ sơ hoặc yêu cầu HTX bổ sung thông tin, giấy tờ, Admin phải ghi nhận lý do xử lý; hệ thống phải lưu kết quả và thông báo cho HTX.
+	Giao diện
+	Màn hình Trạng thái hồ sơ HTX: hiển thị trạng thái hiện tại, kết quả xử lý và lý do từ chối/yêu cầu bổ sung.
+	 
+UC-TK-08 – Tiếp nhận hồ sơ HTX
+Tên UC
+	UC-TK-08 – Tiếp nhận hồ sơ HTX
+	Danh sách chức năng
+	Tiếp nhận hồ sơ HTX – FR-TK-08
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Admin
+	Tác nhân phụ
+	Hệ thống; HTX
+	Mô tả
+	Là Admin, tôi muốn tiếp nhận và xem hồ sơ HTX được gửi lên để kiểm tra thông tin và giấy tờ trước khi ra quyết định xử lý.
+	Điều kiện trước
+	1. Admin đã đăng nhập và có quyền tiếp nhận hồ sơ HTX.
+2. Hệ thống có hồ sơ HTX đã gửi.
+	Kích hoạt UC
+	Admin mở chức năng Hồ sơ HTX chờ xử lý.
+	Luồng sự kiện chính (Happy Case)
+	1. Admin mở danh sách hồ sơ HTX.
+2. Hệ thống hiển thị danh sách và trạng thái hồ sơ.
+3. Admin lọc/chọn hồ sơ ở trạng thái Chờ duyệt.
+4. Hệ thống hiển thị thông tin HTX và giấy tờ kèm theo.
+5. Admin mở và kiểm tra hồ sơ HTX được chọn.
+6.Hệ thống hiển thị đầy đủ thông tin và giấy tờ để Admin thực hiện quy trình phê duyệt hoặc từ chối theo UC-TK-09.
+	Luồng thay thế
+	A1 – Không có hồ sơ chờ duyệt: hệ thống hiển thị danh sách rỗng.
+A2 – Admin mở hồ sơ đã xử lý: hệ thống hiển thị trạng thái/kết quả, không cho tiếp nhận lại theo luồng chờ duyệt.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Hồ sơ không tồn tại hoặc không còn Chờ duyệt: hệ thống thông báo và không cho tiếp nhận theo luồng này.
+E2 – Admin không có quyền: hệ thống từ chối truy cập.
+	Điều kiện sau
+	Hồ sơ được hiển thị để Admin kiểm tra; việc tiếp nhận được ghi nhận theo quy trình hệ thống.
+	Yêu cầu/Business Rule
+	BR-TK-04: Admin phải kiểm tra thông tin và giấy tờ của HTX trước khi quyết định phê duyệt hoặc từ chối hồ sơ.
+BR-TK-08: Người dùng không được thực hiện chức năng hoặc truy cập dữ liệu ngoài phạm vi quyền được cấp.
+	Giao diện
+	Màn hình Danh sách hồ sơ HTX – Admin và Chi tiết hồ sơ: hiển thị trạng thái, thông tin HTX, giấy tờ và thao tác tiếp nhận/xem.
+	 
+UC-TK-09 – Duyệt, từ chối HTX
+Tên UC
+	UC-TK-09 – Duyệt, từ chối HTX
+	Danh sách chức năng
+	Duyệt, từ chối HTX – FR-TK-09
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Admin
+	Tác nhân phụ
+	Hệ thống; HTX
+	Mô tả
+	Là Admin, tôi muốn phê duyệt hoặc từ chối hồ sơ HTX sau khi kiểm tra để xác định hồ sơ có đáp ứng điều kiện hoạt động hay không.
+	Điều kiện trước
+	1. Hồ sơ HTX đã được gửi và đang ở trạng thái Chờ duyệt.
+2. Admin đã đăng nhập và có quyền xử lý hồ sơ.
+	Kích hoạt UC
+	Admin mở một hồ sơ HTX chờ duyệt.
+	Luồng sự kiện chính (Happy Case)
+	1. Admin mở chi tiết hồ sơ HTX.
+2. Hệ thống hiển thị thông tin và giấy tờ HTX đã nộp.
+3. Admin kiểm tra tính đầy đủ và hợp lệ của hồ sơ.
+4. Admin chọn Phê duyệt.
+5. Hệ thống lưu kết quả và cập nhật trạng thái hồ sơ thành Đã duyệt.
+6. Hệ thống thông báo kết quả cho HTX.
+	Luồng thay thế
+	A1 – Yêu cầu bổ sung hồ sơ: Admin yêu cầu HTX bổ sung thông tin hoặc giấy tờ và ghi rõ lý do. Hệ thống lưu yêu cầu, cập nhật trạng thái hồ sơ thành Cần bổ sung và thông báo cho HTX.
+A2 – Admin từ chối hồ sơ: Admin nhập lý do và xác nhận; hệ thống lưu lý do, cập nhật trạng thái Từ chối và thông báo HTX.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Hồ sơ không còn Chờ duyệt: hệ thống thông báo trạng thái hiện tại và không cho xử lý lại.
+E2 – Admin từ chối nhưng chưa nhập lý do: hệ thống yêu cầu nhập lý do trước khi xác nhận. 
+E3 – Thiếu giấy tờ bắt buộc: hồ sơ được chuyển sang yêu cầu bổ sung, không phê duyệt.
+	Điều kiện sau
+	Hồ sơ được ghi nhận kết quả Đã duyệt, Từ chối hoặc Cần bổ sung; kết quả và lý do được hiển thị cho HTX.
+	Yêu cầu/Business Rule
+	BR-TK-04: Admin phải kiểm tra thông tin và giấy tờ của HTX trước khi quyết định phê duyệt hoặc từ chối hồ sơ.
+BR-TK-05: Khi từ chối hồ sơ hoặc yêu cầu HTX bổ sung thông tin, giấy tờ, Admin phải ghi nhận lý do xử lý; hệ thống phải lưu kết quả và thông báo cho HTX.
+	Giao diện
+	Màn hình Chi tiết hồ sơ HTX – Admin: chức năng Phê duyệt, Từ chối, Yêu cầu bổ sung; màn hình kết quả hiển thị trạng thái/lý do.
+	 
+UC-TK-10 – Cấp tài khoản Admin, Cơ quan quản lý
+Tên UC
+	UC-TK-10 – Cấp tài khoản Admin, Cơ quan quản lý
+	Danh sách chức năng
+	Cấp tài khoản Admin, Cơ quan quản lý – FR-TK-10
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Admin
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là Admin có thẩm quyền, tôi muốn tạo/cấp tài khoản cho người dùng thuộc vai trò Admin hoặc Cơ quan quản lý nhà nước để họ truy cập hệ thống theo vai trò được giao.
+	Điều kiện trước
+	1. Admin đã đăng nhập bằng tài khoản có quyền cấp tài khoản.
+2. Có thông tin người được cấp tài khoản và vai trò cần gán.
+	Kích hoạt UC
+	Admin chọn chức năng Quản lý tài khoản và chọn Tạo tài khoản.
+	Luồng sự kiện chính (Happy Case)
+	1. Admin mở chức năng Quản lý tài khoản.
+2. Hệ thống hiển thị biểu mẫu tạo tài khoản.
+3. Admin nhập thông tin định danh và thông tin liên hệ cần thiết.
+4. Admin chọn vai trò Admin hoặc Cơ quan quản lý nhà nước.
+5. Admin xác nhận tạo tài khoản.
+6. Hệ thống kiểm tra dữ liệu bắt buộc và tính duy nhất của thông tin đăng nhập.
+7. Hệ thống tạo tài khoản, gán vai trò và ghi nhận trạng thái tài khoản.
+8. Hệ thống thông báo kết quả cho Admin.
+	Luồng thay thế
+	A1 – Thiếu thông tin: Admin bổ sung các trường bắt buộc rồi gửi lại.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Tài khoản/định danh đã tồn tại: hệ thống không tạo trùng.
+E2 – Admin không có quyền cấp tài khoản: hệ thống từ chối thao tác.
+E3 – Vai trò không hợp lệ: hệ thống không cho lưu tài khoản.
+	Điều kiện sau
+	Tài khoản được tạo với vai trò được gán và trạng thái được ghi nhận trong hệ thống.
+	Yêu cầu/Business Rule
+	BR-TK-06: Tài khoản Admin và Cơ quan quản lý nhà nước được cấp bởi Admin có thẩm quyền, không tự đăng ký.
+BR-TK-07: Mỗi tài khoản phải được gán vai trò phù hợp; quyền truy cập và thao tác được kiểm soát theo vai trò đã cấp.
+BR-TK-08: Người dùng không được thực hiện chức năng hoặc truy cập dữ liệu ngoài phạm vi quyền được cấp.
+	Giao diện
+	Màn hình Danh sách tài khoản và Tạo tài khoản: thông tin người dùng, vai trò, trạng thái và kết quả tạo tài khoản.
+	 
+UC-TK-11 – Phân quyền theo vai trò
+Tên UC
+	UC-TK-11 – Phân quyền theo vai trò
+	Danh sách chức năng
+	Phân quyền theo vai trò – FR-TK-11
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Admin
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là Admin có thẩm quyền, tôi muốn cấu hình quyền chức năng theo từng vai trò để bảo đảm người dùng chỉ được truy cập và thực hiện các chức năng phù hợp với nhiệm vụ được giao.
+	Điều kiện trước
+	1. Admin đã đăng nhập và có quyền quản lý phân quyền. 
+2. Tài khoản hoặc vai trò cần cấu hình đã tồn tại.
+	Kích hoạt UC
+	Admin mở chức năng Phân quyền theo vai trò.
+	Luồng sự kiện chính (Happy Case)
+	1. Admin mở danh sách tài khoản hoặc danh sách vai trò.
+2. Hệ thống hiển thị vai trò và quyền tương ứng.
+3. Admin chọn tài khoản/vai trò cần cấu hình.
+4. Admin gán hoặc cập nhật vai trò/quyền trong phạm vi được phép.
+5. Admin xác nhận lưu thay đổi.
+6. Hệ thống kiểm tra tính hợp lệ của cấu hình quyền. 7. Hệ thống lưu cấu hình và áp dụng quyền mới.
+8. Hệ thống thông báo kết quả cập nhật.
+	Luồng thay thế
+	A1 – Không thay đổi quyền: Admin thoát thao tác; hệ thống giữ nguyên cấu hình hiện tại.
+A2 – Cập nhật quyền cho vai trò: hệ thống áp dụng cấu hình mới cho tài khoản thuộc vai trò đó theo chính sách hệ thống.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Admin không có quyền quản lý phân quyền: hệ thống từ chối thao tác.
+E2 – Cấu hình quyền không hợp lệ: hệ thống không lưu và thông báo lỗi.
+E3 – Tài khoản/vai trò không tồn tại: hệ thống thông báo và yêu cầu chọn lại.
+	Điều kiện sau
+	Cấu hình phân quyền được lưu; các thao tác tiếp theo được kiểm soát theo quyền đã cấp.
+	Yêu cầu/Business Rule
+	BR-TK-07: Mỗi tài khoản phải được gán vai trò phù hợp; quyền truy cập và thao tác được kiểm soát theo vai trò đã cấp.
+BR-TK-08: Người dùng không được thực hiện chức năng hoặc truy cập dữ liệu ngoài phạm vi quyền được cấp.
+	Giao diện
+	Màn hình Phân quyền: danh sách vai trò, quyền chức năng, tài khoản áp dụng và chức năng lưu thay đổi.

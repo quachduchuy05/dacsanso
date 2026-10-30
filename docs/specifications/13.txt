@@ -1,0 +1,897 @@
+# Đặc tả UC, BR và NFR – Module AD.docx
+Nguồn: https://docs.google.com/document/d/11cha049Vn1_MiO7N9414pUB7v846g1yU/edit?usp=drivesdk&ouid=118008469128637664818&rtpof=true&sd=true
+
+Đặc tả Use Case, Business Rule, Trường dữ liệu và NFR – Module AD (Admin)
+App Đặc sản Bắc Giang · Bản nháp v0.1 · 08/10/2026 · Viết theo format đặc tả UC của BRD CSKH by BA Huyền; căn cứ Danh sách FR và UC – Module AD và TK v0.1
+1. Phạm vi, quy ước và giả định
+1.1 Phạm vi
+Tài liệu đặc tả 12 UC (UC-AD-01 đến UC-AD-12) thuộc 6 FR (FR-AD-01 đến FR-AD-06). Mục 2 là đặc tả UC kèm Business Rule (BR); mục 2 là NFR; 
+1.2 Nhóm quyền Admin trong module AD
+1.3 Quy ước
+Mã BR đánh số liên tục toàn module (BR-AD-01, 02, …) để tham chiếu chéo giữa các UC, khác với BRD CSKH đánh lại từ BR01 ở mỗi UC.
+Thông báo hiển thị cho người dùng đặt trong dấu “…”.
+[CẦN CHỐT] là điểm chưa xác định; giá trị đi kèm là giả định để đặc tả tiếp, không phải quyết định. Mọi tỷ lệ, mức phí, thời hạn là tham số cấu hình (mục 4), không cố định trong chức năng.
+Độ ưu tiên theo MoSCoW; PO/Business Owner quyết định mức cuối cùng.
+Khái niệm 4 khoản đối soát (tiền hàng, hoa hồng, phí ship, tiền hoàn) và công thức chi trả lấy theo mục 4 của Danh sách FR và UC của AD.
+1.4 Business Rule dùng chung toàn module
+BR-AD-01: Mọi số tiền tính bằng VND, số nguyên, không có phần thập phân. Quy tắc làm tròn dùng một cách thống nhất cho toàn hệ thống [CẦN CHỐT: làm tròn thông thường hay làm tròn xuống]. Tổng các dòng chi tiết phải bằng tổng hiển thị.
+BR-AD-02: Dòng sổ đối soát đã ghi không sửa, không xóa. Điều chỉnh bằng dòng đảo hoặc dòng bổ sung, có lý do, người thực hiện và thời điểm.
+BR-AD-03: Giá trị tham số (cọc, hoa hồng, phụ phí hỏa tốc, tỷ lệ giữ lại…) được lưu cùng đơn tại thời điểm tạo đơn. Thay đổi tham số về sau không làm đổi đơn cũ.
+BR-AD-04: Mọi thao tác trong module AD ghi nhật ký (ai, làm gì, khi nào, giá trị trước và sau) theo FR-TK-06. Nhật ký chỉ xem, không sửa, không xóa.
+BR-AD-05: Chỉ nhóm quyền được nêu ở mục 1.2 mới thực hiện được thao tác tương ứng. Ngoài nhóm quyền, hệ thống chặn và hiển thị: “Bạn không có quyền thực hiện thao tác này.”
+BR-AD-06: Thời gian lưu và hiển thị theo múi giờ Việt Nam (UTC+7), định dạng dd/MM/yyyy HH:mm.
+BR-AD-07: Trường lý do (từ chối, điều chỉnh, đổi tham số…) là văn bản 10–500 ký tự.
+2. Đặc tả Use Case
+UC-AD-01 – Phê duyệt hoặc từ chối hồ sơ HTX
+UC-AD-02 – Phê duyệt hoặc từ chối sản phẩm
+UC-AD-03 – Cấu hình và xem lịch sử tham số hệ thống
+UC-AD-04 – Tra cứu sổ đối soát theo đơn, HTX, kỳ
+UC-AD-05 – Xác định bên chịu cho khoản tiền hoàn
+UC-AD-06 – Xuất báo cáo đối soát 4 khoản
+UC-AD-07 – Đối soát tiền COD và cước ship với ĐVVC
+UC-AD-08 – Đối soát giao dịch thu và hoàn với cổng thanh toán
+UC-AD-09 – Xử lý chênh lệch đối soát
+UC-AD-10 – Chốt kỳ và lập bảng kê chi trả HTX
+UC-AD-11 – Xác nhận chi trả và khấu trừ, thu hồi HTX
+UC-AD-12 – Xem bảng kê chi trả của HTX
+2. Yêu cầu phi chức năng (NFR)
+Chỉ tiêu ghi trong cột Chỉ tiêu là đề xuất để đội kỹ thuật và PO xác nhận, chưa phải cam kết.
+Nhóm quyền
+Thao tác trong module AD
+Quản lý vận hành
+UC-AD-01, UC-AD-03; nhận cảnh báo chênh lệch tồn đọng (UC-AD-09). Duyệt sản phẩm UC-AD-02 [CẦN CHỐT: nhóm Quản lý vận hành hay Chất lượng]
+Chất lượng
+UC-AD-02 (đề xuất)
+Tài chính
+UC-AD-04 đến UC-AD-11; xem (không sửa) tham số ở UC-AD-03
+CSKH
+Không thao tác sổ. Kết luận trách nhiệm hoàn tiền trên ticket là đầu vào của UC-AD-05
+Quản trị gốc
+Không thao tác nghiệp vụ AD; chỉ tạo tài khoản Admin (UC-TK-07)
+Hạng mục
+Nội dung
+Tên UC
+Phê duyệt hoặc từ chối hồ sơ HTX
+Danh sách chức năng
+Admin – FR-AD-01 Phê duyệt HTX mới
+Độ ưu tiên
+Cao – Must Have. Chưa duyệt HTX thì HTX chưa được bán hàng nên chưa có sản phẩm và đơn hàng. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+Admin (nhóm Quản lý vận hành)
+Tác nhân phụ
+Hệ thống App Đặc sản Bắc Giang; HTX (người nộp hồ sơ, nhận kết quả)
+Mô tả
+Là Admin, tôi muốn kiểm tra thông tin đăng ký và giấy tờ của HTX rồi phê duyệt, từ chối (có lý do) hoặc yêu cầu bổ sung, để chỉ những HTX hợp lệ mới được kích hoạt quyền bán hàng trên sàn.
+Kích hoạt UC
+Admin chọn một hồ sơ trong danh sách Hồ sơ HTX chờ duyệt, hoặc bấm vào thông báo có HTX mới nộp hồ sơ.
+Điều kiện trước
+
+Admin đã đăng nhập thành công và thuộc nhóm quyền Quản lý vận hành.
+Có hồ sơ HTX ở trạng thái Chờ duyệt hoặc Đã bổ sung (HTX nộp lại sau khi được yêu cầu bổ sung).
+Hồ sơ không bị Admin khác đang khóa kiểm tra.
+Admin có kết nối Internet.
+Luồng sự kiện chính (Happy Case)
+Admin vào Quản lý HTX > Hồ sơ chờ duyệt. Hệ thống hiển thị danh sách gồm mã hồ sơ, tên HTX, MST, ngày nộp, trạng thái; mặc định xếp hồ sơ nộp sớm nhất lên đầu.
+Admin chọn một hồ sơ. Hệ thống kiểm tra quyền và trạng thái, sau đó khóa hồ sơ để HTX không chỉnh sửa trong lúc kiểm tra và ghi nhận Admin đang xử lý.
+Hệ thống hiển thị chi tiết hồ sơ: tên HTX, MST, số điện thoại, địa chỉ, người đại diện, giấy tờ và chứng nhận (xem trước được), lịch sử các lần duyệt trước (nếu có).
+Hệ thống tự kiểm tra MST có trùng với HTX đã có không và hiển thị kết quả cạnh trường MST.
+Admin kiểm tra thông tin và giấy tờ.
+Admin bấm Phê duyệt. Hệ thống hiển thị hộp xác nhận.
+Admin xác nhận.
+Hệ thống đổi trạng thái hồ sơ sang Đã duyệt, lưu người duyệt và thời điểm duyệt, kích hoạt quyền bán hàng cho tài khoản HTX.
+Hệ thống mở khóa hồ sơ.
+Hệ thống gửi thông báo cho HTX: “Hồ sơ của bạn đã được phê duyệt. Bạn có thể bắt đầu đăng sản phẩm.”
+Hệ thống ghi nhật ký, hiển thị “Đã phê duyệt HTX [tên HTX].” và quay về danh sách hồ sơ chờ duyệt
+Luồng thay thế
+A1 – Từ chối hồ sơ: Tại bước 6, Admin bấm Từ chối. Hệ thống yêu cầu nhập lý do. Admin nhập lý do và xác nhận. Hệ thống đổi trạng thái sang Từ chối, mở khóa, gửi thông báo kèm lý do cho HTX. HTX được sửa và nộp lại; lần nộp mới là một vòng duyệt mới, lịch sử các vòng trước được giữ.
+A2 – Yêu cầu bổ sung: Tại bước 6, Admin bấm Yêu cầu bổ sung, chọn các mục cần bổ sung (thông tin hoặc giấy tờ cụ thể) và nhập nội dung yêu cầu. Hệ thống đổi trạng thái sang Chờ bổ sung, mở khóa riêng các mục được yêu cầu, gửi thông báo cho HTX. Khi HTX nộp lại, hồ sơ chuyển sang Đã bổ sung và quay về hàng đợi duyệt.
+A3 – Tìm kiếm, lọc danh sách: Tại bước 1, Admin lọc theo trạng thái, khoảng ngày nộp, tìm theo tên HTX hoặc MST.
+A4 – Thoát không quyết định: Admin bấm Đóng. Hệ thống mở khóa hồ sơ, giữ nguyên trạng thái
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc hết phiên: Hệ thống điều hướng đến màn hình Đăng nhập; sau khi đăng nhập quay lại danh sách hồ sơ.
+E2 – Không đủ quyền: Hệ thống chặn và hiển thị thông báo theo BR-AD-05.
+E3 – Hồ sơ đang bị Admin khác khóa: “Hồ sơ đang được [tên Admin] kiểm tra. Vui lòng thử lại sau.”
+E4 – Hồ sơ đã được xử lý trong lúc đang mở: “Hồ sơ đã được xử lý. Vui lòng tải lại danh sách.”
+E5 – MST trùng HTX đã có: Hệ thống cảnh báo “Mã số thuế đã tồn tại trong hệ thống.” và vô hiệu hóa nút Phê duyệt; Admin chỉ từ chối hoặc yêu cầu bổ sung.
+E6 – Từ chối nhưng chưa nhập lý do: “Vui lòng nhập lý do từ chối.”
+E7 – Lý do ngoài 10–500 ký tự: “Lý do phải từ 10 đến 500 ký tự.”
+E8 – Yêu cầu bổ sung nhưng chưa chọn mục: “Vui lòng chọn ít nhất một mục cần bổ sung.”
+E9 – Không mở được giấy tờ đính kèm: “Không thể hiển thị tệp. Vui lòng tải lại hoặc yêu cầu HTX gửi lại.”
+E10 – Khóa hết hạn: Sau 30 phút không thao tác, hệ thống tự mở khóa và hiển thị “Phiên kiểm tra đã hết hạn. Vui lòng mở lại hồ sơ.”
+E11 – Lỗi hệ thống hoặc mạng khi lưu: Hệ thống không đổi trạng thái, giữ nguyên khóa và hiển thị “Không thể lưu kết quả. Vui lòng thử lại.”
+Điều kiện sau
+
+Mức 1: Hồ sơ có kết quả Đã duyệt, Từ chối hoặc Chờ bổ sung; HTX nhận được thông báo kết quả.
+Mức 2: Hệ thống lưu kết quả vào bảng CooperativeRegistration, lưu từng lần duyệt vào CooperativeReviewLog (người duyệt, kết quả, lý do, thời điểm). Nếu Đã duyệt, quyền bán hàng của HTX được kích hoạt.
+Thông báo UX: “Đã phê duyệt HTX [tên HTX].” Điều hướng: từ màn hình Chi tiết hồ sơ về danh sách Hồ sơ HTX chờ duyệt.
+Yêu cầu/Business rule
+BR-AD-08: Chỉ hồ sơ ở trạng thái Chờ duyệt hoặc Đã bổ sung mới được Admin xử lý.
+BR-AD-09: Mã số thuế là duy nhất trên toàn hệ thống; mỗi MST chỉ có một HTX được duyệt.
+BR-AD-10: Từ chối bắt buộc nhập lý do; yêu cầu bổ sung bắt buộc nêu rõ mục cần bổ sung và nội dung yêu cầu.
+BR-AD-11: Khi Admin mở hồ sơ, hồ sơ bị khóa chỉnh sửa với HTX; mỗi hồ sơ chỉ một Admin xử lý tại một thời điểm; khóa tự hết hạn sau 30 phút không thao tác (giả định, cấu hình được).
+BR-AD-12: Chỉ khi Đã duyệt, hệ thống mới kích hoạt quyền bán hàng cho HTX. Trạng thái Từ chối và Chờ bổ sung không có quyền bán hàng.
+BR-AD-13: Mỗi lần duyệt phải lưu người duyệt, thời điểm, kết quả và lý do để tra cứu lại.
+Giao diện
+Màn hình 1 – Danh sách hồ sơ HTX chờ duyệt: bộ lọc trạng thái, khoảng ngày, ô tìm kiếm; bảng hồ sơ.
+Màn hình 2 – Chi tiết hồ sơ: thông tin HTX, giấy tờ xem trước, cảnh báo trùng MST, lịch sử duyệt, các nút Phê duyệt, Từ chối, Yêu cầu bổ sung, Đóng.
+Màn hình 3 – Hộp nhập lý do hoặc chọn mục cần bổ sung.
+Hạng mục
+Nội dung
+Tên UC
+Phê duyệt hoặc từ chối sản phẩm
+Danh sách chức năng
+Admin – FR-AD-02 Phê duyệt sản phẩm
+Độ ưu tiên
+Cao – Must Have. Chỉ sản phẩm đã duyệt mới hiển thị và được bật Preorder. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+Admin (nhóm Chất lượng hoặc Quản lý vận hành – [CẦN CHỐT])
+Tác nhân phụ
+Hệ thống App Đặc sản Bắc Giang; HTX (người đăng sản phẩm, nhận kết quả)
+Mô tả
+Là Admin, tôi muốn kiểm tra thông tin sản phẩm, chứng nhận và dữ liệu xác minh rồi duyệt, từ chối (có lý do) hoặc yêu cầu bổ sung, để khách chỉ thấy sản phẩm có thông tin và nguồn gốc đáng tin cậy.
+Kích hoạt UC
+Admin chọn một sản phẩm trong danh sách Sản phẩm chờ duyệt, hoặc bấm vào thông báo có sản phẩm mới.
+Điều kiện trước
+
+Admin đã đăng nhập và thuộc nhóm quyền được duyệt sản phẩm.
+Có sản phẩm ở trạng thái Chờ duyệt hoặc Đã bổ sung.
+HTX sở hữu sản phẩm đang ở trạng thái Đã duyệt (UC-AD-01).
+Sản phẩm không bị Admin khác khóa kiểm tra.
+Admin có kết nối Internet.
+Luồng sự kiện chính (Happy Case)
+
+Admin vào Quản lý sản phẩm > Sản phẩm chờ duyệt. Hệ thống hiển thị danh sách gồm mã sản phẩm, tên, HTX, danh mục, ngày gửi, trạng thái.
+Admin chọn một sản phẩm. Hệ thống kiểm tra quyền và trạng thái, khóa sản phẩm khỏi chỉnh sửa trong lúc kiểm tra.
+Hệ thống hiển thị chi tiết: tên, danh mục, mô tả, ảnh, quy cách, giá, thành phần, hướng dẫn bảo quản, chứng nhận (loại, số, ngày hiệu lực, tài liệu minh chứng), dữ liệu xác minh nguồn gốc/QR, cấu hình Preorder (số suất, khoảng ngày giao dự kiến).
+Hệ thống tự kiểm tra: chứng nhận còn hiệu lực theo ngày, trường bắt buộc đã đủ; hiển thị kết quả cạnh từng mục.
+Admin kiểm tra thông tin, ảnh, chứng nhận và dữ liệu xác minh.
+Admin bấm Phê duyệt và xác nhận.
+Hệ thống đổi trạng thái sản phẩm sang Đã duyệt, lưu người duyệt và thời điểm; sản phẩm được hiển thị cho khách và được phép bật Preorder.
+Hệ thống mở khóa sản phẩm, gửi thông báo cho HTX: “Sản phẩm [tên sản phẩm] đã được phê duyệt.”
+Hệ thống ghi nhật ký, hiển thị “Đã phê duyệt sản phẩm [tên sản phẩm].” và quay về danh sách.
+Luồng thay thế
+
+A1 – Từ chối sản phẩm: Tại bước 6, Admin bấm Từ chối và nhập lý do. Hệ thống đổi trạng thái sang Từ chối, không hiển thị sản phẩm, gửi lý do cho HTX. HTX sửa và gửi lại.
+A2 – Yêu cầu bổ sung: Tại bước 6, Admin chọn các mục cần bổ sung (ví dụ chứng nhận, ảnh thực tế, dữ liệu xác minh) và nhập nội dung. Trạng thái chuyển Chờ bổ sung; HTX bổ sung thì sản phẩm chuyển Đã bổ sung và quay về hàng đợi.
+A3 – HTX sửa số suất hoặc khoảng ngày giao sau khi đã duyệt: Hệ thống áp dụng ngay, không đưa sản phẩm về hàng đợi duyệt, chỉ ghi nhật ký thay đổi.
+A4 – HTX sửa thông tin chính sau khi đã duyệt (tên, danh mục, ảnh, quy cách, thành phần, chứng nhận, dữ liệu xác minh): Hệ thống tạo bản chỉnh sửa chờ duyệt lại; bản đã duyệt vẫn hiển thị cho đến khi bản mới được duyệt [CẦN CHỐT].
+A5 – Lọc danh sách: Tại bước 1, Admin lọc theo HTX, danh mục, trạng thái, khoảng ngày; tìm theo tên hoặc mã sản phẩm.
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc hết phiên: Điều hướng đến màn hình Đăng nhập.
+E2 – Không đủ quyền: Thông báo theo BR-AD-05.
+E3 – Sản phẩm đang bị Admin khác khóa: “Sản phẩm đang được [tên Admin] kiểm tra. Vui lòng thử lại sau.”
+E4 – Sản phẩm đã được xử lý trong lúc đang mở: “Sản phẩm đã được xử lý. Vui lòng tải lại danh sách.”
+E5 – HTX của sản phẩm chưa ở trạng thái Đã duyệt: Hệ thống vô hiệu hóa nút Phê duyệt và hiển thị “HTX chưa được phê duyệt nên chưa thể duyệt sản phẩm.”
+E6 – Chứng nhận hết hiệu lực hoặc thiếu minh chứng: Hệ thống cảnh báo “Chứng nhận đã hết hạn hoặc chưa có tài liệu minh chứng.” và vô hiệu hóa nút Phê duyệt nếu sản phẩm công bố chứng nhận đó.
+E7 – Thiếu lý do khi từ chối hoặc lý do ngoài 10–500 ký tự: “Vui lòng nhập lý do từ 10 đến 500 ký tự.”
+E8 – Yêu cầu bổ sung nhưng chưa chọn mục: “Vui lòng chọn ít nhất một mục cần bổ sung.”
+E9 – Khóa hết hạn sau 30 phút không thao tác: “Phiên kiểm tra đã hết hạn. Vui lòng mở lại sản phẩm.”
+E10 – Lỗi hệ thống hoặc mạng khi lưu: Không đổi trạng thái; “Không thể lưu kết quả. Vui lòng thử lại.”
+Điều kiện sau
+Mức 1: Sản phẩm có kết quả Đã duyệt, Từ chối hoặc Chờ bổ sung; HTX nhận được thông báo.
+Mức 2: Hệ thống lưu kết quả vào bảng Product (trạng thái duyệt) và ProductReviewLog (người duyệt, kết quả, lý do, thời điểm). Nếu Đã duyệt, sản phẩm đủ điều kiện hiển thị và bật Preorder.
+Thông báo UX: “Đã phê duyệt sản phẩm [tên sản phẩm].” Điều hướng: từ Chi tiết sản phẩm về danh sách Sản phẩm chờ duyệt.
+Yêu cầu/Business rule
+
+BR-AD-14: Chỉ sản phẩm đã duyệt mới hiển thị cho khách và được bật Preorder.
+BR-AD-15: Chỉ duyệt sản phẩm của HTX đã ở trạng thái Đã duyệt.
+BR-AD-16: Từ chối bắt buộc nhập lý do; yêu cầu bổ sung bắt buộc nêu rõ mục cần bổ sung.
+BR-AD-17: Sản phẩm công bố chứng nhận phải có loại chứng nhận, ngày hiệu lực còn hạn và tài liệu minh chứng thì mới được duyệt.
+BR-AD-18: Sửa số suất Preorder và khoảng ngày giao dự kiến sau khi đã duyệt không phải duyệt lại; các thay đổi khác theo luồng A4.
+BR-AD-19: Khi Admin đang kiểm tra, sản phẩm bị khóa chỉnh sửa; áp dụng cùng quy tắc khóa và hết hạn khóa như BR-AD-11.
+Giao diện
+
+Màn hình 1 – Danh sách sản phẩm chờ duyệt: bộ lọc HTX, danh mục, trạng thái, ngày; bảng sản phẩm.
+Màn hình 2 – Chi tiết sản phẩm cần duyệt: thông tin sản phẩm, chứng nhận và minh chứng, dữ liệu xác minh/QR, cấu hình Preorder, kết quả tự kiểm tra, các nút Phê duyệt, Từ chối, Yêu cầu bổ sung, Đóng.
+Màn hình 3 – Hộp nhập lý do hoặc chọn mục cần bổ sung.
+Hạng mục
+Nội dung
+Tên UC
+Cấu hình và xem lịch sử tham số hệ thống
+Danh sách chức năng
+Admin – FR-AD-03 Cấu hình tham số hệ thống
+Độ ưu tiên
+Cao – Must Have. Các tỷ lệ và mức phí chưa chốt nên phải cấu hình được, không cố định trong chức năng. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+Admin (nhóm Quản lý vận hành)
+Tác nhân phụ
+Hệ thống App Đặc sản Bắc Giang; Admin nhóm Tài chính (chỉ xem)
+Mô tả
+Là Admin vận hành, tôi muốn thay đổi các tham số chung về đơn và kho, phí giao và tài chính, đồng thời xem lại lịch sử thay đổi, để hệ thống thích ứng khi chính sách thay đổi mà không cần chỉnh sửa chức năng.
+Kích hoạt UC
+Admin vào Cấu hình -> Tham số hệ thống.
+Điều kiện trước
+
+Admin đã đăng nhập thành công và thuộc nhóm Quản lý vận hành (nhóm Tài chính chỉ có quyền xem).
+Hệ thống đã có bộ tham số khởi tạo (mục 4).
+Admin có kết nối Internet.
+Luồng sự kiện chính (Happy Case)
+
+Admin vào Cấu hình > Tham số hệ thống. Hệ thống hiển thị 3 nhóm: Đơn và kho; Phí giao; Tài chính. Mỗi tham số hiển thị tên, giá trị hiện hành, đơn vị, hiệu lực từ, người sửa gần nhất.
+Admin chọn một tham số và bấm Sửa.
+Hệ thống hiển thị form gồm giá trị hiện tại, giá trị mới, hiệu lực từ (mặc định Ngay khi lưu) và lý do thay đổi.
+Admin nhập giá trị mới và lý do, rồi bấm Lưu.
+Hệ thống kiểm tra kiểu dữ liệu, khoảng giá trị và ràng buộc giữa các tham số.
+Hệ thống hiển thị bản xem trước: giá trị cũ → giá trị mới, kèm thông báo “Thay đổi chỉ áp dụng cho đơn tạo từ [thời điểm hiệu lực]. Các đơn đã tạo giữ giá trị cũ.”
+Admin xác nhận. Với tham số nhóm Tài chính, hệ thống yêu cầu nhập mã OTP.
+Hệ thống lưu phiên bản giá trị mới, ghi lịch sử thay đổi (ai, khi nào, giá trị cũ, giá trị mới, lý do) và cập nhật hiệu lực.
+Hệ thống ghi nhật ký, hiển thị “Đã cập nhật tham số.” và quay lại danh sách tham số.
+Luồng thay thế
+
+A1 – Xem lịch sử thay đổi: Admin chọn Lịch sử tại một tham số hoặc tại toàn nhóm. Hệ thống hiển thị danh sách thay đổi, cho lọc theo tham số, người thay đổi, khoảng ngày. Lịch sử chỉ xem, không sửa, không xóa.
+A2 – Hẹn thời điểm hiệu lực: Tại bước 3, Admin chọn Hẹn hiệu lực và nhập ngày giờ trong tương lai. Hệ thống giữ giá trị cũ đến thời điểm đó rồi tự áp giá trị mới.
+A3 – Khôi phục giá trị cũ: Admin chọn một dòng lịch sử và bấm Khôi phục. Hệ thống tạo một thay đổi mới mang giá trị cũ (đi qua bước 3 đến 9), không xóa hay sửa dòng lịch sử.
+A4 – Admin nhóm Tài chính: Chỉ xem giá trị hiện hành và lịch sử; các nút Sửa và Khôi phục bị ẩn.
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc hết phiên: Điều hướng đến màn hình Đăng nhập.
+E2 – Không đủ quyền sửa: Thông báo theo BR-AD-05.
+E3 – Chưa nhập giá trị mới: “Vui lòng nhập giá trị mới.”
+E4 – Giá trị ngoài khoảng cho phép: “Giá trị phải nằm trong khoảng [min] đến [max].”
+E5 – Chưa nhập lý do hoặc lý do ngoài 10–500 ký tự: “Vui lòng nhập lý do thay đổi từ 10 đến 500 ký tự.”
+E6 – Bậc khoảng cách chồng lấn hoặc bỏ trống: “Các bậc khoảng cách không được chồng lấn hoặc bỏ trống.”
+E7 – Giai đoạn hoa hồng chồng lấn: “Các giai đoạn áp dụng hoa hồng không được chồng lấn.”
+E8 – Hiệu lực trong quá khứ: “Thời điểm hiệu lực phải từ thời điểm hiện tại trở đi.”
+E9 – Tham số vừa bị Admin khác sửa: “Tham số đã được cập nhật bởi người khác. Vui lòng tải lại.”
+E10 – OTP sai hoặc hết hạn: “Mã OTP không đúng hoặc đã hết hạn.”
+E11 – Lỗi hệ thống hoặc mạng khi lưu: Không thay đổi giá trị; “Không thể lưu thay đổi. Vui lòng thử lại.”
+Điều kiện sau
+
+Mức 1: Tham số có giá trị mới (hiệu lực ngay hoặc theo hẹn); chỉ đơn tạo từ thời điểm hiệu lực dùng giá trị mới.
+Mức 2: Hệ thống lưu vào SystemParameter (giá trị hiện hành) và SystemParameterHistory (giá trị cũ, giá trị mới, người thay đổi, lý do, thời điểm, hiệu lực từ). Giá trị tham số được chụp lại cùng từng đơn khi tạo đơn.
+Thông báo UX: “Đã cập nhật tham số.” Điều hướng: từ form Sửa về danh sách tham số.
+Yêu cầu/Business rule
+
+BR-AD-20: Thay đổi tham số chỉ áp cho đơn mới; đơn cũ giữ giá trị tại thời điểm tạo đơn (BR-AD-03).
+BR-AD-21: Mỗi thay đổi lưu lịch sử đủ: người thực hiện, thời điểm, giá trị cũ, giá trị mới, lý do, hiệu lực từ. Lịch sử không sửa, không xóa.
+BR-AD-22: Tỷ lệ nằm trong 0–100%, tối đa 2 chữ số thập phân; thời hạn tính bằng giờ hoặc ngày là số nguyên dương; mức phí là số nguyên VND không âm.
+BR-AD-23: Bảng bậc phụ phí hỏa tốc theo khoảng cách phải liên tục, không chồng lấn, không bỏ trống; mọi đơn hỏa tốc phải rơi vào đúng một bậc.
+BR-AD-24: Tỷ lệ hoa hồng được phép cấu hình nhiều giai đoạn theo thời gian; tại một thời điểm chỉ có một tỷ lệ có hiệu lực. Hiệu lực chỉ từ hiện tại trở đi, không áp ngược về quá khứ.
+BR-AD-25: Chỉ nhóm Quản lý vận hành được sửa tham số; nhóm Tài chính chỉ xem.
+BR-AD-26: Tham số nhóm Tài chính (hoa hồng, phí cổng, chu kỳ chi trả, tỷ lệ và số kỳ giữ lại) yêu cầu xác nhận OTP khi lưu vì ảnh hưởng trực tiếp đến tiền chi trả.
+Giao diện
+
+Màn hình 1 – Danh sách tham số, kèm giá trị hiện hành và nút Sửa, Lịch sử.
+Màn hình 2 – Form Sửa tham số: giá trị hiện tại, giá trị mới, hiệu lực từ, lý do; riêng phụ phí hỏa tốc là bảng bậc có thể thêm, sửa, xóa dòng; riêng hoa hồng là bảng giai đoạn.
+Màn hình 3 – Xem trước thay đổi và xác nhận (OTP với nhóm Tài chính).
+Màn hình 4 – Lịch sử thay đổi: bảng và bộ lọc, nút Khôi phục.
+Hạng mục
+Nội dung
+Tên UC
+Tra cứu sổ đối soát theo đơn, HTX, kỳ
+Danh sách chức năng
+Admin – FR-AD-04 Ghi sổ và tra cứu 4 khoản đối soát theo đơn
+Độ ưu tiên
+Cao – Must Have. Là nền để đối soát, hoàn tiền và chi trả HTX. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+Admin (nhóm Tài chính)
+Tác nhân phụ
+Hệ thống App Đặc sản Bắc Giang (ghi sổ tự động từ đơn, thanh toán, giao hàng, hoàn tiền)
+Mô tả
+Là Admin Tài chính, tôi muốn tra cứu từng khoản tiền hàng, hoa hồng, phí ship, tiền hoàn của mỗi đơn và mỗi HTX theo bên trả, bên nhận và trạng thái đối soát, để biết tiền đi đâu và kiểm tra khi có sai lệch.
+Kích hoạt UC
+Admin Tài chính vào Tài chính > Sổ đối soát.
+Điều kiện trước
+
+Admin đã đăng nhập thành công và thuộc nhóm Tài chính.
+Hệ thống đã có dòng sổ phát sinh từ các đơn (hệ thống tự ghi khi có thu tiền, giao hàng, hoàn tiền).
+Admin có kết nối Internet.
+Luồng sự kiện chính (Happy Case)
+
+Admin vào Tài chính > Sổ đối soát. Hệ thống hiển thị bộ lọc và danh sách dòng sổ của kỳ gần nhất, 20 dòng mỗi trang.
+Admin chọn bộ lọc: mã đơn, HTX, kỳ hoặc khoảng ngày, loại khoản (Tiền hàng, Hoa hồng, Phí ship, Tiền hoàn), trạng thái đối soát.
+Admin bấm Tìm kiếm.
+Hệ thống trả về danh sách dòng sổ khớp tất cả điều kiện lọc, mỗi dòng gồm: mã dòng, mã đơn, HTX, loại khoản, số tiền, chiều thu/chi, bên trả, bên nhận, bên chịu cuối, trạng thái đối soát, thời điểm.
+Hệ thống hiển thị bảng tổng theo từng loại khoản, tách riêng, không cộng gộp.
+Admin chọn một dòng. Hệ thống hiển thị chi tiết: chứng từ nguồn, giá trị tham số tại thời điểm tạo đơn, dòng gốc hoặc dòng đảo liên quan, lịch sử điều chỉnh.
+Admin có thể mở xem toàn bộ dòng của một đơn (đơn có thể sinh nhiều dòng: cọc, phần còn lại, ship, hoàn).
+Luồng thay thế
+
+A1 – Tra cứu theo một đơn: Admin nhập mã đơn; hệ thống hiển thị toàn bộ dòng của đơn đó theo thứ tự thời gian, chia theo 4 loại khoản.
+A2 – Tra cứu theo HTX và kỳ: Admin chọn HTX và kỳ; hệ thống hiển thị tổng từng loại khoản và danh sách dòng của HTX trong kỳ.
+A3 – Chuyển sang xử lý: Từ một dòng Tiền hoàn chưa có bên chịu, Admin bấm Xác định bên chịu (UC-AD-05). Từ dòng trạng thái Lệch, Admin bấm Xử lý chênh lệch (UC-AD-09).
+A4 – Chuyển sang xuất báo cáo: Admin bấm Xuất báo cáo (UC-AD-06) với bộ lọc đang chọn.
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc hết phiên: Điều hướng đến màn hình Đăng nhập.
+E2 – Không đủ quyền: Thông báo theo BR-AD-05.
+E3 – Không có kết quả: “Không tìm thấy dòng sổ phù hợp với điều kiện lọc.”
+E4 – Khoảng ngày vượt quá 366 ngày: “Khoảng thời gian tra cứu tối đa 366 ngày.”
+E5 – Ngày bắt đầu sau ngày kết thúc: “Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.”
+E6 – Mã đơn không tồn tại: “Không tìm thấy mã đơn này.”
+E7 – Lỗi hệ thống hoặc quá thời gian xử lý: “Không thể tải dữ liệu. Vui lòng thử lại.”
+Điều kiện sau
+
+Mức 1: Admin xem được dòng sổ theo bộ lọc; không có dữ liệu nào bị thay đổi.
+Mức 2: Hệ thống ghi nhật ký tra cứu (người xem, bộ lọc, thời điểm) khi bộ lọc chứa mã đơn hoặc HTX cụ thể. Dòng sổ được đọc từ LedgerEntry.
+Điều hướng: ở lại màn hình Sổ đối soát; chi tiết dòng mở dạng ngăn bên.
+Yêu cầu/Business rule
+
+BR-AD-27: Mỗi khoản là một dòng sổ riêng, không gộp; một đơn có thể có nhiều dòng thuộc nhiều loại khoản.
+BR-AD-28: Mỗi dòng sổ có đủ: mã đơn, mã HTX, loại khoản, số tiền, chiều thu hoặc chi, bên trả, bên nhận, bên chịu cuối, trạng thái đối soát (Chưa đối soát, Đã khớp, Lệch, Đã điều chỉnh), chứng từ nguồn, giá trị tham số tại thời điểm tạo đơn.
+BR-AD-29: Bộ lọc kết hợp theo điều kiện VÀ; phân trang 20 dòng mặc định; khoảng ngày tối đa 366 ngày (giả định).
+BR-AD-30: Bảng tổng hiển thị riêng từng loại khoản. Phí cổng thanh toán ghi riêng là chi phí hệ thống, không cộng vào 4 khoản (xem BR-AD-39).
+BR-AD-31: Màn hình sổ không hiển thị tên, số điện thoại, địa chỉ của khách; chỉ hiển thị mã đơn. Tài khoản ngân hàng nhận hoàn tiền của khách chỉ hiện ở UC-AD-05 khi xử lý hoàn tiền
+Giao diện
+
+Màn hình 1 – Sổ đối soát: bộ lọc, bảng tổng 4 khoản, bảng dòng sổ, nút Xuất báo cáo.
+Màn hình 2 – Chi tiết dòng sổ (ngăn bên): chứng từ nguồn, tham số tại thời điểm tạo đơn, dòng liên quan, lịch sử điều chỉnh.
+Màn hình 3 – Toàn bộ dòng của một đơn.
+Hạng mục
+Nội dung
+Tên UC
+Xác định bên chịu cho khoản tiền hoàn
+Danh sách chức năng
+Admin – FR-AD-04 Ghi sổ và tra cứu 4 khoản đối soát theo đơn
+Độ ưu tiên
+Cao – Must Have. Quyết định ai bị trừ tiền khi hoàn cho khách. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+Admin (nhóm Tài chính)
+Tác nhân phụ
+Hệ thống; Admin CSKH (đã kết luận trách nhiệm trên ticket); HTX; đơn vị vận chuyển (ĐVVC); cổng thanh toán hoặc ngân hàng
+Mô tả
+Là Admin Tài chính, tôi muốn gắn mỗi khoản tiền hoàn cho khách với đúng bên chịu cuối cùng (HTX, ĐVVC hoặc hệ thống) và theo dõi hoàn tiền thành công, để thu lại tiền đúng người và không để hệ thống chịu oan.
+Kích hoạt UC
+Admin Tài chính mở một dòng Tiền hoàn chưa có bên chịu từ Sổ đối soát hoặc từ ticket hoàn tiền đã được CSKH kết luận.
+Điều kiện trước
+
+Admin đã đăng nhập và thuộc nhóm Tài chính.
+Có dòng Tiền hoàn đã phát sinh từ ticket hoàn tiền hoặc đơn hủy hợp lệ.
+Admin CSKH đã ghi kết luận trách nhiệm trên ticket (lỗi HTX, lỗi ĐVVC, lỗi hệ thống hoặc không do lỗi bên nào).
+Dòng Tiền hoàn chưa nằm trong bảng kê chi trả đã chốt.
+Luồng sự kiện chính (Happy Case)
+
+Admin Tài chính chọn dòng Tiền hoàn chưa có bên chịu và bấm Xác định bên chịu.
+Hệ thống hiển thị chi tiết: mã đơn, HTX, loại hoàn (hoàn tiền hàng, hoàn cọc, hoàn phí ship), số tiền, kết luận trách nhiệm trên ticket, phương thức hoàn (cổng thanh toán hoặc chuyển khoản cho đơn COD), thông tin nhận hoàn tiền (tài khoản ngân hàng của khách, che bớt, chỉ hiện với nhóm Tài chính).
+Hệ thống gợi ý bên chịu theo kết luận trách nhiệm: lỗi HTX gợi ý HTX; lỗi ĐVVC gợi ý ĐVVC; lỗi hệ thống hoặc hủy hợp lệ không do lỗi bên nào gợi ý Hệ thống.
+Admin xác nhận hoặc chọn lại bên chịu và nhập ghi chú.
+Admin bấm Lưu.
+Hệ thống kiểm tra điều kiện và lưu bên chịu cuối vào dòng Tiền hoàn.
+Hệ thống tạo khoản phải thu tương ứng: nếu bên chịu là HTX, tạo khoản khấu trừ vào kỳ chi trả kế tiếp (UC-AD-10); nếu là ĐVVC, tạo khoản phải thu đưa vào đối soát với ĐVVC (UC-AD-07); nếu là hệ thống, ghi chi phí hệ thống.
+Khi cổng thanh toán hoặc ngân hàng xác nhận hoàn thành công, hệ thống chuyển dòng sang Đã hoàn.
+Hệ thống ghi nhật ký và hiển thị “Đã xác định bên chịu cho khoản hoàn [mã dòng].”
+Luồng thay thế
+
+A1 – Chia nhiều bên cùng chịu: Admin chọn Tách khoản, nhập số tiền cho từng bên (tổng bằng số tiền hoàn). Hệ thống tạo nhiều dòng, mỗi dòng một bên chịu.
+A2 – Hoàn tiền thất bại do lỗi kỹ thuật: Cổng hoặc ngân hàng báo lỗi. Hệ thống giữ dòng ở trạng thái Hoàn lỗi (khác với Không đủ điều kiện hoàn) và cho phép Admin thử hoàn lại; mỗi yêu cầu hoàn chỉ tính thành công một lần.
+A3 – Đơn COD: Admin kiểm tra tài khoản nhận hoàn tiền của khách, thực hiện chuyển khoản và nhập mã giao dịch ngân hàng để ghi nhận Đã hoàn.
+A4 – Chưa có kết luận trách nhiệm: Hệ thống không cho xác định bên chịu, chuyển ticket về CSKH (E3).
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc không đủ quyền: Điều hướng Đăng nhập hoặc thông báo theo BR-AD-05.
+E2 – Khoản hoàn đã nằm trong bảng kê đã chốt: “Khoản hoàn đã nằm trong kỳ chi trả đã chốt. Vui lòng điều chỉnh ở kỳ kế tiếp.”
+E3 – Ticket chưa có kết luận trách nhiệm: “Chưa có kết luận trách nhiệm. Vui lòng chờ CSKH kết luận.”
+E4 – Tổng khoản tách khác số tiền hoàn: “Tổng số tiền các bên chịu phải bằng số tiền hoàn.”
+E5 – Yêu cầu hoàn đã thành công trước đó: “Yêu cầu hoàn này đã được hoàn thành công, không thể hoàn lại.”
+E6 – Thiếu thông tin nhận hoàn tiền (đơn COD): “Khách chưa cung cấp tài khoản nhận hoàn tiền. Vui lòng liên hệ khách qua CSKH.”
+E7 – Không nhập ghi chú khi chọn khác gợi ý: “Vui lòng nhập lý do chọn bên chịu khác với gợi ý.”
+E8 – Lỗi hệ thống hoặc mạng khi lưu: “Không thể lưu. Vui lòng thử lại.”
+Điều kiện sau
+
+Mức 1: Dòng Tiền hoàn có đúng một bên chịu cuối; khoản thu lại tương ứng được tạo.
+Mức 2: Hệ thống cập nhật LedgerEntry (bên chịu cuối) và RefundLiability (kết luận trách nhiệm, bên chịu, trạng thái hoàn, mã giao dịch hoàn); tạo dòng khấu trừ hoặc phải thu cho bên chịu. Ghi nhật ký người xác định bên chịu.
+Thông báo UX: “Đã xác định bên chịu cho khoản hoàn [mã dòng].” Điều hướng: về Sổ đối soát.
+Yêu cầu/Business rule
+
+BR-AD-32: Mỗi dòng Tiền hoàn có đúng một bên chịu cuối: HTX, ĐVVC hoặc hệ thống; nhiều bên cùng chịu thì tách thành nhiều dòng.
+BR-AD-33: Chỉ xác định bên chịu sau khi Admin CSKH kết luận trách nhiệm trên ticket. HTX chỉ xác nhận và phản hồi, không tự quyết định hoàn tiền.
+BR-AD-34: Bên chịu là HTX thì thu lại bằng khấu trừ vào kỳ chi trả kế tiếp; là ĐVVC thì đưa vào đối soát với ĐVVC; là hệ thống thì ghi nhận chi phí hệ thống.
+BR-AD-35: Dòng chỉ chuyển Đã hoàn khi cổng thanh toán hoặc ngân hàng xác nhận thành công. Lỗi kỹ thuật phải phân biệt với trường hợp không đủ điều kiện hoàn (BR-21 của BRD Đơn hàng).
+BR-AD-36: Một yêu cầu hoàn tiền chỉ được tính thành công một lần (BR-DH-46); thao tác hoàn lặp lại phải không tạo thêm dòng.
+BR-AD-37: Không đổi bên chịu của khoản hoàn đã nằm trong bảng kê đã chốt; sai sót xử lý bằng dòng điều chỉnh ở kỳ kế tiếp (BR-AD-02).
+BR-AD-38: Phí cổng khi hoàn và phí chuyển khoản hoàn cho đơn COD do bên nào chịu: [CẦN CHỐT]; mặc định ghi nhận riêng, không cộng vào số tiền hoàn cho khách.
+Giao diện
+
+Màn hình 1 – Chi tiết khoản hoàn: thông tin đơn, kết luận trách nhiệm, bên chịu gợi ý, ô chọn bên chịu, ô ghi chú, nút Tách khoản, Lưu.
+Màn hình 2 – Xử lý hoàn tiền: trạng thái hoàn, mã giao dịch hoàn, nút Thử hoàn lại, ô nhập mã giao dịch (đơn COD).
+Màn hình 3 – Danh sách khoản hoàn theo bên chịu và trạng thái.
+Hạng mục
+Nội dung
+Tên UC
+Xuất báo cáo đối soát 4 khoản
+Danh sách chức năng
+Admin – FR-AD-04 Ghi sổ và tra cứu 4 khoản đối soát theo đơn
+Độ ưu tiên
+Trung bình – Should Have (đề xuất). Phục vụ kế toán và đối chiếu ngoài hệ thống. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+Admin (nhóm Tài chính)
+Tác nhân phụ
+Hệ thống App Đặc sản Bắc Giang
+Mô tả
+Là Admin Tài chính, tôi muốn xuất báo cáo đối soát tách riêng tiền hàng, hoa hồng, phí ship, tiền hoàn theo bộ lọc đang chọn, để gửi kế toán hoặc đối chiếu với báo cáo của ĐVVC, cổng thanh toán.
+Kích hoạt UC
+Admin bấm Xuất báo cáo tại màn hình Sổ đối soát.
+Điều kiện trước
+
+Admin đã đăng nhập và thuộc nhóm Tài chính.
+Admin đã chọn bộ lọc ở UC-AD-04 (ít nhất một khoảng thời gian).
+Có ít nhất một dòng sổ khớp bộ lọc.
+Luồng sự kiện chính (Happy Case)
+
+Admin bấm Xuất báo cáo. Hệ thống hiển thị hộp chọn: định dạng (.xlsx hoặc .csv), mức tổng hợp (theo dòng chi tiết, theo đơn, theo HTX).
+Admin chọn định dạng và mức tổng hợp, bấm Xuất.
+Hệ thống kiểm tra số dòng. Nếu không quá 100.000 dòng, hệ thống tạo tệp ngay.
+Hệ thống tạo báo cáo gồm: bộ lọc đã dùng, thời điểm xuất, bảng tổng 4 khoản tách riêng, phí cổng ghi riêng, danh sách dòng theo mức tổng hợp đã chọn.
+Hệ thống ẩn dữ liệu cá nhân của khách trong tệp (chỉ có mã đơn).
+Hệ thống ghi nhật ký xuất (người xuất, bộ lọc, thời điểm, số dòng) và tải tệp về máy Admin.
+Hệ thống hiển thị “Đã xuất báo cáo.”
+Luồng thay thế
+
+A1 – Quá 100.000 dòng: Hệ thống tạo báo cáo ở nền, thông báo “Báo cáo lớn đang được tạo. Chúng tôi sẽ thông báo khi sẵn sàng.” Khi xong, Admin nhận thông báo kèm liên kết tải, hiệu lực 24 giờ.
+A2 – Xuất báo cáo công thức chi trả HTX theo kỳ: Admin chọn kỳ và HTX; báo cáo hiển thị công thức: tiền hàng, hoa hồng, tiền hoàn thuộc HTX, giữ lại, giữ lại đến hạn, số chi trả.
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc không đủ quyền: Điều hướng Đăng nhập hoặc thông báo theo BR-AD-05.
+E2 – Không có dữ liệu để xuất: “Không có dữ liệu để xuất với bộ lọc hiện tại.”
+E3 – Chưa chọn định dạng: “Vui lòng chọn định dạng tệp.”
+E4 – Lỗi tạo tệp: “Không thể tạo báo cáo. Vui lòng thử lại.” Không ghi nhật ký xuất thành công.
+E5 – Liên kết tải hết hạn: “Liên kết đã hết hạn. Vui lòng xuất lại.”
+Điều kiện sau
+
+Mức 1: Admin nhận được tệp báo cáo; số liệu khớp sổ tại thời điểm xuất.
+Mức 2: Hệ thống ghi nhật ký xuất báo cáo (người xuất, bộ lọc, thời điểm, số dòng, định dạng). Không thay đổi dòng sổ.
+Thông báo UX: “Đã xuất báo cáo.” Điều hướng: ở lại Sổ đối soát.
+Yêu cầu/Business rule
+
+BR-AD-39: Báo cáo tách riêng tiền hàng, hoa hồng, phí ship, tiền hoàn; phí cổng thanh toán là chi phí hệ thống, ghi riêng để đối chiếu với cổng, không cộng vào 4 khoản.
+BR-AD-40: Báo cáo xuất theo đúng bộ lọc của UC-AD-04; số liệu khớp sổ tại thời điểm xuất và ghi rõ thời điểm xuất.
+BR-AD-41: Báo cáo không chứa tên, số điện thoại, địa chỉ, tài khoản ngân hàng của khách.
+BR-AD-42: Mỗi lần xuất ghi nhật ký (BR-AD-04). Ngưỡng 100.000 dòng và hiệu lực liên kết 24 giờ là giả định, cấu hình được.
+Giao diện
+
+Màn hình 1 – Hộp Xuất báo cáo: chọn định dạng, mức tổng hợp, nút Xuất.
+Màn hình 2 – Danh sách báo cáo đã yêu cầu (xuất nền): trạng thái, thời điểm, nút Tải.
+Hạng mục
+Nội dung
+Tên UC
+Đối soát tiền COD và cước ship với ĐVVC
+Danh sách chức năng
+Admin – FR-AD-05 Đối soát với ĐVVC và cổng thanh toán
+Độ ưu tiên
+Trung bình – Should Have. Cần khi có đơn COD và ship qua ĐVVC; điều kiện để đơn COD vào kỳ chi trả (cần xác nhận). PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+Admin (nhóm Tài chính)
+Tác nhân phụ
+Đơn vị vận chuyển (ĐVVC) cung cấp bảng kê; Hệ thống App Đặc sản Bắc Giang
+Mô tả
+Là Admin Tài chính, tôi muốn đối chiếu sổ của hệ thống với bảng kê của ĐVVC về tiền COD thu hộ, cước ship, phí giao lại, chuyển hoàn và bồi thường hàng vỡ, để biết ĐVVC đã chuyển đủ tiền và phát hiện chênh lệch.
+Kích hoạt UC
+Admin chọn Tài chính > Đối soát ĐVVC > Tạo phiên đối soát, hoặc nhận được bảng kê mới từ ĐVVC.
+Điều kiện trước
+
+Admin đã đăng nhập và thuộc nhóm Tài chính.
+Có bảng kê của ĐVVC cho kỳ cần đối soát (tệp hoặc dữ liệu tích hợp – [CẦN CHỐT cách nhận]).
+Các đơn trong kỳ đã có dòng sổ Tiền hàng (COD) và Phí ship.
+Luồng sự kiện chính (Happy Case)
+
+Admin vào Đối soát ĐVVC và bấm Tạo phiên đối soát. Hệ thống hiển thị form chọn ĐVVC và kỳ đối soát (từ ngày, đến ngày).
+Admin tải lên bảng kê của ĐVVC (hoặc chọn nhận qua tích hợp) và bấm Bắt đầu đối soát.
+Hệ thống kiểm tra định dạng tệp, cột bắt buộc và tệp chưa từng được nhập.
+Hệ thống đối chiếu từng dòng theo mã vận đơn với dòng sổ của hệ thống, theo từng loại: tiền COD thu hộ, cước ship, phí giao lại, chuyển hoàn, bồi thường hàng vỡ.
+Hệ thống gán kết quả cho mỗi dòng: Đã khớp, Lệch số tiền, Thiếu bên hệ thống, Thiếu bên ĐVVC.
+Hệ thống cập nhật trạng thái đối soát trên dòng sổ: Đã khớp hoặc Lệch.
+Hệ thống tạo tổng hợp phiên: tổng số dòng, số khớp, số lệch, tổng tiền hai bên, tổng chênh lệch.
+Admin xem kết quả, lọc theo loại kết quả; với dòng Lệch bấm Xử lý chênh lệch (UC-AD-09).
+Hệ thống ghi nhật ký và hiển thị “Đã hoàn tất phiên đối soát [mã phiên].”
+Luồng thay thế
+
+A1 – Nhận dữ liệu qua tích hợp: Hệ thống lấy bảng kê từ ĐVVC theo kỳ, bỏ qua bước tải lên.
+A2 – Đối soát lại một phiên: Admin chọn Đối soát lại sau khi ĐVVC gửi bảng kê điều chỉnh. Hệ thống tạo phiên mới liên kết phiên cũ, không ghi đè kết quả cũ.
+A3 – Bồi thường hàng vỡ: Dòng bồi thường ĐVVC hệ thống nhận được liên kết với khoản Tiền hoàn bên chịu ĐVVC (UC-AD-05) để đối trừ.
+A4 – Tiền COD đã khớp: Dòng COD Đã khớp được đánh dấu Tiền đã về, đủ điều kiện để đơn vào kỳ chi trả (UC-AD-10).
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc không đủ quyền: Điều hướng Đăng nhập hoặc thông báo theo BR-AD-05.
+E2 – Tệp sai định dạng hoặc thiếu cột: “Tệp không đúng định dạng hoặc thiếu cột [tên cột]. Vui lòng kiểm tra và tải lại.”
+E3 – Tệp đã nhập trước đó: “Bảng kê này đã được nhập trong phiên [mã phiên].”
+E4 – Kỳ đối soát chồng lấn phiên đã hoàn tất: “Kỳ đối soát trùng với phiên [mã phiên]. Vui lòng chọn Đối soát lại.”
+E5 – Mã vận đơn không có trong hệ thống: Dòng được gán Thiếu bên hệ thống, không dừng phiên.
+E6 – Tích hợp ĐVVC lỗi hoặc quá thời gian: “Không lấy được dữ liệu từ ĐVVC. Vui lòng thử lại hoặc tải tệp lên.”
+E7 – Lỗi xử lý giữa chừng: Hệ thống không lưu kết quả dở dang; phiên ở trạng thái Lỗi và Admin chạy lại.
+Điều kiện sau
+
+Mức 1: Phiên đối soát hoàn tất, mỗi dòng có kết quả; dòng Lệch chuyển sang xử lý.
+Mức 2: Hệ thống lưu vào ReconciliationSession (phiên) và ReconciliationLine (dòng đối chiếu), cập nhật trạng thái đối soát trên LedgerEntry. Dòng sổ gốc không bị sửa (BR-AD-02).
+Thông báo UX: “Đã hoàn tất phiên đối soát [mã phiên].” Điều hướng: từ form tạo phiên đến Kết quả phiên.
+Yêu cầu/Business rule
+
+BR-AD-43: Đối chiếu theo mã vận đơn; mỗi dòng ĐVVC khớp tối đa một dòng hệ thống cùng loại khoản.
+BR-AD-44: Các khoản đối chiếu với ĐVVC: tiền COD thu hộ, cước ship, phí giao lại, chuyển hoàn, bồi thường hàng vỡ. Phí giao lại và chuyển hoàn do bên có lỗi chịu.
+BR-AD-45: Dòng khớp khi chênh lệch bằng dung sai cấu hình (mặc định 0 đồng); ngoài dung sai là Lệch.
+BR-AD-46: Một bảng kê (theo mã bảng kê hoặc mã băm tệp) không được nhập hai lần.
+BR-AD-47: Tiền COD chỉ được coi là đã về hệ thống khi dòng COD Đã khớp; đơn COD chỉ vào kỳ chi trả sau khi đã khớp [cần xác nhận].
+BR-AD-48: Không sửa dòng gốc; mọi điều chỉnh qua UC-AD-09.
+Giao diện
+
+Màn hình 1 – Danh sách phiên đối soát ĐVVC: ĐVVC, kỳ, trạng thái, số khớp, số lệch.
+Màn hình 2 – Tạo phiên: chọn ĐVVC, kỳ, tải tệp hoặc chọn tích hợp.
+Màn hình 3 – Kết quả phiên: tổng hợp, bảng dòng có bộ lọc theo kết quả, nút Xử lý chênh lệch.
+Hạng mục
+Nội dung
+Tên UC
+Đối soát giao dịch thu và hoàn với cổng thanh toán
+Danh sách chức năng
+Admin – FR-AD-05 Đối soát với ĐVVC và cổng thanh toán
+Độ ưu tiên
+Trung bình – Should Have. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+Admin (nhóm Tài chính)
+Tác nhân phụ
+Cổng thanh toán cung cấp báo cáo giao dịch; Hệ thống App Đặc sản Bắc Giang
+Mô tả
+Là Admin Tài chính, tôi muốn đối chiếu tiền thu online, phí cổng và giao dịch hoàn của hệ thống với báo cáo của cổng thanh toán, để chắc chắn tiền khách trả đã về và hoàn tiền đã thực hiện đúng.
+Kích hoạt UC
+Admin chọn Tài chính > Đối soát cổng thanh toán > Tạo phiên đối soát, hoặc nhận được báo cáo mới từ cổng.
+Điều kiện trước
+
+Admin đã đăng nhập và thuộc nhóm Tài chính.
+Có báo cáo giao dịch của cổng cho kỳ cần đối soát (tệp hoặc tích hợp).
+Các đơn thanh toán online trong kỳ đã có dòng sổ Tiền hàng, và dòng Tiền hoàn nếu có hoàn.
+Luồng sự kiện chính (Happy Case)
+
+Admin vào Đối soát cổng thanh toán và bấm Tạo phiên đối soát. Hệ thống hiển thị form chọn cổng và kỳ đối soát.
+Admin tải lên báo cáo giao dịch của cổng (hoặc chọn nhận qua tích hợp) và bấm Bắt đầu đối soát.
+Hệ thống kiểm tra định dạng, cột bắt buộc và tệp chưa nhập trước đó.
+Hệ thống đối chiếu từng giao dịch theo mã giao dịch hoặc mã đơn: tiền thu online (gồm tiền cọc Preorder), phí cổng, giao dịch hoàn.
+Hệ thống gán kết quả: Đã khớp, Lệch số tiền, Thiếu bên hệ thống, Thiếu bên cổng, Trạng thái hoàn không khớp.
+Hệ thống cập nhật trạng thái đối soát trên dòng sổ và ghi phí cổng thực tế vào dòng Phí cổng riêng để đối chiếu.
+Hệ thống tạo tổng hợp phiên và hiển thị cho Admin; Admin lọc và chuyển dòng Lệch sang UC-AD-09.
+Hệ thống ghi nhật ký và hiển thị “Đã hoàn tất phiên đối soát [mã phiên].”
+Luồng thay thế
+
+A1 – Nhận dữ liệu qua tích hợp: Hệ thống lấy báo cáo giao dịch từ cổng theo kỳ.
+A2 – Đối soát lại một phiên: Giống A2 của UC-AD-07.
+A3 – Giao dịch hoàn: Dòng hoàn trong báo cáo cổng chỉ khớp khi dòng Tiền hoàn của hệ thống ở trạng thái Đã hoàn; nếu cổng báo hoàn thất bại, dòng chuyển Hoàn lỗi (UC-AD-05 A2).
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc không đủ quyền: Điều hướng Đăng nhập hoặc thông báo theo BR-AD-05.
+E2 – Tệp sai định dạng hoặc thiếu cột: “Tệp không đúng định dạng hoặc thiếu cột [tên cột]. Vui lòng kiểm tra và tải lại.”
+E3 – Tệp đã nhập trước đó: “Báo cáo này đã được nhập trong phiên [mã phiên].”
+E4 – Giao dịch ở cổng không xác định được đơn: Dòng gán Thiếu bên hệ thống, loại “Không xác định đơn”, chuyển UC-AD-09.
+E5 – Tích hợp cổng lỗi hoặc quá thời gian: “Không lấy được dữ liệu từ cổng thanh toán. Vui lòng thử lại hoặc tải tệp lên.”
+E6 – Lỗi xử lý giữa chừng: Phiên ở trạng thái Lỗi, không lưu kết quả dở dang.
+Điều kiện sau
+
+Mức 1: Phiên đối soát hoàn tất; mỗi giao dịch có kết quả.
+Mức 2: Hệ thống lưu ReconciliationSession và ReconciliationLine (đối tác là cổng thanh toán), cập nhật trạng thái đối soát trên LedgerEntry; dòng Phí cổng ghi riêng.
+Thông báo UX: “Đã hoàn tất phiên đối soát [mã phiên].” Điều hướng: đến Kết quả phiên.
+Yêu cầu/Business rule
+
+BR-AD-49: Đối chiếu theo mã giao dịch của cổng và mã đơn; một giao dịch cổng khớp tối đa một dòng hệ thống.
+BR-AD-50: Phí cổng là chi phí hệ thống, ghi nhận riêng và đối chiếu với báo cáo cổng; không cộng vào 4 khoản đối soát.
+BR-AD-51: Dòng Tiền hoàn chỉ Đã hoàn khi cổng xác nhận thành công (BR-AD-35); trạng thái hoàn hai bên phải khớp.
+BR-AD-52: Giao dịch cổng không xác định được đơn không được tự bỏ qua; phải được xử lý ở UC-AD-09. BR-AD-45, 46, 48 áp dụng tương tự.
+Giao diện
+
+Màn hình 1 – Danh sách phiên đối soát cổng thanh toán.
+Màn hình 2 – Tạo phiên: chọn cổng, kỳ, tải tệp hoặc chọn tích hợp.
+Màn hình 3 – Kết quả phiên: tổng hợp thu, phí cổng, hoàn; bảng dòng; nút Xử lý chênh lệch.
+Hạng mục
+Nội dung
+Tên UC
+Xử lý chênh lệch đối soát
+Danh sách chức năng
+Admin – FR-AD-05 Đối soát với ĐVVC và cổng thanh toán
+Độ ưu tiên
+Trung bình – Should Have. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+Admin (nhóm Tài chính)
+Tác nhân phụ
+Hệ thống; Admin nhóm Quản lý vận hành (nhận cảnh báo chênh lệch tồn đọng); ĐVVC; cổng thanh toán
+Mô tả
+Là Admin Tài chính, tôi muốn ghi nguyên nhân và điều chỉnh các chênh lệch phát hiện khi đối soát bằng bút toán riêng mà không sửa dòng gốc, để sổ khớp với bên thứ ba và còn đầy đủ dấu vết kiểm tra.
+Kích hoạt UC
+Admin bấm Xử lý chênh lệch tại một dòng Lệch trong kết quả phiên đối soát hoặc tại Sổ đối soát.
+Điều kiện trước
+
+Admin đã đăng nhập và thuộc nhóm Tài chính.
+Có dòng đối soát ở kết quả Lệch, Thiếu bên hệ thống hoặc Thiếu bên đối tác.
+Dòng chưa nằm trong bảng kê chi trả đã chốt.
+Luồng sự kiện chính (Happy Case)
+
+Admin bấm Xử lý chênh lệch. Hệ thống hiển thị chi tiết: mã chênh lệch, phiên, mã đơn, loại khoản, số tiền hệ thống, số tiền đối tác, chênh lệch, chứng từ hai bên.
+Admin chọn loại nguyên nhân: Sai số tiền, Thiếu giao dịch, Trùng giao dịch, Sai phí, Trễ cập nhật, Khác.
+Admin nhập nguyên nhân chi tiết và đính kèm chứng từ (sao kê, ảnh).
+Admin chọn cách xử lý: Điều chỉnh sổ hoặc Đóng không điều chỉnh (do trễ cập nhật, bên đối tác sẽ bù).
+Nếu Điều chỉnh sổ, hệ thống hiển thị bút toán điều chỉnh sẽ tạo (dòng đảo hoặc dòng bổ sung, loại khoản, số tiền, bên chịu).
+Admin xác nhận.
+Hệ thống kiểm tra ngưỡng duyệt. Nếu số tiền không vượt ngưỡng, hệ thống ghi bút toán ngay.
+Hệ thống tạo dòng điều chỉnh liên kết dòng gốc, cập nhật trạng thái sang Đã điều chỉnh, đóng chênh lệch.
+Hệ thống ghi nhật ký và hiển thị “Đã xử lý chênh lệch [mã chênh lệch].”
+Luồng thay thế
+
+A1 – Vượt ngưỡng duyệt: Tại bước 7, nếu số tiền vượt ngưỡng cấu hình, chênh lệch chuyển Chờ duyệt cho một Admin Tài chính khác duyệt trước khi ghi bút toán [CẦN CHỐT: tách người lập và người duyệt].
+A2 – Đóng không điều chỉnh: Admin bắt buộc nhập lý do; dòng giữ trạng thái Lệch và gắn nhãn Chờ đối tác bù, theo dõi đến khi phiên sau khớp.
+A3 – Hoàn tác điều chỉnh: Admin tạo dòng đảo của bút toán điều chỉnh, kèm lý do; không xóa bút toán cũ.
+A4 – Cảnh báo tồn đọng: Chênh lệch chưa xử lý quá số ngày cấu hình thì hệ thống gửi cảnh báo cho Admin Tài chính và Quản lý vận hành.
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc không đủ quyền: Điều hướng Đăng nhập hoặc thông báo theo BR-AD-05.
+E2 – Chưa chọn nguyên nhân: “Vui lòng chọn loại nguyên nhân.”
+E3 – Chưa nhập nguyên nhân chi tiết hoặc ngoài 10–500 ký tự: “Vui lòng nhập nguyên nhân từ 10 đến 500 ký tự.”
+E4 – Thiếu chứng từ khi bắt buộc: “Vui lòng đính kèm chứng từ.”
+E5 – Dòng đã nằm trong bảng kê đã chốt: “Dòng đã nằm trong kỳ chi trả đã chốt. Vui lòng điều chỉnh ở kỳ kế tiếp.”
+E6 – Chênh lệch đã được xử lý bởi người khác: “Chênh lệch đã được xử lý. Vui lòng tải lại.”
+E7 – Lỗi hệ thống hoặc mạng khi lưu: Không ghi bút toán; “Không thể lưu. Vui lòng thử lại.”
+Điều kiện sau
+
+Mức 1: Chênh lệch được đóng hoặc chuyển Chờ duyệt; số liệu sổ khớp bên thứ ba sau điều chỉnh.
+Mức 2: Hệ thống lưu vào ReconciliationDiscrepancy (nguyên nhân, chứng từ, người xử lý, người duyệt) và tạo dòng điều chỉnh trong LedgerEntry liên kết dòng gốc. Ghi nhật ký.
+Thông báo UX: “Đã xử lý chênh lệch [mã chênh lệch].” Điều hướng: về Kết quả phiên đối soát.
+Yêu cầu/Business rule
+
+BR-AD-53: Mỗi chênh lệch có mã duy nhất theo định dạng DL-YYYY-XXXXXX và một loại nguyên nhân thuộc danh mục cố định.
+BR-AD-54: Điều chỉnh bằng bút toán riêng (dòng đảo hoặc bổ sung), không sửa dòng gốc (BR-AD-02).
+BR-AD-55: Bắt buộc nhập nguyên nhân chi tiết (10–500 ký tự) và chứng từ đính kèm đối với loại Sai số tiền, Thiếu giao dịch, Sai phí.
+BR-AD-56: Điều chỉnh vượt ngưỡng cấu hình cần người duyệt thứ hai [CẦN CHỐT ngưỡng và có tách người lập, người duyệt hay không].
+BR-AD-57: Chênh lệch tồn quá số ngày cấu hình (giả định 7 ngày) gửi cảnh báo cho Tài chính và Quản lý vận hành.
+BR-AD-58: Đơn có chênh lệch chưa xử lý không đủ điều kiện đưa vào bảng kê chi trả; các đơn khác của kỳ vẫn được chi trả bình thường.
+Giao diện
+
+Màn hình 1 – Danh sách chênh lệch: bộ lọc loại nguyên nhân, trạng thái, đối tác, tuổi tồn.
+Màn hình 2 – Chi tiết chênh lệch: số liệu hai bên, chứng từ, ô nguyên nhân, cách xử lý, nút Xác nhận.
+Màn hình 3 – Xem trước bút toán điều chỉnh và hộp xác nhận.
+Hạng mục
+Nội dung
+Tên UC
+Chốt kỳ và lập bảng kê chi trả HTX
+Danh sách chức năng
+Admin – FR-AD-06 Chốt kỳ và chi trả HTX
+Độ ưu tiên
+Cao – Must Have. Là cách HTX nhận tiền hàng. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+Admin (nhóm Tài chính); Hệ thống (tự tổng hợp theo chu kỳ)
+Tác nhân phụ
+HTX (xem kết quả ở UC-AD-12); Admin Tài chính duyệt bảng kê
+Mô tả
+Là Admin Tài chính, tôi muốn hệ thống tổng hợp các đơn đủ điều kiện theo chu kỳ, trừ hoa hồng, khấu trừ tiền hoàn thuộc HTX, giữ lại một phần và lập bảng kê cho từng HTX, để chi trả đúng và minh bạch.
+Kích hoạt UC
+Đến ngày chốt kỳ theo chu kỳ cấu hình, hệ thống tự lập bảng kê nháp; hoặc Admin bấm Chốt kỳ thủ công [CẦN CHỐT chu kỳ: từng đơn hay hằng tuần].
+Điều kiện trước
+
+Admin đã đăng nhập và thuộc nhóm Tài chính.
+Chu kỳ chi trả và tỷ lệ, số kỳ giữ lại đã được cấu hình (UC-AD-03).
+Kỳ trước đã chốt (hoặc là kỳ đầu tiên).
+Có đơn đủ điều kiện chi trả trong kỳ.
+Luồng sự kiện chính (Happy Case)
+
+Đến ngày chốt kỳ, hệ thống tạo kỳ chi trả mới và xác định các đơn đủ điều kiện: đã giao thành công, hết thời gian bảo vệ và đổi trả, không còn ticket, hoàn tiền hay chênh lệch chưa xử lý; đơn COD đã đối soát xong với ĐVVC.
+Với mỗi HTX, hệ thống tính: Σ tiền hàng của đơn đủ điều kiện; Σ hoa hồng (tỷ lệ tại thời điểm tạo đơn); Σ tiền hoàn thuộc trách nhiệm HTX (kể cả ship hoàn, ship giao lại do HTX chịu); phần giữ lại kỳ này; phần giữ lại kỳ trước đến hạn trả; khoản khấu trừ chuyển từ kỳ trước.
+Hệ thống tính số tiền chi trả theo công thức: Chi trả HTX = Σ tiền hàng − Σ hoa hồng − Σ tiền hoàn thuộc HTX − phần giữ lại kỳ này + phần giữ lại kỳ trước đến hạn.
+Hệ thống lập bảng kê ở trạng thái Nháp cho từng HTX, mã theo định dạng BK-YYYY-XXXXXX, gồm dòng chi tiết từng đơn với 4 khoản tách riêng.
+Admin Tài chính mở danh sách bảng kê của kỳ, xem tổng và chi tiết từng HTX, đối chiếu với Sổ đối soát.
+Admin loại một đơn khỏi bảng kê khi cần (kèm lý do) hoặc bấm Tính lại.
+Admin bấm Chốt bảng kê. Hệ thống kiểm tra tổng chi tiết bằng tổng hiển thị.
+Hệ thống chuyển bảng kê sang Chờ duyệt (hoặc Đã duyệt nếu không tách người lập và người duyệt), khóa các đơn trong bảng kê khỏi kỳ khác.
+Hệ thống ghi nhật ký và hiển thị “Đã chốt bảng kê [mã bảng kê].”
+Luồng thay thế
+
+A1 – Chốt thủ công: Admin bấm Chốt kỳ, chọn đến ngày; hệ thống tính như bước 1 đến 4.
+A2 – Số chi trả âm hoặc bằng 0: Hệ thống không chi; phần âm ghi thành công nợ HTX và khấu trừ vào kỳ sau (BR-AD-66).
+A3 – Phần giữ lại đến hạn: Hệ thống tự cộng phần giữ lại của kỳ cách đây đúng số kỳ cấu hình, trừ chi phí hoàn trả phát sinh nếu có.
+A4 – Tính lại bảng kê Nháp: Hệ thống tính lại theo dữ liệu mới nhất; bảng kê đã chốt không được tính lại.
+A5 – Hoàn tiền phát sinh sau kỳ: Khoản hoàn mới được đưa vào khấu trừ của kỳ kế tiếp.
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc không đủ quyền: Điều hướng Đăng nhập hoặc thông báo theo BR-AD-05.
+E2 – Kỳ trước chưa chốt: “Kỳ trước chưa được chốt. Vui lòng chốt kỳ trước.”
+E3 – Không có đơn đủ điều kiện: “Không có đơn đủ điều kiện chi trả trong kỳ này.”
+E4 – Đơn chưa đối soát COD hoặc còn chênh lệch: Đơn bị loại khỏi bảng kê và hiển thị trong danh sách “Đơn chưa đủ điều kiện” kèm lý do.
+E5 – Tổng chi tiết khác tổng hiển thị: “Số liệu bảng kê không khớp. Vui lòng tính lại.”
+E6 – Thiếu lý do khi loại đơn khỏi bảng kê: “Vui lòng nhập lý do loại đơn khỏi bảng kê.”
+E7 – Lỗi hệ thống hoặc mạng khi chốt: Không chốt, bảng kê giữ Nháp; “Không thể chốt bảng kê. Vui lòng thử lại.”
+Điều kiện sau
+
+Mức 1: Mỗi HTX có bảng kê Chờ duyệt hoặc Đã duyệt cho kỳ; các đơn trong bảng kê đã khóa.
+Mức 2: Hệ thống lưu vào PayoutPeriod (kỳ), PayoutStatement (bảng kê từng HTX), PayoutStatementLine (dòng đơn), PayoutHoldback (phần giữ lại) và HtxReceivable (công nợ nếu có). Ghi nhật ký.
+Thông báo UX: “Đã chốt bảng kê [mã bảng kê].” Điều hướng: đến danh sách bảng kê của kỳ.
+Yêu cầu/Business rule
+
+BR-AD-59: Chu kỳ chốt theo tham số cấu hình; hệ thống tự lập bảng kê Nháp tại ngày chốt, Admin có thể chốt thủ công.
+BR-AD-60: Đơn đủ điều kiện chi trả: đã giao thành công, hết thời gian bảo vệ và đổi trả, không có ticket hoặc hoàn tiền đang mở, không có chênh lệch chưa xử lý (BR-AD-58); đơn COD đã đối soát xong (BR-AD-47).
+BR-AD-61: Chi trả HTX = Σ tiền hàng của đơn đủ điều kiện − Σ hoa hồng − Σ tiền hoàn thuộc trách nhiệm HTX − phần giữ lại kỳ này + phần giữ lại kỳ trước đến hạn. Phí ship không nằm trong tiền chi trả, trừ phần ship HTX phải chịu do lỗi của HTX.
+BR-AD-62: Hoa hồng tính trên tiền hàng thực giữ lại của đơn, theo tỷ lệ tại thời điểm tạo đơn, không tính trên phí ship; khi hoàn tiền, hoa hồng đảo tương ứng phần hoàn [CẦN CHỐT]. Hoa hồng có bao gồm phí cổng hay không [CẦN CHỐT].
+BR-AD-63: Phần giữ lại theo tỷ lệ và số kỳ lưu cùng đơn lúc tạo (BR-AD-03); trả lại khi đến hạn, sau khi trừ chi phí hoàn trả nếu có.
+BR-AD-64: Mỗi đơn chỉ thuộc một bảng kê; bảng kê Nháp được tính lại, bảng kê đã chốt không sửa (BR-AD-02).
+BR-AD-65: Bảng kê hiển thị riêng 4 khoản cho từng đơn và tổng từng loại khoản theo HTX.
+BR-AD-66: Số chi trả âm không chi trả; phần âm ghi thành công nợ HTX, khấu trừ vào kỳ sau; HTX không còn phát sinh doanh thu thì giữ công nợ để thu hồi (UC-AD-11).
+BR-AD-67: Hoàn tiền phát sinh sau khi đã chi trả được khấu trừ vào kỳ kế tiếp.
+BR-AD-68: Trạng thái bảng kê: Nháp → Chờ duyệt → Đã duyệt → Đã chi trả hoặc Chi trả lỗi. Chỉ Nháp được tính lại.
+Giao diện
+
+Màn hình 1 – Danh sách kỳ chi trả: kỳ, từ ngày đến ngày, trạng thái, số bảng kê, tổng chi trả.
+Màn hình 2 – Danh sách bảng kê của kỳ: HTX, tiền hàng, hoa hồng, tiền hoàn thuộc HTX, giữ lại, giữ lại đến hạn, số chi trả, trạng thái.
+Màn hình 3 – Chi tiết bảng kê: công thức tính, bảng dòng đơn với 4 khoản, nút Loại đơn, Tính lại, Chốt bảng kê.
+Màn hình 4 – Đơn chưa đủ điều kiện kèm lý do.
+Hạng mục
+Nội dung
+Tên UC
+Xác nhận chi trả và khấu trừ, thu hồi HTX
+Danh sách chức năng
+Admin – FR-AD-06 Chốt kỳ và chi trả HTX
+Độ ưu tiên
+Cao – Must Have. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+Admin (nhóm Tài chính)
+Tác nhân phụ
+Hệ thống App Đặc sản Bắc Giang; HTX (nhận tiền, nhận thông báo); ngân hàng
+Mô tả
+Là Admin Tài chính, tôi muốn duyệt bảng kê, xác nhận đã chi trả cho HTX kèm chứng từ, và theo dõi công nợ cần khấu trừ hoặc thu hồi, để tiền đến đúng HTX và mọi khoản trừ đều có dấu vết.
+Kích hoạt UC
+Admin mở một bảng kê ở trạng thái Chờ duyệt hoặc Đã duyệt từ danh sách bảng kê (UC-AD-10).
+Điều kiện trước
+
+Admin đã đăng nhập và thuộc nhóm Tài chính.
+Bảng kê đã chốt (Chờ duyệt hoặc Đã duyệt).
+HTX đã có thông tin tài khoản nhận tiền hợp lệ trong hồ sơ.
+Admin có kết nối Internet.
+Luồng sự kiện chính (Happy Case)
+
+Admin mở danh sách bảng kê của kỳ và chọn một bảng kê Chờ duyệt. Hệ thống hiển thị chi tiết gồm công thức, 4 khoản tách riêng, phần giữ lại, khấu trừ.
+Admin kiểm tra và bấm Duyệt bảng kê. Hệ thống đổi trạng thái sang Đã duyệt, lưu người duyệt và thời điểm.
+Admin thực hiện chuyển tiền cho HTX ngoài hệ thống (hoặc qua kênh chi trả) rồi bấm Xác nhận chi trả.
+Hệ thống hiển thị form: số tiền chi (mặc định bằng số chi trả của bảng kê), ngày chi, mã giao dịch ngân hàng, tệp chứng từ.
+Admin nhập mã giao dịch, ngày chi, đính kèm chứng từ và bấm Xác nhận.
+Hệ thống kiểm tra số tiền chi bằng số chi trả của bảng kê.
+Hệ thống đổi bảng kê sang Đã chi trả, ghi nhận khoản chi trả vào sổ (chiều chi, bên trả hệ thống, bên nhận HTX).
+Hệ thống ghi nhận phần giữ lại kỳ này vào PayoutHoldback và đánh dấu Đã hoàn phần giữ lại kỳ trước đã nằm trong bảng kê.
+Hệ thống gửi thông báo cho HTX: “Bảng kê [mã bảng kê] đã được chi trả số tiền [số tiền].”
+Hệ thống ghi nhật ký và hiển thị “Đã xác nhận chi trả [mã bảng kê].”
+Luồng thay thế
+
+A1 – Tách người lập và người duyệt: Nếu bật tách quyền, người chốt bảng kê không được duyệt bảng kê đó; Admin khác của nhóm Tài chính duyệt [CẦN CHỐT].
+A2 – Từ chối bảng kê: Tại bước 2, Admin bấm Trả lại, nhập lý do; bảng kê về Nháp để tính lại (UC-AD-10).
+A3 – Chi trả thất bại: Ngân hàng báo lỗi hoặc sai thông tin nhận tiền. Admin bấm Ghi nhận chi trả lỗi và nhập lý do; bảng kê chuyển Chi trả lỗi, giữ nguyên số tiền, cho phép chi lại sau khi HTX cập nhật thông tin.
+A4 – Theo dõi công nợ HTX: Admin vào Công nợ HTX, xem các khoản khấu trừ chưa thu. Khoản còn nợ được khấu trừ tự động ở kỳ kế tiếp (UC-AD-10).
+A5 – Thu hồi thủ công: HTX không còn phát sinh doanh thu, Admin ghi nhận khoản HTX nộp lại: nhập số tiền, ngày, mã giao dịch, chứng từ; hệ thống giảm công nợ tương ứng.
+A6 – Xóa nợ: Admin ghi nhận Xóa nợ kèm lý do và chứng từ phê duyệt; hệ thống tạo dòng điều chỉnh, không xóa dòng công nợ gốc.
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc không đủ quyền: Điều hướng Đăng nhập hoặc thông báo theo BR-AD-05.
+E2 – Bảng kê không ở trạng thái cho phép: “Bảng kê không ở trạng thái có thể xác nhận chi trả.”
+E3 – Người lập duyệt chính bảng kê của mình (khi bật tách quyền): “Bạn không thể duyệt bảng kê do chính bạn lập.”
+E4 – Số tiền chi khác số chi trả: “Số tiền chi phải bằng số tiền chi trả của bảng kê.”
+E5 – Thiếu mã giao dịch, ngày chi hoặc chứng từ: “Vui lòng nhập mã giao dịch, ngày chi và đính kèm chứng từ.”
+E6 – HTX chưa có tài khoản nhận tiền hợp lệ: “HTX chưa có thông tin tài khoản nhận tiền. Vui lòng liên hệ HTX cập nhật.”
+E7 – Bảng kê đã được xác nhận chi trả: “Bảng kê đã được chi trả, không thể xác nhận lại.”
+E8 – Lỗi hệ thống hoặc mạng khi lưu: Không đổi trạng thái; “Không thể lưu. Vui lòng thử lại.”
+Điều kiện sau
+
+Mức 1: Bảng kê ở trạng thái Đã chi trả hoặc Chi trả lỗi; HTX nhận được thông báo kết quả.
+Mức 2: Hệ thống cập nhật PayoutStatement (người duyệt, mã giao dịch, ngày chi, chứng từ), ghi dòng chi trả trong LedgerEntry, cập nhật PayoutHoldback và HtxReceivable. Ghi nhật ký.
+Thông báo UX: “Đã xác nhận chi trả [mã bảng kê].” Điều hướng: về danh sách bảng kê của kỳ.
+Yêu cầu/Business rule
+
+BR-AD-69: Chỉ bảng kê Đã duyệt mới được xác nhận chi trả; nếu bật tách quyền, người lập và người duyệt phải là hai người khác nhau [CẦN CHỐT].
+BR-AD-70: Xác nhận chi trả bắt buộc mã giao dịch ngân hàng, ngày chi và chứng từ; số tiền chi bằng đúng số chi trả của bảng kê (không hỗ trợ chi một phần ở giai đoạn đầu).
+BR-AD-71: Mỗi bảng kê chỉ xác nhận chi trả một lần; thao tác lặp không tạo thêm dòng chi.
+BR-AD-72: Chi trả lỗi giữ nguyên số tiền và đơn trong bảng kê, cho phép chi lại; không lập bảng kê mới cho cùng các đơn.
+BR-AD-73: Khoản hoàn phát sinh sau kỳ khấu trừ vào kỳ kế tiếp; HTX không còn phát sinh doanh thu thì ghi nhận công nợ và thu hồi thủ công, mọi khoản thu hồi hoặc xóa nợ phải có chứng từ và lý do.
+BR-AD-74: Phần giữ lại được trả khi đến hạn theo BR-AD-63; dòng giữ lại không sửa, chỉ chuyển trạng thái Đang giữ → Đã hoàn.
+Giao diện
+
+Màn hình 1 – Chi tiết bảng kê để duyệt: công thức, 4 khoản, phần giữ lại, khấu trừ, nút Duyệt, Trả lại.
+Màn hình 2 – Form Xác nhận chi trả: số tiền, ngày chi, mã giao dịch, đính kèm chứng từ.
+Màn hình 3 – Công nợ HTX: HTX, số nợ, nguồn phát sinh, trạng thái, nút Ghi nhận thu hồi, Xóa nợ.
+Hạng mục
+Nội dung
+Tên UC
+Xem bảng kê chi trả của HTX
+Danh sách chức năng
+Admin – FR-AD-06 Chốt kỳ và chi trả HTX (xem chung màn hình với UC-TK-06)
+Độ ưu tiên
+Cao – Must Have (theo FR-AD-06 và FR-TK-04). PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW
+Tác nhân chính
+HTX
+Tác nhân phụ
+Hệ thống App Đặc sản Bắc Giang
+Mô tả
+Là HTX, tôi muốn xem bảng kê đối soát và chi trả của chính HTX tôi theo từng kỳ, tách riêng tiền hàng, hoa hồng, phí ship, tiền hoàn, để biết tiền đã nhận, đã bị trừ gì và kiểm tra khi có thắc mắc.
+Kích hoạt UC
+HTX đăng nhập và vào Tài chính > Bảng kê chi trả, hoặc bấm thông báo bảng kê mới.
+Điều kiện trước
+
+HTX đã được phê duyệt và đăng nhập thành công.
+HTX có ít nhất một bảng kê đã duyệt.
+HTX có kết nối Internet.
+Luồng sự kiện chính (Happy Case)
+
+HTX vào Tài chính > Bảng kê chi trả. Hệ thống hiển thị danh sách bảng kê Đã duyệt, Đã chi trả hoặc Chi trả lỗi của chính HTX: mã bảng kê, kỳ, số chi trả, trạng thái, ngày chi.
+HTX chọn một bảng kê.
+Hệ thống hiển thị công thức chi trả của kỳ: Σ tiền hàng, Σ hoa hồng, Σ tiền hoàn thuộc HTX, phần giữ lại kỳ này, phần giữ lại đến hạn, số chi trả.
+Hệ thống hiển thị danh sách đơn trong bảng kê, mỗi đơn có 4 khoản tách riêng, và các khoản khấu trừ từ kỳ trước nếu có.
+HTX xem mã giao dịch và ngày chi nếu bảng kê Đã chi trả.
+HTX có thể lọc theo kỳ, trạng thái, mã đơn.
+Luồng thay thế
+
+A1 – Xem phần giữ lại: HTX mở mục Phần giữ lại để xem các khoản đang giữ, kỳ đến hạn và trạng thái.
+A2 – Xem công nợ: HTX có công nợ thì hệ thống hiển thị số nợ, nguồn phát sinh và kỳ sẽ khấu trừ.
+A3 – Có thắc mắc về bảng kê: HTX gửi thắc mắc qua kênh CSKH hiện có; chức năng này chỉ xem, không sửa, không tự xác nhận hay từ chối (ngoài phạm vi module AD).
+Luồng rẽ nhánh/ngoại lệ
+
+E1 – Chưa đăng nhập hoặc hết phiên: Điều hướng đến màn hình Đăng nhập.
+E2 – Chưa có bảng kê: “Chưa có bảng kê chi trả.”
+E3 – Truy cập bảng kê của HTX khác: Hệ thống chặn và hiển thị “Bạn không có quyền xem bảng kê này.”
+E4 – Lỗi hệ thống hoặc mạng: “Không thể tải dữ liệu. Vui lòng thử lại.”
+Điều kiện sau
+
+Mức 1: HTX xem được bảng kê của chính mình.
+Mức 2: Dữ liệu chỉ đọc từ PayoutStatement và PayoutStatementLine; không thay đổi dữ liệu.
+Điều hướng: ở lại Bảng kê chi trả; chi tiết mở trong trang chi tiết.
+Yêu cầu/Business rule
+
+BR-AD-75: HTX chỉ xem bảng kê của chính HTX mình; chỉ xem, không sửa, không duyệt, không xác nhận.
+BR-AD-76: Chỉ bảng kê Đã duyệt trở đi hiển thị cho HTX; bảng kê Nháp và Chờ duyệt không hiển thị.
+BR-AD-77: Bảng kê hiển thị riêng 4 khoản; không hiển thị tên, số điện thoại, địa chỉ, tài khoản ngân hàng của khách, chỉ có mã đơn.
+BR-AD-78: Thao tác xem bảng kê ghi nhật ký truy cập (HTX, bảng kê, thời điểm).
+Giao diện
+
+Màn hình 1 – Danh sách bảng kê: bộ lọc kỳ, trạng thái, mã đơn.
+Màn hình 2 – Chi tiết bảng kê: công thức, bảng đơn với 4 khoản, phần giữ lại, khấu trừ.
+Màn hình 3 – Phần giữ lại và công nợ.
+Mã
+Nhóm
+Yêu cầu
+Chỉ tiêu đề xuất
+NFR-AD-01
+Hiệu năng
+Tra cứu sổ đối soát (UC-AD-04)
+95% yêu cầu trả kết quả trong 3 giây với bộ lọc trong một kỳ, dữ liệu đến 1 triệu dòng sổ
+NFR-AD-02
+Hiệu năng
+Xử lý tệp đối soát (UC-AD-07, 08)
+Tệp đến 10.000 dòng xử lý xong trong 2 phút
+NFR-AD-03
+Hiệu năng
+Xuất báo cáo (UC-AD-06)
+Đến 100.000 dòng trong 60 giây; vượt ngưỡng thì xuất nền
+NFR-AD-04
+Bảo mật
+Xác thực và phiên
+Đăng nhập bằng OTP; phiên hết hạn sau 30 phút không thao tác; đổi tham số tài chính và xác nhận chi trả yêu cầu OTP lại
+NFR-AD-05
+Bảo mật
+Phân quyền
+Phân quyền theo nhóm quyền, kiểm tra ở máy chủ chứ không chỉ ẩn nút; HTX không truy cập được dữ liệu của HTX khác dù đổi mã trong đường dẫn
+NFR-AD-06
+Bảo mật
+Bảo vệ dữ liệu
+Truyền tải qua HTTPS (TLS 1.2 trở lên); tài khoản ngân hàng của khách và HTX mã hóa khi lưu, hiển thị che bớt (chỉ 4 số cuối); chứng từ lưu có kiểm soát truy cập, liên kết tải có thời hạn
+NFR-AD-07
+Dữ liệu cá nhân
+Tuân thủ bảo vệ dữ liệu cá nhân
+Tuân thủ quy định pháp luật Việt Nam về bảo vệ dữ liệu cá nhân; chỉ nhóm Tài chính thấy tài khoản nhận hoàn tiền của khách khi xử lý hoàn tiền; báo cáo xuất và màn hình HTX không có dữ liệu cá nhân của khách (BR-AD-31, 41, 77)
+NFR-AD-08
+Toàn vẹn dữ liệu
+Dữ liệu chỉ thêm
+Dòng sổ, lịch sử tham số, nhật ký và bút toán điều chỉnh chỉ thêm; cấm sửa, xóa ở cả ứng dụng và quyền cơ sở dữ liệu (BR-AD-02)
+NFR-AD-09
+Toàn vẹn dữ liệu
+Chống ghi trùng
+Hoàn tiền, xác nhận chi trả, nhập bảng kê đối tác dùng khóa chống trùng; bấm hai lần hoặc cổng gọi lại nhiều lần không tạo bản ghi thứ hai (BR-AD-36, 46, 71)
+NFR-AD-10
+Đồng thời
+Xử lý nhiều Admin cùng lúc
+Khóa kiểm tra hồ sơ, sản phẩm; kiểm soát phiên bản cho tham số, chênh lệch, bảng kê; xung đột thì báo lỗi theo luồng ngoại lệ, không ghi đè
+NFR-AD-11
+Độ chính xác
+Số tiền
+Lưu số nguyên VND, không dùng số thực dấu phẩy động; một quy tắc làm tròn duy nhất; tổng chi tiết luôn bằng tổng hiển thị (BR-AD-01)
+NFR-AD-12
+Sẵn sàng
+Thời gian hoạt động
+99,5% mỗi tháng; không chạy chốt kỳ trong khung bảo trì
+NFR-AD-13
+Thông báo
+Gửi thông báo
+Thông báo cho HTX và Admin trong 1 phút kể từ khi sự kiện xảy ra; lỗi gửi thông báo không làm hỏng giao dịch gốc và được thử lại
+NFR-AD-14
+Khả dụng giao diện
+Giao diện và định dạng
+Trang quản trị chạy trên trình duyệt bản mới (Chrome, Edge, Safari, Firefox), màn hình từ 1366 px; màn hình HTX xem bảng kê dùng được trên điện thoại; tiếng Việt; số tiền dạng 1.234.567 đ; thông báo lỗi nêu rõ cách khắc phục
+NFR-AD-15
+Mở rộng
+Tăng khối lượng
+Chịu được số đơn và số HTX tăng 10 lần mà không đổi kiến trúc; có chỉ mục theo mã đơn, HTX, kỳ, loại khoản, trạng thái

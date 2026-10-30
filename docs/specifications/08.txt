@@ -1,0 +1,303 @@
+# Đặc tả UC
+Nguồn: https://docs.google.com/document/d/1zGJt-zt71dFflvmkBuwwcI8DpvqnaSCjOvIS4SX3PSc/edit?usp=drivesdk
+
+﻿Đặc tả use case module SP
+
+
+Mã
+	Module
+	Chức năng
+	Tác nhân chính
+	Use case
+	Ưu tiên
+	FR-SP-02 
+	Quản lý sản phẩm 
+	Tạo sản phẩm, gửi chờ duyệt 
+	HTX
+	UC-SP-02 
+	Must
+	FR-SP-03
+	Quản lý sản phẩm 
+	Theo dõi tình trạng duyệt 
+	HTX
+	UC-SP-03
+	Must
+	FR-SP-04
+	Quản lý sản phẩm 
+	Kiểm duyệt: phê duyệt hoặc từ chối sản phẩm 
+	Admin
+	UC-SP-04
+	Must
+	FR-SP-05
+	Quản lý sản phẩm 
+	Quản lý sản phẩm đang bán (ẩn, ngừng bán) 
+	HTX, Admin
+	UC-SP-05
+	Must
+	FR-SP-06
+	Quản lý sản phẩm 
+	Sửa sản phẩm 
+	HTX
+	UC-SP-06
+	Must
+	
+
+UC-SP-02 – Tạo sản phẩm, gửi chờ duyệt
+Hạng mục
+	Nội dung
+	Tên UC
+	Tạo sản phẩm và gửi chờ duyệt
+	Danh sách chức năng
+	FR-SP-02 Tạo sản phẩm, gửi chờ duyệt
+	Độ ưu tiên
+	Must. Không có sản phẩm thì app không có hàng bán
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Admin (nhận thông báo, duyệt ở UC-SP-04), Hệ thống
+	Mô tả
+	HTX đăng sản phẩm mới kèm thông tin vận hành và chứng nhận, gửi Admin kiểm duyệt trước khi lên bán. Sản phẩm chỉ hiển thị cho Khách hàng sau khi được phê duyệt
+	Kích hoạt UC
+	HTX bấm Thêm sản phẩm trong mục Sản phẩm / chứng nhận
+	Điều kiện trước
+	1. HTX đã đăng nhập.
+2. Hồ sơ HTX ở trạng thái Đã duyệt.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX bấm Thêm sản phẩm.
+2. Hệ thống kiểm tra HTX đủ điều kiện (BR-SP-01), hiển thị form.
+3. HTX nhập thông tin cơ bản: tên, danh mục, nhóm hàng, đơn vị tính, quy cách, giá, mô tả, ảnh.
+4. HTX nhập thông tin vận hành: hạn dùng, cách bảo quản, tháng thu hoạch, thời gian chuẩn bị, bật hoặc tắt hoả tốc, bật hoặc tắt Preorder.
+5. HTX thêm chứng nhận: loại, số, đơn vị cấp, ngày cấp, ngày hết hạn, ảnh.
+6. HTX bấm Gửi chờ duyệt.
+7. Hệ thống kiểm tra dữ liệu theo BR-SP-02 đến BR-SP-10.
+8. Hệ thống tạo sản phẩm, sinh mã, đặt trạng thái Chờ duyệt, ghi thời điểm gửi và nhật ký (BR-SP-27).
+9. Hệ thống gửi thông báo cho Admin và hiển thị xác nhận Đã gửi, đang chờ duyệt cho HTX.
+	Luồng thay thế
+	A1. Ở bước 3 đến 6, HTX bấm Lưu nháp: Hệ thống lưu trạng thái Nháp, không yêu cầu đủ trường bắt buộc, không báo Admin. HTX mở lại bản Nháp để làm tiếp (giữ 30 ngày, BR-SP-12).
+A2. HTX không có chứng nhận chính thức: chọn loại Cam kết nguồn gốc của HTX hoặc Tự công bố sản phẩm, vẫn gửi duyệt được (BR-SP-06).
+	Luồng rẽ nhánh/ngoại lệ
+	E1 (bước 7). Thiếu trường bắt buộc hoặc sai quy tắc: báo lỗi tại trường sai, giữ dữ liệu đã nhập, không gửi.
+E2 (bước 2). HTX chưa được duyệt hoặc đang bị tạm khoá: chặn, hiển thị lý do.
+E3 (bước 7). Chứng nhận chính thức đã hết hạn: chặn gửi, yêu cầu xoá hoặc thay chứng nhận khác (BR-SP-07).
+E4 (bước 7). Trùng tên với sản phẩm khác của HTX: chặn, gợi ý mở sản phẩm đã có (BR-SP-08).
+E5. Ảnh sai định dạng hoặc quá dung lượng: báo lỗi riêng từng ảnh, ảnh hợp lệ vẫn giữ (BR-SP-05).
+E6 (bước 6). Mất mạng: lưu thành Nháp, báo HTX gửi lại sau, không tạo bản gửi trùng.
+	Điều kiện sau
+	Thành công: sản phẩm ở trạng thái Chờ duyệt, Admin nhận thông báo, HTX theo dõi được ở UC-SP-03, nhật ký được ghi.
+Lưu nháp: sản phẩm ở trạng thái Nháp, Admin không nhận gì.
+Thất bại: không tạo sản phẩm mới, dữ liệu HTX đã nhập được giữ.
+	Yêu cầu/Business rule
+	BR-SP-01 Chỉ HTX Đã duyệt mới được tạo sản phẩm.
+BR-SP-02 Trường bắt buộc, nhóm Tươi/hạn ngắn thêm tháng thu hoạch.
+BR-SP-03 Tên 5 đến 100 ký tự, mô tả 20 đến 2.000 ký tự.
+BR-SP-04 Giá từ 1.000 đến 10.000.000 VNĐ.
+BR-SP-05 Ảnh sản phẩm 1 đến 6, ảnh chứng nhận tối đa 3 mỗi chứng nhận, JPG hoặc PNG, tối đa 5 MB.
+BR-SP-06 Chứng nhận chia hai nhóm: chính thức và khai báo.
+BR-SP-07 Ngày chứng nhận hợp lệ, chứng nhận hết hạn không được gửi duyệt.
+BR-SP-08 Không trùng tên trong cùng HTX.
+BR-SP-09 Hạn dùng tối đa 30 ngày (Tươi) hoặc 36 tháng (Khô).
+BR-SP-10 Hoả tốc chỉ nhóm Tươi/hạn ngắn, chuẩn bị tối đa 60 phút.
+BR-SP-12 Bản Nháp giữ 30 ngày.
+BR-SP-14 Thông báo trong tối đa 1 phút.
+BR-SP-27 Ghi nhật ký thay đổi.
+
+
+	Giao diện
+	Màn hình Thêm sản phẩm của HTX (nhánh Sản phẩm / chứng nhận trong sơ đồ màn hình), chia ba nhóm: Thông tin cơ bản, Thông tin vận hành, Chứng nhận. Nút Lưu nháp và Gửi chờ duyệt cố định ở cuối màn hình. Lỗi hiển thị ngay dưới trường sai. Chữ và nút đủ lớn cho người lớn tuổi (NFR-SP-03). Trường dữ liệu: xem mục 8 của tài liệu Đặc tả module SP.
+	UC-SP-03 – Theo dõi tình trạng duyệt
+Hạng mục
+	Nội dung
+	Tên UC
+	Theo dõi tình trạng duyệt
+	Danh sách chức năng
+	FR-SP-03 Theo dõi tình trạng duyệt
+	Độ ưu tiên
+	Must. HTX cần biết sản phẩm đã được duyệt chưa và vì sao bị từ chối để sửa
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	HTX xem danh sách sản phẩm của mình theo trạng thái, xem lịch sử duyệt và lý do từ chối
+	Kích hoạt UC
+	HTX mở mục Sản phẩm của tôi, hoặc bấm vào thông báo đổi trạng thái
+	Điều kiện trước
+	HTX đã đăng nhập
+	Luồng sự kiện chính (Happy Case)
+	1. HTX mở Sản phẩm của tôi.
+2. Hệ thống hiển thị danh sách sản phẩm của HTX: ảnh, tên, trạng thái, thời điểm gửi hoặc cập nhật gần nhất. Có lọc theo trạng thái và tìm theo tên (BR-SP-13).
+3. HTX chọn một sản phẩm.
+4. Hệ thống hiển thị chi tiết: trạng thái hiện tại, dòng thời gian (gửi, duyệt hoặc từ chối, ai, khi nào), lý do từ chối nếu có, nút hành động phù hợp với trạng thái.
+	Luồng thay thế
+	A1. HTX bấm vào thông báo: mở thẳng chi tiết sản phẩm, bỏ qua bước 1 đến 3.
+A2. Sản phẩm Bị từ chối: hiển thị lý do chuẩn và ghi chú của Admin, nút Sửa và gửi lại (UC-SP-06) (BR-SP-17).
+A3. Sản phẩm Đang bán có bản sửa chờ duyệt: hiển thị song song bản đang bán và bản sửa (BR-SP-21, BR-SP-23).
+	Luồng rẽ nhánh/ngoại lệ
+	E1. HTX chưa có sản phẩm: hiển thị màn hình trống kèm nút Thêm sản phẩm.
+E2. Mất mạng: hiển thị dữ liệu tải gần nhất kèm cảnh báo chưa cập nhật.
+E3. HTX mở sản phẩm của HTX khác qua liên kết: từ chối, báo không có quyền (BR-SP-13).
+	Điều kiện sau
+	HTX nắm được trạng thái từng sản phẩm. Use case chỉ đọc, không thay đổi dữ liệu
+	Yêu cầu/Business rule
+	BR-SP-11 Khi Chờ duyệt, HTX chỉ được xem.
+BR-SP-13 HTX chỉ thấy sản phẩm của mình, có lọc, tìm kiếm và lịch sử trạng thái.
+BR-SP-14 Thông báo đổi trạng thái trong tối đa 1 phút.
+BR-SP-17 Từ chối bắt buộc có lý do.
+BR-SP-23 Bản sửa bị từ chối thì bản đang bán không đổi.
+	Giao diện
+	Màn hình Sản phẩm của tôi: danh sách thẻ sản phẩm, thanh lọc trạng thái (Tất cả, Nháp, Chờ duyệt, Bị từ chối, Đang bán, Ẩn, Ngừng bán), ô tìm kiếm. Màn hình Chi tiết trạng thái: dòng thời gian, khung lý do từ chối nổi bật, nút hành động theo trạng thái
+	UC-SP-04 – Kiểm duyệt sản phẩm
+Hạng mục
+	Nội dung
+	Tên UC
+	Kiểm duyệt sản phẩm
+	Danh sách chức năng
+	FR-SP-04 Kiểm duyệt: phê duyệt hoặc từ chối sản phẩm
+	Độ ưu tiên
+	Must. Đây là bước bảo đảm đúng gốc trước khi Khách hàng nhìn thấy sản phẩm
+	Tác nhân chính
+	Admin
+	Tác nhân phụ
+	HTX (nhận kết quả), Hệ thống
+	Mô tả
+	Admin đối chiếu thông tin và chứng nhận của sản phẩm hoặc bản sửa đang Chờ duyệt, rồi phê duyệt hoặc từ chối kèm lý do
+	Kích hoạt UC
+	Admin mở mục Duyệt sản phẩm, hoặc bấm vào thông báo có sản phẩm chờ duyệt
+	Điều kiện trước
+	1. Admin đã đăng nhập.
+2. Có ít nhất một sản phẩm hoặc bản sửa ở trạng thái Chờ duyệt.
+	Luồng sự kiện chính (Happy Case)
+	1. Admin mở danh sách chờ duyệt. Hệ thống xếp hồ sơ gửi sớm nhất lên đầu, hiển thị số giờ chờ và đánh dấu hồ sơ quá 2 ngày làm việc (BR-SP-18).
+2. Admin chọn một sản phẩm. Hệ thống khoá sản phẩm cho Admin này (BR-SP-15), hiển thị đầy đủ thông tin, ảnh, chứng nhận và checklist (BR-SP-16).
+3. Admin đối chiếu và tick checklist. Với từng chứng nhận chính thức, chọn Đã xác minh hoặc Không xác minh được.
+4. Admin bấm Phê duyệt.
+5. Hệ thống chuyển sản phẩm sang Đang bán, gán huy hiệu theo BR-SP-19, thông báo HTX (BR-SP-20), ghi nhật ký.
+	Luồng thay thế
+	A1. Từ chối (thay cho bước 4 và 5): Admin bấm Từ chối, chọn lý do chuẩn và ghi chú. Hệ thống chuyển Bị từ chối, thông báo HTX kèm lý do, ghi nhật ký (BR-SP-17).
+A2. Đối tượng duyệt là bản sửa của sản phẩm đang bán (UC-SP-06): hiển thị so sánh bản đang bán và bản sửa, tô sáng trường thay đổi. Phê duyệt thì bản sửa thay bản đang bán, từ chối thì giữ bản cũ (BR-SP-23).
+A3. Admin thoát, chưa quyết định: sản phẩm vẫn Chờ duyệt, mở khoá.
+	Luồng rẽ nhánh/ngoại lệ
+	E1. Hai Admin mở cùng một sản phẩm: người mở sau chỉ được xem, kèm thông báo đang được xử lý bởi Admin nào (BR-SP-15).
+E2. Khoá quá 15 phút không thao tác: Hệ thống tự mở khoá.
+E3. Bấm Từ chối khi thiếu lý do: chặn, yêu cầu nhập lý do.
+E4. Mất mạng khi bấm quyết định: không ghi nhận, báo thử lại, không tạo quyết định trùng.
+	Điều kiện sau
+	Phê duyệt: sản phẩm Đang bán, huy hiệu theo kết quả xác minh, HTX nhận thông báo.
+Từ chối: sản phẩm Bị từ chối kèm lý do, HTX nhận thông báo và có thể sửa rồi gửi lại.
+Thoát hoặc thất bại: sản phẩm giữ Chờ duyệt, khoá được mở.
+Mọi trường hợp: nhật ký được ghi.
+	Yêu cầu/Business rule
+	BR-SP-06 Phân nhóm chứng nhận chính thức và khai báo.
+BR-SP-14 Thông báo trong tối đa 1 phút.
+BR-SP-15 Một Admin xử lý một sản phẩm tại một thời điểm, khoá tự mở sau 15 phút.
+BR-SP-16 Checklist kiểm duyệt.
+BR-SP-17 Từ chối bắt buộc có lý do 10 đến 500 ký tự.
+BR-SP-18 Duyệt trong tối đa 2 ngày làm việc, quá hạn thì nhắc.
+BR-SP-19 Huy hiệu Đã xác minh chỉ cho chứng nhận chính thức được Admin xác minh.
+BR-SP-20 Sau phê duyệt sản phẩm Đang bán và hiển thị cho Khách hàng.
+BR-SP-23 Bản sửa bị từ chối thì giữ bản đang bán.
+BR-SP-27 Ghi nhật ký.
+	Giao diện
+	Màn hình Duyệt sản phẩm của Admin (nhánh Duyệt HTX / sản phẩm trong sơ đồ màn hình): danh sách chờ duyệt kèm số giờ chờ và nhãn quá hạn. Màn hình Chi tiết kiểm duyệt: ảnh sản phẩm, thông tin khai báo, ảnh chứng nhận phóng to cạnh dữ liệu đã khai, checklist, nút Phê duyệt và Từ chối cố định ở cuối. Bản sửa hiển thị dạng so sánh hai cột
+	UC-SP-05 – Quản lí các sản phẩm đang bán(ẩn, ngừng bán sản phẩm)
+Hạng mục
+	Nội dung
+	Tên UC
+	Ẩn, bật lại, ngừng bán sản phẩm
+	Danh sách chức năng
+	FR-SP-05 Quản lý sản phẩm đang bán (ẩn, ngừng bán)
+	Độ ưu tiên
+	Must. Cần để dừng bán nhanh khi hết mùa, hết hàng hoặc có vấn đề chất lượng
+	Tác nhân chính
+	HTX (sản phẩm của mình), Admin (mọi sản phẩm)
+	Tác nhân phụ
+	Hệ thống, module DH (kiểm tra đơn chưa hoàn tất)
+	Mô tả
+	HTX hoặc Admin ẩn sản phẩm tạm thời, bật lại, hoặc ngừng bán hẳn. Admin dùng khi sản phẩm vi phạm hoặc có khiếu nại, HTX dùng khi hết mùa hoặc hết hàng
+	Kích hoạt UC
+	Người dùng chọn sản phẩm trong danh sách và bấm Ẩn, Bật lại hoặc Ngừng bán
+	Điều kiện trước
+	1. Người dùng đã đăng nhập.
+2. Ẩn: sản phẩm Đang bán. Bật lại: sản phẩm Ẩn. Ngừng bán: sản phẩm Đang bán hoặc Ẩn.
+3. HTX chỉ thao tác trên sản phẩm của mình.
+	Luồng sự kiện chính (Happy Case)
+	Luồng Ẩn:
+1. HTX hoặc Admin chọn sản phẩm Đang bán, bấm Ẩn.
+2. Hệ thống hiển thị cảnh báo ảnh hưởng: số đơn đang xử lý và Preorder đã đặt vẫn được giao bình thường (BR-SP-24). Nếu là Admin, bắt buộc nhập lý do (BR-SP-26).
+3. Người dùng xác nhận.
+4. Hệ thống chuyển sản phẩm sang Ẩn, ngừng hiển thị cho Khách hàng, ghi nhật ký (BR-SP-27) và thông báo bên còn lại.
+	Luồng thay thế
+	A1. Bật lại: sản phẩm Ẩn chuyển Đang bán nếu người bật có quyền (BR-SP-26).
+A2. Ngừng bán: Hệ thống kiểm tra BR-SP-25, yêu cầu xác nhận hai lần, chuyển Ngừng bán, ghi nhật ký.
+	Luồng rẽ nhánh/ngoại lệ
+	E1. Còn đơn chưa hoàn tất hoặc Preorder chưa giao khi Ngừng bán: chặn, liệt kê số đơn, gợi ý dùng Ẩn.
+E2. HTX bật lại sản phẩm do Admin ẩn: chặn, hiển thị lý do Admin đã ghi (BR-SP-26).
+E3. Sản phẩm đang có bản sửa chờ duyệt khi bị Ẩn: giữ nguyên bản sửa chờ duyệt.
+E4. Mất mạng khi xác nhận: không đổi trạng thái, báo thử lại.
+	Điều kiện sau
+	Ẩn: Khách hàng không thấy và không thêm giỏ được, đơn cũ vẫn xử lý.
+Bật lại: Khách hàng thấy lại sản phẩm.
+Ngừng bán: sản phẩm kết thúc, không khôi phục.
+Mọi trường hợp: nhật ký được ghi, bên còn lại được thông báo.
+	Yêu cầu/Business rule
+	BR-SP-14 Thông báo trong tối đa 1 phút.
+BR-SP-22 Đơn và Preorder đã đặt giữ nguyên giá và thông tin.
+BR-SP-24 Sản phẩm Ẩn không hiển thị, đơn đang xử lý vẫn giao.
+BR-SP-25 Ngừng bán chỉ khi không còn đơn chưa hoàn tất và Preorder chưa giao, không khôi phục.
+BR-SP-26 Admin ẩn hoặc ngừng bán phải có lý do, HTX không tự bật lại sản phẩm Admin đã ẩn.
+BR-SP-27 Ghi nhật ký.
+	Giao diện
+	Danh sách Sản phẩm đang bán (HTX: nhánh Sản phẩm / chứng nhận. Admin: nhánh Duyệt HTX / sản phẩm): mỗi thẻ có menu ba chấm gồm Ẩn, Bật lại, Ngừng bán. Hộp thoại xác nhận hiển thị số đơn bị ảnh hưởng. Admin có ô nhập lý do bắt buộc. Sản phẩm do Admin ẩn gắn nhãn Do Admin ẩn
+	UC-SP-06 – Sửa sản phẩm
+Hạng mục
+	Nội dung
+	Tên UC
+	Sửa sản phẩm
+	Danh sách chức năng
+	FR-SP-06 Sửa sản phẩm
+	Độ ưu tiên
+	Must. HTX cần cập nhật giá, hạn dùng, chứng nhận trong quá trình bán
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Admin (duyệt bản sửa ở UC-SP-04), Hệ thống
+	Mô tả
+	HTX sửa thông tin sản phẩm. Trường thường áp dụng ngay, trường trọng yếu tạo bản sửa chờ Admin duyệt và bản đang bán vẫn hiển thị cho tới khi duyệt, để giữ ý nghĩa đúng gốc đã được xác minh
+	Kích hoạt UC
+	HTX mở sản phẩm và bấm Sửa
+	Điều kiện trước
+	1. HTX đã đăng nhập.
+2. Sản phẩm thuộc HTX và ở trạng thái Nháp, Bị từ chối, Đang bán hoặc Ẩn.
+3. Sản phẩm không ở trạng thái Chờ duyệt (BR-SP-11).
+	Luồng sự kiện chính (Happy Case)
+	1. HTX mở sản phẩm, bấm Sửa.
+2. Hệ thống hiển thị form với dữ liệu hiện tại, đánh dấu trường trọng yếu là trường cần duyệt lại.
+3. HTX sửa thông tin, bấm Lưu.
+4. Hệ thống kiểm tra dữ liệu theo BR-SP-02 đến BR-SP-10.
+5. Hệ thống phân loại thay đổi theo BR-SP-21. Nếu chỉ sửa trường thường: áp dụng ngay và ghi nhật ký. Nếu có sửa trường trọng yếu: tạo bản sửa Chờ duyệt, bản đang bán vẫn hiển thị, thông báo Admin.
+6. Hệ thống thông báo kết quả cho HTX.
+	Luồng thay thế
+	A1. Sản phẩm đang Nháp: sửa như UC-SP-02.
+A2. Sản phẩm Bị từ chối: sau khi sửa, HTX bấm Gửi lại, sản phẩm chuyển Chờ duyệt.
+A3. Sửa giá khi có Preorder hoặc đơn chưa hoàn tất: giá mới chỉ áp dụng cho đơn mới (BR-SP-22).
+	Luồng rẽ nhánh/ngoại lệ
+	E1. Sửa khi sản phẩm đang Chờ duyệt: chặn, báo đang chờ duyệt.
+E2. Không có thay đổi nào: không tạo bản mới.
+E3. Bản sửa bị từ chối: giữ bản cũ, HTX nhận lý do (BR-SP-23).
+E4. Hai người cùng HTX sửa một lúc: người lưu sau nhận cảnh báo xung đột và phải tải lại.
+E5. Dữ liệu sai quy tắc: báo lỗi tại trường sai, giữ dữ liệu đã nhập.
+	Điều kiện sau
+	Trường thường: thay đổi hiển thị ngay.
+Trường trọng yếu: có bản sửa Chờ duyệt, bản đang bán không đổi cho tới khi Admin phê duyệt.
+Mọi trường hợp: nhật ký được ghi.
+	Yêu cầu/Business rule
+	BR-SP-02 đến BR-SP-10 Quy tắc dữ liệu như UC-SP-02.
+BR-SP-11 Khi Chờ duyệt, HTX chỉ được xem.
+BR-SP-14 Thông báo trong tối đa 1 phút.
+BR-SP-17 Từ chối bắt buộc có lý do.
+BR-SP-21 Trường trọng yếu cần duyệt lại, trường thường áp dụng ngay.
+BR-SP-22 Đơn và Preorder đã đặt giữ nguyên giá.
+BR-SP-23 Bản sửa bị từ chối thì giữ bản đang bán.
+BR-SP-27 Ghi nhật ký.
+	Giao diện
+	Màn hình Sửa sản phẩm dùng lại form của UC-SP-02. Mỗi trường trọng yếu có nhãn Cần duyệt lại. Trước khi Lưu, hộp thoại tóm tắt thay đổi áp dụng ngay và thay đổi chờ duyệt. Chi tiết sản phẩm hiển thị song song bản đang bán và bản sửa chờ duyệt

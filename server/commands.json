@@ -1,0 +1,2617 @@
+{
+  "addToCart": {
+    "module": "cart",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "customerId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "quantity",
+        "type": "number",
+        "optional": false
+      },
+      {
+        "name": "now",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "setCartLine": {
+    "module": "cart",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "customerId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "patch",
+        "type": "Partial<Pick<CartLine, 'quantity' | 'deliveryDate'>>",
+        "optional": false
+      }
+    ]
+  },
+  "removeCartLine": {
+    "module": "cart",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "customerId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "productIds",
+        "type": "string[]",
+        "optional": false
+      }
+    ]
+  },
+  "addAddress": {
+    "module": "address",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "customerId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "AddressInput",
+        "optional": false
+      }
+    ]
+  },
+  "updateAddress": {
+    "module": "address",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "customerId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "AddressInput",
+        "optional": false
+      }
+    ]
+  },
+  "deleteAddress": {
+    "module": "address",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "customerId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "optional": false
+      }
+    ]
+  },
+  "setDefaultAddress": {
+    "module": "address",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "customerId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "optional": false
+      }
+    ]
+  },
+  "placeCheckout": {
+    "module": "checkout",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "PlaceInput",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "customerCancel": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "customerRequestCancel": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "customerConfirmReceived": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "customerSwitchRemainingToCod": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopConfirm": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopReject": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopReportReady": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "ensureRemainingTransaction": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopCannotSupply": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopHandover": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopReceiveReturn": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopDecideCancelRequest": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "approve",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "rejectReason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "carrierSimulate": {
+    "module": "orders",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "event",
+        "type": "CarrierEvent",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "applyGatewayResult": {
+    "module": "payment",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "txId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "result",
+        "type": "GatewayResult",
+        "optional": false
+      },
+      {
+        "name": "gatewayRef",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "updateCustomerProfile": {
+    "module": "account",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false
+      }
+    ]
+  },
+  "linkRefundAccount": {
+    "module": "account",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "BankLinkInput",
+        "optional": false
+      },
+      {
+        "name": "otp",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "unlinkRefundAccount": {
+    "module": "account",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      }
+    ]
+  },
+  "opsCreateAccount": {
+    "module": "account",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "NewAccountInput",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "opsSetAccountLocked": {
+    "module": "account",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "userId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "locked",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "rootSetAdminGroup": {
+    "module": "account",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "userId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "group",
+        "type": "AdminSubGroup",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopUpdateStock": {
+    "module": "productChanges",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "newStock",
+        "type": "number",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopCreateProduct": {
+    "module": "productChanges",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "NewProductInput",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopRequestContentChange": {
+    "module": "productChanges",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "content",
+        "type": "ProductContent",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopSetProductHidden": {
+    "module": "productChanges",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "hidden",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopRequestExpress": {
+    "module": "productChanges",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "express",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopRequestCertification": {
+    "module": "productChanges",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "cert",
+        "type": "Omit<Certification, 'id' | 'verified'>",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopRequestPriceChange": {
+    "module": "productChanges",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "newPrice",
+        "type": "number",
+        "optional": false
+      },
+      {
+        "name": "note",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopRequestPreorder": {
+    "module": "productChanges",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "cfg",
+        "type": "PreorderConfig",
+        "optional": false
+      },
+      {
+        "name": "note",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "decideProductChange": {
+    "module": "productChanges",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "requestId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "approve",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopSubmitProfile": {
+    "module": "coopProfile",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "profile",
+        "type": "CoopProfile",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "qualityDecideCoopProfile": {
+    "module": "coopProfile",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "coopId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "approve",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "qualitySetSellingRights": {
+    "module": "coopProfile",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "coopId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "active",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopSetPhones": {
+    "module": "coopContact",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "phones",
+        "type": "string[]",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopSetAddress": {
+    "module": "coopContact",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "address",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "submitComplaint": {
+    "module": "complaint",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "ComplaintInput",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopReplyTicket": {
+    "module": "complaint",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "ticketId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      },
+      {
+        "name": "proposal",
+        "type": "'refund' | 'no_refund'",
+        "optional": true
+      }
+    ]
+  },
+  "cskhUpdateTicket": {
+    "module": "complaint",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "ticketId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "status",
+        "type": "TicketStatus",
+        "optional": false
+      },
+      {
+        "name": "note",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      },
+      {
+        "name": "refundApproved",
+        "type": "boolean",
+        "optional": true
+      }
+    ]
+  },
+  "cskhRequestCoopReply": {
+    "module": "complaint",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "ticketId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "note",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "submitReview": {
+    "module": "reviews",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "ReviewInput",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopReplyReview": {
+    "module": "reviews",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "reviewId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "reply",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "cskhSetReviewVisibility": {
+    "module": "reviews",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "reviewId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "hide",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "opsUpdateParam": {
+    "module": "adminConfig",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "key",
+        "type": "K",
+        "optional": false
+      },
+      {
+        "name": "value",
+        "type": "Params[K]",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "opsSaveWard": {
+    "module": "adminConfig",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "ward",
+        "type": "Omit<Ward, 'id'> & { id?: string }",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "opsDeleteWard": {
+    "module": "adminConfig",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "wardId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "opsSaveGiftBox": {
+    "module": "adminConfig",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "box",
+        "type": "Omit<GiftBoxType, 'id'> & { id?: string }",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "opsDeleteGiftBox": {
+    "module": "adminConfig",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "boxId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "adminCreateVoucher": {
+    "module": "adminConfig",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "VoucherInput",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "adminSetVoucherActive": {
+    "module": "adminConfig",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "voucherId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "active",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "closePeriod": {
+    "module": "settlement",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "coopId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "cutoff",
+        "type": "Date",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "recordPayout": {
+    "module": "settlement",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "periodId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "startRefundProcessing": {
+    "module": "finance",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "refundId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "confirmRefundBySimBank": {
+    "module": "finance",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "refundId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopConfirmHarvest": {
+    "module": "harvest",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "HarvestInput",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "sendOrderMessage": {
+    "module": "orderContact",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      },
+      {
+        "name": "photos",
+        "type": "string[]",
+        "optional": true
+      }
+    ]
+  },
+  "logCoopCall": {
+    "module": "orderContact",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "outcome",
+        "type": "CallOutcome",
+        "optional": false
+      },
+      {
+        "name": "note",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "markOrderChatRead": {
+    "module": "orderContact",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "sendDirectMessage": {
+    "module": "coopChat",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "otherId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": true
+      },
+      {
+        "name": "photos",
+        "type": "string[]",
+        "optional": true
+      }
+    ]
+  },
+  "markThreadRead": {
+    "module": "coopChat",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "otherId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "submitCoopApplication": {
+    "module": "coopApplication",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "ApplicationInput",
+        "optional": false
+      },
+      {
+        "name": "otp",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "resubmitCoopApplication": {
+    "module": "coopApplication",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "ApplicationInput",
+        "optional": false
+      },
+      {
+        "name": "otp",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "qualityAcceptApplication": {
+    "module": "coopApplication",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "qualitySetCheck": {
+    "module": "coopApplication",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "check",
+        "type": "ApplicationCheck",
+        "optional": false
+      },
+      {
+        "name": "passed",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "qualityRequestInfo": {
+    "module": "coopApplication",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "note",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "qualityDecideApplication": {
+    "module": "coopApplication",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "approve",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "note",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "opsAssignShipper": {
+    "module": "shipper",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "shipperId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "pickupNote",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "shipperPickUp": {
+    "module": "shipper",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "shipperDelivered": {
+    "module": "shipper",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "{ photos: string[]; note?: string }",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "shipperFailed": {
+    "module": "shipper",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "note",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "shipperRefused": {
+    "module": "shipper",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "shipperRemitCod": {
+    "module": "shipper",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "financeConfirmRemittance": {
+    "module": "shipper",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "remittanceId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "setFavorite": {
+    "module": "marketplace",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "on",
+        "type": "boolean",
+        "optional": false
+      }
+    ]
+  },
+  "setFollow": {
+    "module": "marketplace",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "coopId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "on",
+        "type": "boolean",
+        "optional": false
+      }
+    ]
+  },
+  "saveVoucher": {
+    "module": "marketplace",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "voucherId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "unsaveVoucher": {
+    "module": "marketplace",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "voucherId",
+        "type": "string",
+        "optional": false
+      }
+    ]
+  },
+  "setSeasonWatch": {
+    "module": "seasonWatch",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "on",
+        "type": "boolean",
+        "optional": false
+      },
+      {
+        "name": "now",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "saveInvoiceDefault": {
+    "module": "invoice",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "invoice",
+        "type": "CompanyInvoice | null",
+        "optional": false
+      }
+    ]
+  },
+  "markNotificationsRead": {
+    "module": "notifications",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "userId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "ids",
+        "type": "string[]",
+        "optional": true
+      }
+    ]
+  },
+  "customerChangeAddress": {
+    "module": "orderEdits",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "addressId",
+        "type": "string",
+        "optional": false
+      }
+    ]
+  },
+  "customerChangeDeliveryDate": {
+    "module": "orderEdits",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "date",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "customerEditGift": {
+    "module": "orderEdits",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "recipient",
+        "type": "GiftRecipient | undefined",
+        "optional": false
+      }
+    ]
+  },
+  "reorderToCart": {
+    "module": "orderTabs",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "orderId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "coopAddVariant": {
+    "module": "variants",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "productId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "input",
+        "type": "NewVariantInput",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "rootSetDemoCode": {
+    "module": "demoAccess",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "code",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "rootClearDemoCode": {
+    "module": "demoAccess",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  },
+  "demoGatewaySuccess": {
+    "module": "demoAccess",
+    "params": [
+      {
+        "name": "state",
+        "type": "DemoState",
+        "optional": false
+      },
+      {
+        "name": "actor",
+        "type": "Actor",
+        "optional": false
+      },
+      {
+        "name": "txId",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "gatewayRef",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "at",
+        "type": "Date",
+        "optional": false
+      }
+    ]
+  }
+}

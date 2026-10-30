@@ -1,0 +1,256 @@
+# DAC-TA_FR-BCTK-02_Bao-cao-doanh-thu.docx
+Nguồn: https://docs.google.com/document/d/1-VTO7pbZPpLmU9PSNsGF9Dy7jO89Vd5L/edit?usp=drivesdk&ouid=118008469128637664818&rtpof=true&sd=true
+
+ĐẶC TẢ YÊU CẦU PHẦN MỀM
+FR BCTK 02  BÁO CÁO DOANH THU VÀ ĐỐI SOÁT
+Thông tin tài liệu
+1. Mục đích và phạm vi
+1.1 Mục đích
+Cung cấp báo cáo tài chính vận hành để Admin theo dõi giá trị đơn hàng, số tiền thực thu, hoàn tiền, phí, nghĩa vụ thanh toán cho HTX và chênh lệch đối soát.
+1.2 Trong phạm vi
+Tổng hợp báo cáo theo kỳ, HTX, phương thức thanh toán và trạng thái đối soát.
+Xem xu hướng và chi tiết cấu thành số liệu.
+Phát hiện chênh lệch giữa đơn hàng, giao dịch, hoàn tiền và thanh toán HTX.
+Chuyển bộ lọc sang FR-BCTK-03 để xuất báo cáo.
+1.3 Ngoài phạm vi
+Thực hiện thu tiền, hoàn tiền hoặc chuyển tiền cho HTX.
+Hạch toán kế toán, xuất hóa đơn và kê khai thuế.
+Chỉnh sửa dữ liệu giao dịch nguồn.
+2. Thuật ngữ và nguyên tắc ghi nhận
+Thời điểm ghi nhận từng chỉ số và chính sách phân bổ phí/khuyến mại: [CẦN CHỐT].
+3. Tác nhân và phân quyền
+QLNN và HTX không được truy cập tài liệu này, trừ khi có yêu cầu thay đổi được phê duyệt.
+4. Giả định và phụ thuộc
+Mỗi đơn hàng, giao dịch, hoàn tiền và đợt thanh toán có mã định danh duy nhất.
+Hệ thống nhận được trạng thái cuối cùng hoặc sự kiện cập nhật từ cổng thanh toán/COD.
+Tiền tệ mặc định là VND; số tiền lưu theo số nguyên đồng.
+Hiển thị theo Asia/Ho_Chi_Minh; lưu thời gian theo UTC.
+Phụ thuộc dữ liệu đơn hàng, thanh toán, hoàn tiền, chính sách phí, FR-BCTK-01 và FR-HT-03.
+5. Ca sử dụng
+UC-BCTK-02-01 – Xem báo cáo doanh thu
+Tác nhân: Admin có quyền.
+Kích hoạt: Mở màn hình Báo cáo doanh thu.
+Tiền điều kiện: Đã đăng nhập và được cấp quyền.
+Hậu điều kiện: Số liệu được hiển thị theo bộ lọc và data_as_of.
+Luồng chính
+1. Hệ thống nạp bộ lọc mặc định và xác định phạm vi quyền.
+2. Người dùng chọn kỳ báo cáo, HTX, phương thức thanh toán hoặc trạng thái đối soát.
+3. Hệ thống kiểm tra bộ lọc.
+4. Hệ thống hiển thị các chỉ số, bảng phân rã và biểu đồ xu hướng.
+5. Người dùng có thể chọn chỉ số để xem cấu thành.
+Ngoại lệ
+E1. Bộ lọc không hợp lệ: hiển thị BCTK02-V01.
+E2. Không có quyền với HTX đã chọn: hiển thị BCTK02-A01.
+E3. Không có dữ liệu: hiển thị 0 và trạng thái “Không có dữ liệu trong kỳ”.
+UC-BCTK-02-02 – Xem chi tiết đối soát
+Tác nhân: Admin tài chính.
+Kích hoạt: Chọn một dòng tổng hợp hoặc chỉ số chênh lệch.
+Luồng chính
+1. Hệ thống hiển thị các bản ghi cấu thành theo cùng bộ lọc và data_as_of.
+2. Mỗi dòng thể hiện liên kết giữa đơn hàng, giao dịch thu, hoàn tiền và thanh toán HTX.
+3. Hệ thống đánh dấu bản ghi thiếu liên kết hoặc có chênh lệch.
+4. Người dùng mở chi tiết nhưng không được sửa dữ liệu nguồn.
+UC-BCTK-02-03 – Chuyển sang xuất báo cáo
+1. Người dùng chọn “Xuất báo cáo”.
+2. Hệ thống chuyển loại báo cáo, bộ lọc và data_as_of sang FR-BCTK-03.
+6. Yêu cầu chức năng
+7. Chỉ số và công thức
+Công thức M-FIN-10 là khung đề xuất và chỉ có hiệu lực sau khi chính sách tài chính phê duyệt: [CẦN CHỐT].
+8. Dữ liệu vào và đầu ra
+Mỗi dòng chi tiết tối thiểu gồm: order_id, htx_id, payment_id, refund_id, payout_id, loại bút toán, số tiền, tiền tệ, trạng thái, occurred_at, recorded_at, kỳ ghi nhận và correlation_id.
+9. Quy tắc nghiệp vụ
+BR-BCTK02-01: Chỉ giao dịch thành công mới được tính vào thực thu/hoàn tiền.
+BR-BCTK02-02: Mỗi bút toán chỉ được tính một lần theo mã định danh duy nhất.
+BR-BCTK02-03: Giao dịch đảo ngược hoặc điều chỉnh phải tạo bút toán đối ứng, không sửa số tiền lịch sử.
+BR-BCTK02-04: Số liệu tổng hợp phải truy vết được đến bản ghi cấu thành.
+BR-BCTK02-05: Mọi giá trị tiền dùng VND, không có phần thập phân; số âm thể hiện khoản giảm.
+BR-BCTK02-06: Mức chênh lệch được cảnh báo: [CẦN CHỐT NGƯỠNG].
+BR-BCTK02-07: Báo cáo và tệp xuất tại cùng data_as_of phải có kết quả nhất quán.
+10. Yêu cầu phi chức năng
+11. Thông báo
+12. Tiêu chí nghiệm thu
+13. Truy vết
+14. Vấn đề cần chốt
+1. Trạng thái đơn và mốc thời gian dùng để ghi nhận GMV/doanh thu.
+2. Công thức phải trả HTX, bên chịu từng loại phí, khuyến mại và hoàn tiền.
+3. Quy trình COD, giao dịch thất bại/đảo ngược và thời điểm khóa kỳ.
+4. Ngưỡng chênh lệch đối soát và người chịu trách nhiệm xử lý.
+5. Ma trận quyền Admin và trường tài chính cần che.
+Thuộc tính
+Giá trị
+Mã tài liệu
+SRS-FR-BCTK-02
+Phiên bản
+0.1 – Bản chuẩn hóa chờ phê duyệt
+Ngày cập nhật
+14/10/2026
+Phân hệ
+Báo cáo – Thống kê
+Yêu cầu nguồn
+FR-BCTK-02
+Đối tượng sử dụng
+Admin
+Thuật ngữ
+Định nghĩa
+GMV
+Tổng giá trị hàng hóa của các đơn thuộc tập ghi nhận, trước hoàn tiền và các khoản khấu trừ
+Thực thu
+Tổng số tiền hệ thống xác nhận đã thu thành công từ khách
+Hoàn tiền
+Số tiền đã hoàn thành công cho khách trong kỳ
+Thực thu ròng
+Thực thu trừ hoàn tiền
+Phí nền tảng
+Khoản phí hệ thống thu của HTX theo chính sách
+Phí thanh toán
+Khoản phí của cổng/phương thức thanh toán
+Phí vận chuyển
+Khoản tiền vận chuyển do bên chịu phí thanh toán
+Khuyến mại/tài trợ
+Khoản giảm giá được phân bổ theo bên tài trợ
+Phải trả HTX
+Nghĩa vụ thanh toán cho HTX sau các điều chỉnh được phê duyệt
+Đối soát
+So sánh dữ liệu giữa đơn hàng, giao dịch, hoàn tiền và khoản thanh toán
+Tác nhân
+Quyền
+Admin tài chính
+Xem tổng hợp, chi tiết giao dịch/đối soát và xuất báo cáo theo phạm vi được cấp
+Admin khác
+Chỉ xem nếu được cấu hình; trường nhạy cảm có thể bị che
+Hệ thống
+Tổng hợp, kiểm tra quyền, tính toán và ghi nhật ký
+Mã
+Yêu cầu
+FR-BCTK-02.01
+Hệ thống phải tổng hợp báo cáo theo kỳ và phạm vi quyền.
+FR-BCTK-02.02
+Hệ thống phải hỗ trợ lọc theo HTX, phương thức thanh toán, trạng thái giao dịch và trạng thái đối soát.
+FR-BCTK-02.03
+Hệ thống phải hiển thị GMV, thực thu, hoàn tiền, thực thu ròng, các khoản phí/điều chỉnh và phải trả HTX.
+FR-BCTK-02.04
+Hệ thống phải cho phép xem danh sách bản ghi cấu thành mỗi chỉ số.
+FR-BCTK-02.05
+Hệ thống phải liên kết đơn hàng với giao dịch, hoàn tiền và khoản thanh toán bằng mã tham chiếu.
+FR-BCTK-02.06
+Hệ thống phải đánh dấu bản ghi thiếu liên kết, trùng lặp hoặc có chênh lệch vượt ngưỡng.
+FR-BCTK-02.07
+Hệ thống phải hiển thị thời điểm cập nhật và kỳ ghi nhận của số liệu.
+FR-BCTK-02.08
+Hệ thống phải chuyển nguyên vẹn bộ lọc sang FR-BCTK-03.
+FR-BCTK-02.09
+Hệ thống phải ghi nhật ký truy cập, lọc, xem chi tiết và yêu cầu xuất theo FR-HT-03.
+Mã
+Chỉ số
+Công thức đề xuất
+M-FIN-01
+GMV
+Tổng giá trị hàng hóa của đơn thuộc tập ghi nhận
+M-FIN-02
+Thực thu
+Tổng giao dịch thu có trạng thái thành công
+M-FIN-03
+Hoàn tiền
+Tổng giao dịch hoàn tiền có trạng thái thành công
+M-FIN-04
+Thực thu ròng
+M-FIN-02 − M-FIN-03
+M-FIN-05
+Phí nền tảng
+Tổng phí nền tảng được ghi nhận
+M-FIN-06
+Phí thanh toán
+Tổng phí cổng/phương thức thanh toán
+M-FIN-07
+Phí vận chuyển điều chỉnh
+Tổng khoản vận chuyển làm tăng/giảm nghĩa vụ HTX
+M-FIN-08
+Khuyến mại HTX chịu
+Tổng phần khuyến mại phân bổ cho HTX
+M-FIN-09
+Điều chỉnh khác
+Tổng bút toán điều chỉnh tăng/giảm đã duyệt
+M-FIN-10
+Phải trả HTX
+Thực thu phân bổ cho HTX − hoàn tiền HTX chịu − M-FIN-05 − M-FIN-06 ± M-FIN-07 − M-FIN-08 ± M-FIN-09
+M-FIN-11
+Chênh lệch đối soát
+Giá trị kỳ vọng − giá trị đã đối soát/thanh toán
+Trường lọc
+Bắt buộc
+Quy tắc
+from_at, to_at
+Có
+from_at ≤ to_at; theo Asia/Ho_Chi_Minh
+htx_id
+Không
+Phải thuộc phạm vi quyền
+payment_method
+Không
+Giá trị thuộc danh mục được cấu hình
+payment_status
+Không
+Giá trị thuộc vòng đời giao dịch
+reconciliation_status
+Không
+matched/unmatched/difference/pending hoặc danh mục được duyệt
+Mã
+Yêu cầu
+NFR-BCTK02-01
+95% truy vấn tổng hợp kỳ ≤ 12 tháng hoàn tất trong ≤ 5 giây [CẦN CHỐT SLA].
+NFR-BCTK02-02
+100% API phải kiểm tra xác thực, quyền vai trò và phạm vi dữ liệu phía máy chủ.
+NFR-BCTK02-03
+Phép tính tiền phải dùng kiểu số nguyên/decimal chính xác, không dùng số thực nhị phân.
+NFR-BCTK02-04
+Dữ liệu phải truy vết được từ chỉ số đến bút toán nguồn và lịch sử thay đổi.
+NFR-BCTK02-05
+Dữ liệu nhạy cảm trong log và màn hình phải được che theo chính sách.
+Mã
+Nội dung
+BCTK02-V01
+Bộ lọc báo cáo không hợp lệ.
+BCTK02-A01
+Bạn không có quyền xem dữ liệu tài chính đã chọn.
+BCTK02-E01
+Chưa thể tải báo cáo doanh thu. Vui lòng thử lại.
+Mã
+Given
+When
+Then
+AC-BCTK02-01
+Có đơn và giao dịch thu thành công trong kỳ
+Mở báo cáo
+GMV và thực thu được tính đúng quy tắc
+AC-BCTK02-02
+Có hoàn tiền thành công
+Tải lại báo cáo
+Hoàn tiền tăng và thực thu ròng giảm đúng số tiền
+AC-BCTK02-03
+Một giao dịch được gửi lặp cùng mã
+Tổng hợp
+Giao dịch chỉ được tính một lần
+AC-BCTK02-04
+Thiếu liên kết giữa giao dịch và đơn
+Xem đối soát
+Bản ghi được đánh dấu chưa khớp
+AC-BCTK02-05
+Người dùng không có quyền tài chính
+Gọi màn hình/API
+Hệ thống từ chối, không lộ dữ liệu
+AC-BCTK02-06
+Người dùng lọc theo HTX và kỳ
+Mở chi tiết
+Tổng các dòng cấu thành khớp chỉ số tại cùng data_as_of
+AC-BCTK02-07
+Người dùng chọn xuất
+Chuyển FR-BCTK-03
+Bộ lọc và data_as_of được giữ nguyên
+Yêu cầu nguồn
+Ca sử dụng
+Yêu cầu chi tiết
+Tiêu chí nghiệm thu
+FR-BCTK-02
+UC-BCTK-02-01 → 03
+FR-BCTK-02.01 → 09
+AC-BCTK02-01 → 07

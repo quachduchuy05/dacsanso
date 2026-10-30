@@ -1,0 +1,26 @@
+import {useEffect,useState} from 'react';
+import {api} from '../store/backend';
+import {useUi} from '../app/UiContext';
+import {useStore} from '../store/AppDataContext';
+import {Field,Input,Textarea,SecondaryButton} from './form';
+
+type Adjustment={id:string;orderId:string;amount:number;evidence:string;note:string;status:string;createdBy:string;ledgerId?:string;history:{action:string;note:string;at:string}[]};
+export function AdjustmentProposal({sessionId,rowIndex,amount,onSaved}:{sessionId:string;rowIndex:number;amount:number;onSaved:()=>Promise<unknown>}){
+  const [evidence,setEvidence]=useState(''),[note,setNote]=useState(''),[confirm,setConfirm]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
+  return <details className="min-w-72"><summary className="min-h-11 cursor-pointer">Đề xuất bút toán điều chỉnh</summary><form className="space-y-2" onSubmit={async e=>{e.preventDefault();setBusy(true);setMessage('');try{const r=await api('/api/v1/reconciliation-adjustments',{action:'propose',sessionId,rowIndex,amount,evidence,note,confirm});setMessage(r.duplicate?'Dòng này đã có đề xuất hoặc bút toán.':'Đã gửi đề xuất cho nhân viên Tài chính khác duyệt.');await onSaved();window.dispatchEvent(new Event('adjustments-updated'));}catch(e){setMessage(e instanceof Error?e.message:'Không lập được đề xuất.');}finally{setBusy(false);}}}>
+    <p>Số tiền có dấu: <strong>{amount.toLocaleString('vi-VN')}đ</strong>. Với hoàn tiền, dấu ngược chiều tiền thu. Không tự chuyển tiền hoặc sửa công nợ HTX.</p>
+    <Field label="Mã chứng từ điều chỉnh"><Input required minLength={3} maxLength={100} value={evidence} onChange={e=>setEvidence(e.target.value)}/></Field><Field label="Giải trình điều chỉnh"><Textarea required minLength={20} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}/></Field><label className="flex min-h-11 items-center gap-2"><input required type="checkbox" checked={confirm} onChange={e=>setConfirm(e.target.checked)}/>Đã kiểm tra chứng từ và chênh lệch</label><SecondaryButton disabled={busy}>Gửi đề xuất điều chỉnh</SecondaryButton>{message&&<p role="status">{message}</p>}
+  </form></details>;
+}
+export function ReconciliationAdjustments(){
+  const [items,setItems]=useState<Adjustment[]>([]),[message,setMessage]=useState(''),{syncNow}=useStore();
+  const load=async()=>{try{setItems((await api('/api/v1/reconciliation-adjustments')).items);}catch(e){setMessage(e instanceof Error?e.message:'Không tải được đề xuất.');}};
+  useEffect(()=>{void load();const reload=()=>void load();window.addEventListener('adjustments-updated',reload);return()=>window.removeEventListener('adjustments-updated',reload);},[]);
+  return <section className="space-y-3 rounded border p-3"><h3 className="font-semibold">Duyệt bút toán chênh lệch</h3><p className="text-sm">Hai nhân viên Tài chính độc lập lập và duyệt. Bút toán chỉ thêm vào sổ; không sửa đơn, kỳ đã chốt hoặc tự xác nhận chuyển tiền. Các chính sách phí và giữ tiền tiếp tục theo tham số đã được duyệt.</p><SecondaryButton onClick={()=>void load()}>Làm mới đề xuất điều chỉnh</SecondaryButton>{items.map(item=><AdjustmentRow key={item.id} item={item} onSaved={async()=>{await load();syncNow();}}/>)}{!items.length&&<p className="text-sm">Chưa có đề xuất điều chỉnh.</p>}{message&&<p role="status">{message}</p>}</section>;
+}
+function AdjustmentRow({item,onSaved}:{item:Adjustment;onSaved:()=>Promise<void>}){
+  const {user}=useUi(),[note,setNote]=useState(''),[confirm,setConfirm]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
+  const act=async(action:string)=>{setBusy(true);setMessage('');try{await api('/api/v1/reconciliation-adjustments',{action,id:item.id,note,confirm});await onSaved();}catch(e){setMessage(e instanceof Error?e.message:'Không xử lý được.');}finally{setBusy(false);}};
+  const labels:Record<string,string>={proposed:'Chờ duyệt',posted:'Đã ghi sổ',rejected:'Đã từ chối',cancelled:'Đã rút'};
+  return <article className="space-y-2 border-t pt-3 text-sm"><p className="font-semibold">Đơn {item.orderId} · {item.amount.toLocaleString('vi-VN')}đ · {labels[item.status]}</p><p>Chứng từ: {item.evidence} · Người lập: {item.createdBy}</p><p>{item.note}</p>{item.ledgerId&&<p>Mã dòng sổ: {item.ledgerId}</p>}{item.history.map((h,index)=><p key={index}>{new Date(h.at).toLocaleString('vi-VN')}: {h.note}</p>)}{item.status==='proposed'&&<div className="space-y-2"><Field label="Căn cứ xử lý bút toán"><Textarea minLength={20} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}/></Field>{user?.id===item.createdBy?<SecondaryButton disabled={busy||note.trim().length<20} onClick={()=>void act('cancel')}>Rút đề xuất</SecondaryButton>:<><label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={confirm} onChange={e=>setConfirm(e.target.checked)}/>Đã kiểm tra chứng từ và số tiền độc lập</label><SecondaryButton disabled={busy||!confirm||note.trim().length<20} onClick={()=>void act('approve')}>Duyệt và thêm dòng sổ</SecondaryButton><SecondaryButton disabled={busy||note.trim().length<20} onClick={()=>void act('reject')}>Từ chối đề xuất</SecondaryButton></>}</div>}{message&&<p role="alert">{message}</p>}</article>;
+}

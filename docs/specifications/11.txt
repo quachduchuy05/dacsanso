@@ -1,0 +1,712 @@
+# Quỳnh Anh_đặc tả chức năng_8/10
+Nguồn: https://docs.google.com/document/d/1uOKzilRqRh680uGmr7u6p08dBC9v8BMpeRNhr-xWZI0/edit?usp=drivesdk
+
+﻿FUNCTIONAL SPECIFICATION
+APP ĐẶC SẢN BẮC GIANG
+Chăm sóc khách hàng & Quản lý sản phẩm
+ 
+
+
+1. Mục tiêu, phạm vi và quy ước
+Tài liệu mô tả mục đích, tác nhân, điều kiện, luồng chính, ngoại lệ, dữ liệu, quy tắc nghiệp vụ, phân quyền, tiêu chí nghiệm thu và mô tả giao diện mức khung cho 5 chức năng được giao.
+Mã
+	Chức năng theo bảng nguồn
+	Vai trò theo bảng nguồn
+	Phạm vi
+	FR-CSKH-06
+	Kiểm duyệt đánh giá
+	Admin: Có
+	Admin xử lý đánh giá
+	FR-CSKH-07
+	Danh sách ticket
+	Admin: Có; Cơ quan QLNN: Tổng hợp
+	Admin xem danh sách; QLNN xem số liệu tổng hợp
+	FR-CSKH-08
+	Phản hồi ticket
+	HTX: Của mình; Admin: Có
+	HTX phản hồi ticket của mình; Admin theo quyền
+	FR-CSKH-09
+	Kết luận, đóng ticket
+	Admin: Có
+	Admin kết luận và đóng ticket
+	FR-SP-01
+	Tạo danh mục sản phẩm
+	HTX: Có
+	HTX tạo danh mục trong phạm vi được cấp
+	 
+2. Phân quyền
+Vai trò
+	Quyền đã có căn cứ
+	Giới hạn/điểm cần xác nhận
+	Admin
+	Kiểm duyệt đánh giá; xem danh sách ticket; phản hồi ticket; kết luận/đóng ticket.
+	Phạm vi dữ liệu Admin quản lý: toàn hệ thống hay theo phân công – cần xác nhận.
+	HTX
+	Phản hồi ticket của HTX mình; tạo danh mục sản phẩm.
+	Không thao tác dữ liệu HTX khác. Mô hình sở hữu danh mục cần xác nhận.
+	Cơ quan QLNN
+	Tổng hợp ticket.
+	Không mặc nhiên có quyền xem danh sách/nội dung ticket chi tiết.
+	Khách vãng lai/Khách hàng
+	Không có quyền trong 5 chức năng theo bảng nguồn.
+	Tạo đánh giá/ticket có thể thuộc chức năng khác.
+	 
+
+
+ 
+FR-CSKH-06 – Kiểm duyệt đánh giá
+Thông tin chức năng
+Thuộc tính
+	Đặc tả
+	Mục đích
+	Cho phép Admin xem xét và quyết định xử lý đánh giá theo chính sách nội dung nền tảng.
+	Tác nhân
+	Admin.
+	Điều kiện tiên quyết
+	Đã đăng nhập, có quyền kiểm duyệt; đánh giá tồn tại và thuộc phạm vi được xử lý.
+	Kích hoạt
+	Admin mở chức năng kiểm duyệt hoặc chọn một đánh giá.
+	Đầu vào
+	Mã đánh giá; hành động duyệt/từ chối; lý do từ chối nếu được yêu cầu.
+	Đầu ra
+	Kết quả xử lý, trạng thái mới và thông tin lịch sử theo quy tắc được chốt.
+	 
+Luồng chính
+1.         06-M01: Admin mở chức năng kiểm duyệt đánh giá.
+2.         06-M02: Hệ thống xác thực đăng nhập và quyền Admin.
+3.         06-M03: Hệ thống hiển thị danh sách đánh giá trong phạm vi quyền.
+4.         06-M04: Admin chọn đánh giá và xem chi tiết.
+5.         06-M05: Admin chọn Duyệt hoặc Từ chối.
+6.         06-M06: Nếu từ chối và lý do bắt buộc, Admin nhập lý do.
+7.         06-M07: Hệ thống kiểm tra quyền, trạng thái hiện tại và dữ liệu đầu vào.
+8.         06-M08: Nếu hợp lệ, hệ thống lưu quyết định/lịch sử và thông báo kết quả.
+Luồng thay thế và ngoại lệ
+Mã
+	Tình huống
+	Hành vi mong đợi
+	06-A01
+	Không có đánh giá phù hợp
+	Hiển thị trạng thái rỗng; không báo lỗi hệ thống.
+	06-A02
+	Đánh giá đã được xử lý ở phiên khác
+	Không ghi đè; tải trạng thái mới và thông báo.
+	06-E01
+	Không đủ quyền
+	Từ chối thao tác ở giao diện/API; không đổi dữ liệu.
+	06-E02
+	Thiếu lý do khi lý do bắt buộc
+	Không lưu; báo lỗi tại trường lý do.
+	06-E03
+	Lỗi lưu
+	Thông báo thất bại; không hiển thị thành công giả.
+	 
+Quy tắc nghiệp vụ
+Mã
+	Nội dung
+	Mức độ xác nhận
+	BR-REV-01
+	Chỉ Admin được kiểm duyệt theo bảng phân quyền.
+	Theo bảng nguồn
+	BR-REV-02
+	Chỉ đánh giá ở trạng thái cho phép mới được xử lý.
+	Cần xác nhận
+	BR-REV-03
+	Trạng thái chính thức và cách hiển thị sau duyệt/từ chối phải theo chính sách nền tảng.
+	Cần xác nhận
+	BR-REV-04
+	Lý do từ chối có bắt buộc không, độ dài và người được xem phải được xác định.
+	Cần xác nhận
+	BR-REV-05
+	Lưu người xử lý, thời gian, hành động và lý do nếu có để truy vết.
+	Đề xuất BA
+	 
+Dữ liệu đầu vào/đầu ra
+Trường
+	Nguồn/kiểu
+	Bắt buộc
+	Validation/ghi chú
+	Mã đánh giá
+	ID hệ thống
+	Có
+	Duy nhất; hệ thống cấp.
+	Sản phẩm
+	ID/liên kết
+	Có
+	Phải tham chiếu sản phẩm tồn tại.
+	Người đánh giá
+	Thông tin tài khoản
+	TBD
+	Chỉ hiển thị theo quyền/chính sách dữ liệu.
+	Số sao
+	Số nguyên
+	TBD
+	Miền giá trị cần đối chiếu mô hình đánh giá.
+	Nội dung đánh giá
+	Văn bản
+	TBD
+	Giới hạn ký tự và quy tắc rỗng cần chốt.
+	Trạng thái
+	Enum
+	Có
+	Tên trạng thái chính thức cần xác nhận.
+	Hành động
+	Enum
+	Có khi xử lý
+	Duyệt/Từ chối hoặc tập hành động chính thức.
+	Lý do từ chối
+	Văn bản
+	TBD
+	Bắt buộc hay tùy chọn cần xác nhận.
+	Người xử lý/thời gian
+	Audit fields
+	Khi xử lý
+	Hệ thống tự ghi nhận.
+	 
+Mô tả giao diện mức khung
+·       Danh sách: các cột được duyệt, trạng thái và hành động phù hợp quyền.
+·       Chi tiết: nội dung đánh giá, sản phẩm và thông tin người đánh giá trong phạm vi được phép.
+·       Hộp thoại từ chối có trường lý do nếu nghiệp vụ yêu cầu; có nút xác nhận/hủy.
+·       Có trạng thái tải, rỗng, lỗi và thành công; chỉ báo thành công sau khi lưu.
+  
+FR-CSKH-07 – Danh sách ticket
+Thông tin chức năng
+Thuộc tính
+	Đặc tả
+	Mục đích
+	Admin theo dõi danh sách ticket; Cơ quan QLNN xem dữ liệu tổng hợp theo quyền.
+	Tác nhân
+	Admin; Cơ quan QLNN.
+	Điều kiện tiên quyết
+	Đã đăng nhập; quyền và phạm vi dữ liệu được xác thực.
+	Kích hoạt
+	Người dùng mở Danh sách ticket.
+	Đầu vào
+	Từ khóa/bộ lọc/khoảng thời gian nếu được hỗ trợ.
+	Đầu ra
+	Admin nhận danh sách chi tiết; QLNN nhận chỉ số tổng hợp đã được duyệt.
+	 
+Luồng chính
+9.         07-M01: Người dùng mở Danh sách ticket.
+10.   07-M02: Hệ thống xác thực vai trò và phạm vi quyền.
+11.   07-M03: Với Admin, hệ thống lấy ticket trong phạm vi được cấp.
+12.   07-M04: Hệ thống hiển thị danh sách và các bộ lọc đã chốt.
+13.   07-M05: Admin nhập từ khóa/chọn bộ lọc; hệ thống trả kết quả phù hợp.
+14.   07-M06: Admin chọn ticket; hệ thống mở chi tiết nếu có quyền.
+15.   07-M07: Với QLNN, hệ thống chỉ truy vấn và hiển thị chỉ số tổng hợp đã phê duyệt.
+Luồng thay thế và ngoại lệ
+Mã
+	Tình huống
+	Hành vi mong đợi
+	07-A01
+	Không có kết quả
+	Hiển thị trạng thái rỗng và cho phép xóa bộ lọc.
+	07-A02
+	Khoảng thời gian không hợp lệ
+	Báo lỗi tại bộ lọc; không chạy truy vấn sai.
+	07-E01
+	Không đủ quyền xem danh sách
+	Từ chối truy cập; không trả dữ liệu chi tiết.
+	07-E02
+	QLNN gọi URL/API chi tiết
+	Từ chối nếu chỉ có quyền Tổng hợp.
+	07-E03
+	Lỗi tải dữ liệu
+	Hiển thị lỗi và cho phép thử lại; không giả lập dữ liệu.
+	 
+Quy tắc nghiệp vụ
+Mã
+	Nội dung
+	Mức độ xác nhận
+	BR-TKLIST-01
+	Admin chỉ xem ticket trong phạm vi quản trị được cấp.
+	Cần xác nhận phạm vi
+	BR-TKLIST-02
+	QLNN chỉ có quyền Tổng hợp; không mặc nhiên được xem ticket chi tiết.
+	Theo bảng nguồn
+	BR-TKLIST-03
+	Bộ lọc, logic kết hợp, sắp xếp mặc định và phân trang phải được xác định.
+	Cần xác nhận
+	BR-TKLIST-04
+	Mỗi chỉ số tổng hợp phải có định nghĩa, công thức, phạm vi dữ liệu và bộ lọc.
+	Cần xác nhận
+	BR-TKLIST-05
+	Không cung cấp xuất báo cáo/trường định danh nếu chưa được cấp quyền rõ ràng.
+	Đề xuất BA
+	 
+Dữ liệu đầu vào/đầu ra
+Trường
+	Nguồn/kiểu
+	Bắt buộc
+	Validation/ghi chú
+	Mã ticket
+	ID
+	Có với danh sách Admin
+	Duy nhất; mở đúng ticket.
+	Loại vấn đề
+	Danh mục
+	TBD
+	Danh mục loại ticket cần thống nhất.
+	Nội dung/tóm tắt
+	Văn bản
+	Theo quyền
+	Không hiển thị chi tiết cho QLNN nếu chỉ có Tổng hợp.
+	Trạng thái
+	Enum
+	Có với danh sách Admin
+	Danh mục trạng thái chính thức cần xác nhận.
+	Ngày tạo/cập nhật
+	Datetime
+	TBD
+	Trường lọc, định dạng và múi giờ cần chốt.
+	Người gửi/HTX
+	Thông tin liên kết
+	Theo quyền
+	Không lộ thông tin vượt quyền.
+	Chỉ số tổng hợp
+	Số liệu
+	TBD
+	Công thức, thời gian và phạm vi đếm phải được duyệt.
+	 
+Mô tả giao diện mức khung
+·       Admin: bộ lọc đã chốt, bảng danh sách, trạng thái rỗng/lỗi, phân trang nếu có và hành động mở chi tiết.
+·       QLNN: màn hình tổng hợp riêng; chỉ hiển thị chỉ số và bộ lọc được duyệt.
+·       Không mặc định bổ sung biểu đồ, xuất Excel hoặc chỉ số SLA nếu chưa có yêu cầu.
+
+
+ 
+FR-CSKH-08 – Phản hồi ticket
+Thông tin chức năng
+Thuộc tính
+	Đặc tả
+	Mục đích
+	HTX phản hồi ticket thuộc HTX mình; Admin phản hồi theo phạm vi quyền.
+	Tác nhân
+	HTX; Admin.
+	Điều kiện tiên quyết
+	Đã đăng nhập; ticket tồn tại; người dùng có quyền và trạng thái cho phép phản hồi.
+	Kích hoạt
+	Người dùng mở ticket và nhập phản hồi.
+	Đầu vào
+	Ticket ID; nội dung phản hồi; tệp đính kèm nếu được hỗ trợ.
+	Đầu ra
+	Phản hồi gắn với ticket; lịch sử trao đổi được cập nhật; trạng thái chỉ đổi theo quy tắc đã chốt.
+	 
+Luồng chính
+16.   08-M01: HTX/Admin mở ticket trong phạm vi quyền.
+17.   08-M02: Hệ thống kiểm tra quyền và trạng thái ticket.
+18.   08-M03: Hệ thống hiển thị nội dung ticket và lịch sử trong phạm vi quyền.
+19.   08-M04: Người dùng nhập phản hồi; đính kèm tệp nếu tính năng được duyệt.
+20.   08-M05: Người dùng chọn Gửi phản hồi.
+21.   08-M06: Hệ thống kiểm tra nội dung, tệp, quyền và trạng thái hiện tại.
+22.   08-M07: Nếu hợp lệ, hệ thống lưu phản hồi, người gửi và thời điểm.
+23.   08-M08: Hệ thống cập nhật lịch sử, thông báo kết quả; chỉ đổi trạng thái theo quy tắc đã xác nhận.
+Luồng thay thế và ngoại lệ
+Mã
+	Tình huống
+	Hành vi mong đợi
+	08-A01
+	Nội dung rỗng/chỉ có khoảng trắng
+	Không gửi; báo lỗi tại trường nội dung.
+	08-A02
+	Tệp không hợp lệ
+	Từ chối tệp; áp dụng nếu tính năng đính kèm được hỗ trợ.
+	08-A03
+	Ticket đã đóng/không cho phản hồi
+	Chặn gửi và hiển thị trạng thái/lý do.
+	08-E01
+	HTX truy cập ticket HTX khác
+	Từ chối ở giao diện/API; không lộ dữ liệu.
+	08-E02
+	Ticket đổi trạng thái trong lúc soạn
+	Kiểm tra lại trước lưu; không tạo phản hồi nếu không còn hợp lệ.
+	08-E03
+	Lỗi lưu/kết nối
+	Thông báo chưa gửi thành công; không tạo bản ghi trùng hoặc báo thành công giả.
+	 
+Quy tắc nghiệp vụ
+Mã
+	Nội dung
+	Mức độ xác nhận
+	BR-TKREPLY-01
+	HTX chỉ xem/phản hồi ticket của HTX mình.
+	Theo bảng nguồn
+	BR-TKREPLY-02
+	Admin phản hồi trong phạm vi quản trị được cấp.
+	Cần xác nhận phạm vi
+	BR-TKREPLY-03
+	Nội dung không rỗng sau khi loại bỏ khoảng trắng.
+	Đề xuất BA
+	BR-TKREPLY-04
+	Trạng thái được phép phản hồi phải có trong state machine chính thức.
+	Cần xác nhận
+	BR-TKREPLY-05
+	Sửa/xóa phản hồi, giới hạn ký tự và tệp đính kèm phải được chốt.
+	Cần xác nhận
+	BR-TKREPLY-06
+	Mỗi phản hồi lưu ticket, người gửi và thời gian do hệ thống ghi nhận.
+	Đề xuất BA
+	 
+Dữ liệu đầu vào/đầu ra
+Trường
+	Nguồn/kiểu
+	Bắt buộc
+	Validation/ghi chú
+	Ticket ID
+	ID
+	Có
+	Ticket tồn tại và thuộc phạm vi quyền.
+	Nội dung phản hồi
+	Văn bản
+	Có – đề xuất
+	Không rỗng; độ dài tối đa TBD.
+	Tệp đính kèm
+	Danh sách tệp
+	TBD
+	Chỉ áp dụng nếu hỗ trợ; định dạng/dung lượng/số lượng TBD.
+	Người gửi
+	User/HTX từ phiên đăng nhập
+	Có
+	Không lấy từ dữ liệu client tự khai báo.
+	Thời gian gửi
+	Datetime hệ thống
+	Có
+	Hệ thống tự ghi nhận.
+	Trạng thái ticket
+	Enum
+	Có để kiểm tra
+	Kiểm tra trạng thái tại thời điểm lưu.
+	 
+Mô tả giao diện mức khung
+·       Chi tiết ticket: mã, nội dung, trạng thái và lịch sử trao đổi theo quyền.
+·       Khu vực phản hồi: ô nhập, vùng đính kèm nếu được hỗ trợ, nút Gửi phản hồi.
+·       Trong lúc gửi, ngăn gửi lặp; chỉ báo thành công sau khi hệ thống xác nhận lưu.
+·       Lỗi hiển thị tại trường/vùng thao tác tương ứng.
+ 
+FR-CSKH-09 – Kết luận, đóng ticket
+Thông tin chức năng
+Thuộc tính
+	Đặc tả
+	Mục đích
+	Cho phép Admin ghi kết luận và đóng ticket khi đủ điều kiện nghiệp vụ.
+	Tác nhân
+	Admin.
+	Điều kiện tiên quyết
+	Đã đăng nhập, có quyền; ticket ở trạng thái được phép đóng.
+	Kích hoạt
+	Admin mở ticket và chọn kết luận/đóng ticket.
+	Đầu vào
+	Ticket ID; kết luận; xác nhận đóng nếu có.
+	Đầu ra
+	Kết luận được lưu; ticket chuyển trạng thái kết thúc đã chốt; ghi người đóng/thời gian.
+	 
+Luồng chính
+24.   09-M01: Admin mở ticket cần kết thúc xử lý.
+25.   09-M02: Hệ thống kiểm tra quyền và hiển thị trạng thái/lịch sử.
+26.   09-M03: Admin nhập kết luận.
+27.   09-M04: Admin chọn Đóng ticket.
+28.   09-M05: Hệ thống kiểm tra quyền, trạng thái hiện tại và điều kiện đóng.
+29.   09-M06: Nếu hợp lệ, hệ thống lưu kết luận, trạng thái và thông tin audit nhất quán.
+30.   09-M07: Hệ thống hiển thị kết quả; gửi thông báo nếu nghiệp vụ đã yêu cầu.
+Luồng thay thế và ngoại lệ
+Mã
+	Tình huống
+	Hành vi mong đợi
+	09-A01
+	Thiếu kết luận khi kết luận bắt buộc
+	Không đóng; báo lỗi tại trường kết luận.
+	09-A02
+	Trạng thái không cho phép đóng
+	Không đổi dữ liệu; nêu lý do.
+	09-A03
+	Ticket đã đóng ở phiên khác
+	Không ghi đè; tải trạng thái mới.
+	09-E01
+	Không đủ quyền
+	Từ chối thao tác.
+	09-E02
+	Lỗi lưu kết luận/trạng thái
+	Không để kết luận và trạng thái mâu thuẫn; thông báo thất bại.
+	09-A04
+	Gửi thông báo sau đóng thất bại
+	Kết quả đóng theo giao dịch chính; cơ chế thử lại thông báo theo thiết kế hệ thống.
+	 
+Quy tắc nghiệp vụ
+Mã
+	Nội dung
+	Mức độ xác nhận
+	BR-TKCLOSE-01
+	Chỉ Admin có quyền kết luận/đóng theo bảng phân quyền.
+	Theo bảng nguồn
+	BR-TKCLOSE-02
+	Chỉ trạng thái nguồn được phép mới có thể chuyển sang trạng thái đóng.
+	Cần xác nhận
+	BR-TKCLOSE-03
+	Kết luận có bắt buộc không và giới hạn nội dung phải được xác định.
+	Cần xác nhận
+	BR-TKCLOSE-04
+	Lưu người đóng, thời điểm đóng và kết luận để truy vết.
+	Đề xuất BA
+	BR-TKCLOSE-05
+	Phản hồi sau đóng/mở lại ticket và vai trò có quyền cần được xác định.
+	Cần xác nhận
+	BR-TKCLOSE-06
+	Người nhận và nội dung thông báo sau đóng cần được chốt.
+	Cần xác nhận
+	 
+Dữ liệu đầu vào/đầu ra
+Trường
+	Nguồn/kiểu
+	Bắt buộc
+	Validation/ghi chú
+	Ticket ID
+	ID
+	Có
+	Ticket tồn tại.
+	Kết luận xử lý
+	Văn bản
+	TBD
+	Nếu bắt buộc: không rỗng; giới hạn độ dài TBD.
+	Trạng thái trước đóng
+	Enum
+	Có
+	Kiểm tra điều kiện chuyển trạng thái.
+	Trạng thái sau đóng
+	Enum
+	Có
+	Tên chính thức cần xác nhận.
+	Người đóng
+	User ID
+	Có
+	Lấy từ phiên đăng nhập.
+	Thời gian đóng
+	Datetime
+	Có
+	Hệ thống tự ghi nhận.
+	Thông tin mở lại
+	Audit/text
+	Nếu hỗ trợ
+	Vai trò, lý do và thời gian cần xác nhận.
+	 
+Mô tả giao diện mức khung
+·       Chi tiết ticket hiển thị trạng thái hiện tại và lịch sử trao đổi.
+·       Khu vực kết luận có ô nhập và validation khớp quy tắc đã chốt.
+·       Nút Đóng ticket chỉ khả dụng với Admin có quyền và trạng thái phù hợp.
+·       Sau thành công hiển thị trạng thái mới, người đóng và thời gian.
+ 
+FR-SP-01 – Tạo danh mục sản phẩm
+Thông tin chức năng
+Thuộc tính
+	Đặc tả
+	Mục đích
+	Cho phép HTX tạo danh mục sản phẩm trong phạm vi quyền.
+	Tác nhân
+	HTX.
+	Điều kiện tiên quyết
+	HTX đã đăng nhập, tài khoản hoạt động và có quyền quản lý danh mục.
+	Kích hoạt
+	HTX mở Quản lý danh mục và chọn Tạo danh mục.
+	Đầu vào
+	Tên, mô tả, danh mục cha/trạng thái nếu mô hình hỗ trợ.
+	Đầu ra
+	Danh mục mới được lưu trong đúng phạm vi sở hữu; hiển thị kết quả.
+	 
+Luồng chính
+31.   SP01-M01: HTX mở Quản lý danh mục sản phẩm.
+32.   SP01-M02: Hệ thống xác thực đăng nhập và quyền.
+33.   SP01-M03: HTX chọn Tạo danh mục; hệ thống hiển thị biểu mẫu.
+34.   SP01-M04: HTX nhập dữ liệu và chọn Lưu.
+35.   SP01-M05: Hệ thống kiểm tra trường bắt buộc, định dạng, độ dài và trùng tên theo quy tắc đã chốt.
+36.   SP01-M06: Hệ thống xác định HTX sở hữu từ phiên đăng nhập, không tin mã HTX tự gửi từ client.
+37.   SP01-M07: Nếu hợp lệ, tạo danh mục; nếu không hợp lệ, giữ dữ liệu nhập và chỉ rõ lỗi.
+Luồng thay thế và ngoại lệ
+Mã
+	Tình huống
+	Hành vi mong đợi
+	SP01-A01
+	Thiếu tên nếu tên được chốt là bắt buộc
+	Không lưu; báo lỗi tại trường tên.
+	SP01-A02
+	Tên trùng theo phạm vi quy định
+	Không lưu nếu chính sách cấm trùng; thông báo phù hợp.
+	SP01-A03
+	Danh mục cha không hợp lệ
+	Áp dụng nếu hỗ trợ cây danh mục; không lưu và nêu lỗi.
+	SP01-E01
+	Chưa đăng nhập/không đủ quyền
+	Từ chối truy cập.
+	SP01-E02
+	Request gán danh mục cho HTX khác
+	Không tạo dữ liệu trái quyền.
+	SP01-E03
+	Lỗi lưu
+	Thông báo thất bại; không báo tạo thành công giả.
+	 
+Quy tắc nghiệp vụ
+Mã
+	Nội dung
+	Mức độ xác nhận
+	BR-CAT-01
+	Danh mục gắn với HTX đang đăng nhập nếu mô hình là danh mục riêng theo HTX.
+	Cần xác nhận mô hình sở hữu
+	BR-CAT-02
+	Tên bắt buộc, độ dài và ký tự hợp lệ phải được xác định.
+	Cần xác nhận
+	BR-CAT-03
+	Phạm vi kiểm tra trùng tên (theo HTX/toàn hệ thống) phải được xác định.
+	Cần xác nhận
+	BR-CAT-04
+	Danh mục một cấp hay nhiều cấp phải được xác định.
+	Cần xác nhận
+	BR-CAT-05
+	Có cần Admin duyệt và trạng thái mặc định là gì phải được xác định.
+	Cần xác nhận
+	BR-CAT-06
+	Quy tắc xóa/đổi tên/ngừng hoạt động khi đã gắn sản phẩm phải được xác định.
+	Cần xác nhận
+	BR-CAT-07
+	Cách sử dụng danh mục khi HTX tạo sản phẩm phải khớp mô hình sản phẩm.
+	Cần xác nhận
+	 
+Dữ liệu đầu vào/đầu ra
+Trường
+	Nguồn/kiểu
+	Bắt buộc
+	Validation/ghi chú
+	Tên danh mục
+	Văn bản
+	TBD
+	Trim khoảng trắng; độ dài/ký tự hợp lệ TBD.
+	Mô tả
+	Văn bản
+	TBD
+	Giới hạn độ dài TBD.
+	Danh mục cha
+	ID
+	Nếu hỗ trợ cây
+	Phải tồn tại và hợp lệ.
+	HTX sở hữu
+	HTX ID
+	Có nếu danh mục riêng HTX
+	Lấy từ phiên đăng nhập; không cho tự gán.
+	Trạng thái
+	Enum
+	Theo mô hình
+	Trạng thái mặc định/quy trình duyệt TBD.
+	Người tạo/thời gian
+	Audit fields
+	Có
+	Hệ thống tự ghi nhận.
+	 
+Mô tả giao diện mức khung
+·       Danh sách danh mục: nút Tạo danh mục, bảng danh sách, trạng thái rỗng/lỗi.
+·       Biểu mẫu chỉ gồm các trường đã được chốt; nút Lưu và Hủy; đánh dấu trường bắt buộc.
+·       Không cho người dùng sửa trường HTX sở hữu nếu hệ thống tự xác định theo tài khoản.
+·       Lỗi hiển thị tại trường tương ứng; chỉ báo thành công sau khi lưu.
+
+
+ 
+8. Bảng trạng thái và chuyển trạng thái
+Chưa có state machine chính thức trong thông tin nguồn. Bảng dưới đây là danh sách chuyển trạng thái cần xác nhận, không phải quy trình đã được phê duyệt.
+	 
+Đối tượng
+	Trạng thái nguồn
+	Hành động
+	Trạng thái đích
+	Quyền/điều kiện
+	Đánh giá
+	TBD
+	Admin duyệt
+	TBD
+	Trạng thái nguồn và điều kiện hiển thị cần chốt.
+	Đánh giá
+	TBD
+	Admin từ chối
+	TBD
+	Lý do từ chối và cách thông báo cần chốt.
+	Ticket
+	TBD
+	Admin kết luận/đóng
+	Trạng thái đóng chính thức – TBD
+	Quyền Admin và điều kiện đóng.
+	Ticket
+	Đã đóng (nếu có)
+	Mở lại
+	TBD
+	Có hỗ trợ mở lại không; ai có quyền/lý do gì.
+	Ticket
+	TBD
+	HTX/Admin phản hồi
+	TBD
+	Phản hồi có đổi trạng thái hay không.
+	Danh mục
+	Mới tạo
+	Duyệt/kích hoạt
+	TBD
+	Có quy trình duyệt và trạng thái nào không.
+	 
+9. Open Issues – Các quyết định cần xác nhận
+ID
+	Câu hỏi cần chốt
+	Ảnh hưởng
+	Ưu tiên
+	Người xác nhận
+	OI-01
+	Đánh giá có cần duyệt trước khi công khai? Trạng thái chính thức là gì?
+	FR-CSKH-06
+	P0
+	PO/Lead BA
+	OI-02
+	Từ chối đánh giá có bắt buộc lý do không? Ai được xem lý do?
+	FR-CSKH-06
+	P0
+	PO/Lead BA
+	OI-03
+	Admin xem tất cả ticket hay ticket được phân công?
+	FR-CSKH-07/08/09
+	P0
+	PO/Lead BA
+	OI-04
+	QLNN được xem chỉ số nào, công thức và bộ lọc nào?
+	FR-CSKH-07
+	P0
+	PO/Stakeholder
+	OI-05
+	Trạng thái ticket chính thức và điều kiện chuyển trạng thái là gì?
+	FR-CSKH-07/08/09
+	P0
+	PO/Lead BA
+	OI-06
+	HTX phản hồi ticket đã đóng được không? Có chức năng mở lại không?
+	FR-CSKH-08/09
+	P0
+	PO/Lead BA
+	OI-07
+	Kết luận bắt buộc trước khi đóng không? Có gửi thông báo sau đóng không?
+	FR-CSKH-09
+	P0
+	PO/Lead BA
+	OI-08
+	Danh mục là riêng từng HTX hay dùng chung toàn sàn?
+	FR-SP-01
+	P0
+	PO/Lead BA
+	OI-09
+	Tên danh mục trùng kiểm tra trong phạm vi nào? Danh mục có nhiều cấp không?
+	FR-SP-01
+	P0
+	PO/Lead BA
+	OI-10
+	Danh mục cần Admin duyệt không? Danh mục đã gắn sản phẩm có được xóa không?
+	FR-SP-01
+	P0
+	PO/Lead BA
+	OI-11
+	Phản hồi có hỗ trợ file? Nếu có, định dạng/dung lượng/số lượng?
+	FR-CSKH-08
+	P1
+	PO/Lead BA
+	OI-12
+	Bộ lọc, phân trang, sắp xếp và trường hiển thị từng màn hình là gì?
+	Các chức năng liên quan
+	P1
+	PO/UX/UI

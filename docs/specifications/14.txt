@@ -1,0 +1,592 @@
+# Đặc tả UC HTX - Nguyễn Khải
+Nguồn: https://docs.google.com/document/d/1t9Xle-iygLIPksIb8jLtlu3W1Nm_iQe7TVXdTmzdfIw/edit?usp=drivesdk
+
+﻿UC-HTX-01 – Quản lý hồ sơ HTX
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-01 – Quản lý hồ sơ HTX
+	Danh sách chức năng
+	Quản lý hồ sơ HTX – FR-HTX-01
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là HTX, tôi muốn nộp, xem và chỉnh sửa hồ sơ HTX để hoàn thiện thông tin đăng ký và gửi hồ sơ phê duyệt.
+	Điều kiện trước
+	1. HTX có quyền truy cập chức năng quản lý hồ sơ.
+2. Hệ thống hoạt động bình thường.
+	Kích hoạt UC
+	HTX chọn chức năng Hồ sơ HTX.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX đăng nhập vào hệ thống.
+2. HTX chọn chức năng Hồ sơ HTX.
+3. Hệ thống hiển thị thông tin hồ sơ HTX.
+4. HTX nhập hoặc cập nhật thông tin bắt buộc gồm tên HTX, mã số thuế, số điện thoại, địa chỉ và thông tin người đại diện.
+5. HTX bổ sung giấy phép và giấy chứng nhận theo yêu cầu.
+6. HTX gửi hồ sơ.
+7. Hệ thống kiểm tra tính đầy đủ của thông tin và hồ sơ.
+8. Hệ thống lưu hồ sơ và chuyển sang trạng thái Chờ duyệt.
+9. Hệ thống thông báo trạng thái hồ sơ cho HTX.
+	Luồng thay thế
+	A1 – Lưu thông tin chưa gửi duyệt: HTX chỉnh sửa thông tin → chọn lưu → hệ thống lưu thay đổi ở trạng thái có thể tiếp tục hoàn thiện.
+A2 – Bổ sung hồ sơ sau khi bị từ chối: HTX xem lý do từ chối → chỉnh sửa/bổ sung hồ sơ → gửi lại → hệ thống chuyển hồ sơ về trạng thái Chờ duyệt.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Hồ sơ đang được kiểm tra: hệ thống khóa chức năng chỉnh sửa và thông báo hồ sơ đang được kiểm tra.
+E2 – Thiếu thông tin hoặc giấy tờ: hệ thống yêu cầu HTX bổ sung trước khi gửi hồ sơ.
+E3 – HTX đã tồn tại trên hệ thống: Hệ thống kiểm tra thông tin định danh; nếu HTX đã tồn tại thì không cho phép đăng ký trùng và hiển thị thông báo. 
+	Điều kiện sau
+	Trường hợp thành công: hồ sơ được lưu và gửi sang trạng thái Chờ duyệt.
+Trường hợp hồ sơ bị từ chối: HTX xem được lý do và có thể chỉnh sửa/bổ sung để gửi lại.
+	Yêu cầu/Business Rule
+	BR-HTX-01: Mỗi HTX chỉ được đăng ký một tài khoản HTX trong phạm vi hệ thống.
+BR-HTX-02: HTX phải cung cấp đầy đủ thông tin bắt buộc và hồ sơ chứng minh theo quy định trước khi gửi hồ sơ phê duyệt.
+BR-HTX-03: Hồ sơ HTX đang ở trạng thái Chờ duyệt không được phép chỉnh sửa.
+BR-HTX-07: HTX có hồ sơ bị từ chối chỉ được gửi lại hồ sơ sau khi bổ sung hoặc chỉnh sửa theo yêu cầu của hệ thống.
+	Giao diện
+	Màn hình Hồ sơ HTX: hiển thị thông tin HTX, trạng thái hồ sơ, giấy tờ đã nộp và chức năng chỉnh sửa/gửi hồ sơ.
+	
+
+UC-HTX-02 – Quản lý danh sách và hồ sơ HTX chờ duyệt
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-02 – Quản lý danh sách và hồ sơ HTX chờ duyệt
+	Danh sách chức năng
+	Quản lý danh sách và hồ sơ HTX chờ duyệt – FR-HTX-02
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Admin
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là Admin, tôi muốn xem danh sách HTX và các hồ sơ đang chờ duyệt để lựa chọn hồ sơ cần kiểm tra và xử lý.
+	Điều kiện trước
+	1. Admin đã đăng nhập hệ thống.
+2. Admin có quyền quản lý hồ sơ HTX.
+3. Hệ thống có dữ liệu hồ sơ HTX.
+	Kích hoạt UC
+	Admin chọn chức năng Danh sách HTX/Hồ sơ chờ duyệt.
+	Luồng sự kiện chính (Happy Case)
+	1. Admin mở chức năng quản lý HTX.
+2. Hệ thống hiển thị danh sách HTX.
+3. Hệ thống hiển thị trạng thái xử lý của từng hồ sơ.
+4. Admin chọn trạng thái Chờ duyệt để xem các hồ sơ cần xử lý.
+5. Admin chọn một hồ sơ.
+6. Hệ thống hiển thị thông tin HTX và giấy tờ đã nộp.
+7. Admin xem hồ sơ để thực hiện bước kiểm tra/phê duyệt.
+	Luồng thay thế
+	A1 – Không có hồ sơ chờ duyệt: hệ thống hiển thị danh sách rỗng và trạng thái tương ứng.
+A2 – Chọn hồ sơ đã xử lý: hệ thống hiển thị trạng thái và kết quả xử lý của hồ sơ.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Hồ sơ không tồn tại hoặc không còn ở trạng thái Chờ duyệt: hệ thống thông báo trạng thái hiện tại và không cho Admin xử lý hồ sơ theo luồng chờ duyệt.
+	Điều kiện sau
+	Admin xem được danh sách và thông tin hồ sơ HTX theo trạng thái; hồ sơ được chọn sẵn sàng cho bước kiểm tra.
+	Yêu cầu/Business Rule
+	BR-HTX-04: Admin phải kiểm tra thông tin hồ sơ và giấy tờ của HTX trước khi phê duyệt.
+	Giao diện
+	Màn hình Danh sách HTX – Admin: hiển thị danh sách, trạng thái hồ sơ và chức năng xem chi tiết.
+	
+
+UC-HTX-03 – Phê duyệt hồ sơ HTX
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-03 – Phê duyệt hồ sơ HTX
+	Danh sách chức năng
+	Phê duyệt hồ sơ HTX – FR-HTX-03
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Admin
+	Tác nhân phụ
+	Hệ thống; HTX
+	Mô tả
+	Là Admin, tôi muốn kiểm tra và phê duyệt hoặc từ chối hồ sơ HTX để xác định HTX có đủ điều kiện hoạt động trên hệ thống.
+	Điều kiện trước
+	1. Hồ sơ HTX đã được gửi thành công và đang ở trạng thái Chờ duyệt.
+2. Hồ sơ có đầy đủ thông tin và giấy tờ cần thiết để Admin thực hiện kiểm tra.
+3. Admin đã đăng nhập và có quyền phê duyệt hồ sơ HTX.
+4. Hệ thống đang hoạt động bình thường.
+	Kích hoạt UC
+	Admin chọn một hồ sơ HTX trong danh sách chờ duyệt và mở chức năng xử lý.
+	Luồng sự kiện chính (Happy Case)
+	1. Admin mở hồ sơ HTX cần xử lý.
+2. Hệ thống hiển thị thông tin đăng ký và các giấy tờ HTX đã nộp.
+3. Admin kiểm tra thông tin hồ sơ và giấy tờ của HTX.
+4. Admin xác nhận Phê duyệt hồ sơ.
+5. Hệ thống kiểm tra và ghi nhận kết quả phê duyệt.
+6. Hệ thống cập nhật trạng thái hồ sơ thành Đã phê duyệt.
+7. Hệ thống ghi nhận hồ sơ đã được phê duyệt và đủ điều kiện chuyển sang bước kích hoạt quyền bán hàng.
+8. Hệ thống thông báo kết quả phê duyệt cho HTX.
+	Luồng thay thế
+	A1 – Hồ sơ cần bổ sung:
+1. Admin phát hiện thông tin hoặc giấy tờ chưa đầy đủ.
+2. Admin yêu cầu HTX bổ sung hoặc chỉnh sửa hồ sơ.
+3. Hệ thống ghi nhận yêu cầu bổ sung và thông báo cho HTX.
+4. HTX bổ sung/chỉnh sửa thông tin hoặc giấy tờ theo yêu cầu.
+5. HTX gửi lại hồ sơ.
+6. Hệ thống chuyển hồ sơ về trạng thái Chờ duyệt.
+7. Admin thực hiện kiểm tra lại hồ sơ.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Từ chối hồ sơ: Admin chọn chức năng Từ chối hồ sơ Hệ thống yêu cầu Admin nhập lý do từ chối. Admin nhập lý do và xác nhận từ chối. Hệ thống lưu kết quả và lý do từ chối. Hệ thống cập nhật trạng thái hồ sơ thành Từ chối. Hệ thống thông báo kết quả và lý do từ chối cho HTX.
+E2 – Hồ sơ không còn ở trạng thái Chờ duyệt: Hệ thống kiểm tra trạng thái hồ sơ. Nếu hồ sơ đã được xử lý hoặc không còn ở trạng thái Chờ duyệt, hệ thống thông báo trạng thái hiện tại. Hệ thống không cho phép Admin tiếp tục thực hiện thao tác phê duyệt/từ chối theo luồng này.
+E3 – Thiếu giấy tờ bắt buộc: Hệ thống hoặc Admin phát hiện hồ sơ thiếu giấy phép hoặc giấy chứng nhận theo yêu cầu. Hệ thống thông báo hồ sơ chưa đủ điều kiện xử lý. Admin yêu cầu HTX bổ sung giấy tờ. HTX bổ sung và gửi lại hồ sơ để tiếp tục kiểm tra.
+	Điều kiện sau
+	Trường hợp phê duyệt: hồ sơ được lưu kết quả Đã phê duyệt và đủ điều kiện chuyển sang bước kích hoạt.
+Trường hợp từ chối: hồ sơ chuyển sang trạng thái từ chối, có lý do và HTX được phép bổ sung/gửi lại theo quy định.
+	Yêu cầu/Business Rule
+	BR-HTX-04: Admin phải kiểm tra thông tin hồ sơ và giấy tờ của HTX trước khi phê duyệt.
+BR-HTX-05: Khi từ chối hồ sơ HTX, Admin phải ghi nhận lý do từ chối.
+BR-HTX-07: HTX có hồ sơ bị từ chối chỉ được gửi lại hồ sơ sau khi bổ sung hoặc chỉnh sửa theo yêu cầu của hệ thống.
+	Giao diện
+	Màn hình Chi tiết hồ sơ HTX – Admin: hiển thị thông tin, giấy tờ và chức năng Phê duyệt/Từ chối; Màn hình Kết quả xử lý: hiển thị trạng thái và lý do từ chối nếu có.
+	
+
+UC-HTX-04 – Kích hoạt và tạm khóa quyền bán của HTX
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-04 – Kích hoạt và tạm khóa quyền bán của HTX
+	Danh sách chức năng
+	Kích hoạt và tạm khóa quyền bán của HTX – FR-HTX-04
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Admin
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là Admin, tôi muốn kích hoạt hoặc tạm khóa quyền bán hàng của HTX để kiểm soát trạng thái hoạt động bán hàng của HTX trên hệ thống.
+	Điều kiện trước
+	1. HTX đã có hồ sơ trên hệ thống.
+2. Admin có quyền quản lý trạng thái hoạt động của HTX.
+	Kích hoạt UC
+	Admin mở thông tin HTX và chọn chức năng Kích hoạt hoặc Tạm khóa quyền bán.
+	Luồng sự kiện chính (Happy Case)
+	1. Admin mở hồ sơ HTX.
+2. Hệ thống hiển thị trạng thái hiện tại của HTX.
+3. Admin chọn Kích hoạt quyền bán đối với HTX đủ điều kiện.
+4. Hệ thống cập nhật trạng thái HTX.
+5. Hệ thống cho phép HTX thực hiện các chức năng bán hàng theo quyền được cấp.
+	Luồng thay thế
+	A1 – Tạm khóa quyền bán: Admin chọn Tạm khóa → hệ thống cập nhật trạng thái HTX → quyền bán hàng của HTX bị tạm khóa.
+A2 – Kích hoạt lại: Admin chọn Kích hoạt đối với HTX đủ điều kiện → hệ thống khôi phục quyền bán hàng.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – HTX chưa được phê duyệt: hệ thống không cho phép kích hoạt quyền bán.
+E2 – HTX không đáp ứng điều kiện hoạt động: Admin thực hiện tạm khóa quyền bán theo quy định.
+	Điều kiện sau
+	Trạng thái quyền bán của HTX được cập nhật theo quyết định của Admin.
+	Yêu cầu/Business Rule
+	BR-HTX-06: Chỉ HTX đã được Admin phê duyệt và kích hoạt mới được phép đăng bán sản phẩm.
+BR-HTX-08: Admin có quyền tạm khóa quyền bán hàng của HTX khi HTX không đáp ứng điều kiện hoạt động theo quy định của hệ thống.
+	Giao diện
+	Màn hình Chi tiết HTX – Admin: hiển thị trạng thái HTX và chức năng Kích hoạt/Tạm khóa quyền bán.
+	
+
+UC-HTX-05 – Quản lý danh sách sản phẩm của HTX
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-05 – Quản lý danh sách sản phẩm của HTX
+	Danh sách chức năng
+	Quản lý danh sách sản phẩm của HTX – FR-HTX-05
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là HTX, tôi muốn xem danh sách các sản phẩm thuộc HTX theo trạng thái để theo dõi tình trạng quản lý và bán sản phẩm.
+	Điều kiện trước
+	1. HTX đã đăng nhập.
+2. HTX có quyền xem sản phẩm thuộc phạm vi quản lý.
+	Kích hoạt UC
+	HTX chọn chức năng Danh sách sản phẩm của HTX.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX mở chức năng Danh sách sản phẩm.
+2. Hệ thống hiển thị các sản phẩm thuộc HTX.
+3. Hệ thống hiển thị trạng thái của từng sản phẩm.
+4. HTX chọn trạng thái cần xem như Nháp, Chờ duyệt, Đang bán, Bị từ chối hoặc Ngừng bán.
+5. Hệ thống lọc và hiển thị danh sách theo trạng thái đã chọn.
+6. HTX chọn sản phẩm để xem thông tin chi tiết.
+	Luồng thay thế
+	A1 – Không có sản phẩm ở trạng thái được chọn: hệ thống hiển thị danh sách rỗng.
+A2 – Sản phẩm bị từ chối: hệ thống hiển thị trạng thái và cho phép HTX mở thông tin để thực hiện bổ sung/chỉnh sửa theo quyền.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Sản phẩm không thuộc HTX: hệ thống không hiển thị trong phạm vi quản lý của HTX.
+	Điều kiện sau
+	HTX xem được danh sách sản phẩm thuộc phạm vi quản lý theo từng trạng thái.
+	Yêu cầu/Business Rule
+	BR-HTX-11: Sản phẩm ở trạng thái Chờ duyệt không được phép bán trên hệ thống.
+	Giao diện
+	Màn hình Danh sách sản phẩm HTX: hiển thị sản phẩm theo các trạng thái Nháp, Chờ duyệt, Đang bán, Bị từ chối, Ngừng bán.
+	
+
+UC-HTX-06 – Tạo, lưu nháp và gửi duyệt sản phẩm
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-06 – Tạo, lưu nháp và gửi duyệt sản phẩm
+	Danh sách chức năng
+	Tạo, lưu nháp và gửi duyệt sản phẩm – FR-HTX-06
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là HTX, tôi muốn tạo sản phẩm, lưu nháp và gửi sản phẩm để Admin phê duyệt trước khi sản phẩm được bán trên hệ thống.
+	Điều kiện trước
+	1. HTX đã được kích hoạt quyền bán.
+2. HTX có quyền tạo sản phẩm.
+3. Hệ thống hoạt động bình thường.
+	Kích hoạt UC
+	HTX chọn chức năng Tạo sản phẩm.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX chọn Tạo sản phẩm.
+2. Hệ thống hiển thị biểu mẫu sản phẩm.
+3. HTX nhập tên sản phẩm, danh mục, giá, số lượng tồn kho, đơn vị tính, quy cách, hạn sử dụng và thông tin mô tả.
+4. HTX cung cấp chứng nhận liên quan theo yêu cầu.
+5. HTX chọn Lưu nháp hoặc Gửi duyệt.
+6. Nếu Gửi duyệt, hệ thống kiểm tra tính đầy đủ của thông tin.
+7. Hệ thống lưu sản phẩm và chuyển sang trạng thái Chờ duyệt.
+8. Hệ thống đưa sản phẩm vào danh sách để Admin kiểm tra.
+	Luồng thay thế
+	A1 – Lưu nháp: HTX chọn Lưu nháp → hệ thống lưu sản phẩm ở trạng thái Nháp → HTX có thể tiếp tục hoàn thiện.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – HTX chưa được kích hoạt: hệ thống không cho phép tạo/gửi sản phẩm.
+E2 – Thiếu thông tin bắt buộc: hệ thống không cho gửi duyệt và hiển thị trường cần bổ sung.
+E3 – Sản phẩm ở Chờ duyệt: sản phẩm không được bán trên hệ thống.
+	Điều kiện sau
+	Sản phẩm được lưu ở trạng thái Nháp hoặc Chờ duyệt tùy thao tác của HTX.
+	Yêu cầu/Business Rule
+	BR-HTX-09: Chỉ HTX đã được kích hoạt quyền bán mới được tạo và gửi sản phẩm để phê duyệt.
+BR-HTX-10: HTX phải cung cấp đầy đủ thông tin bắt buộc của sản phẩm trước khi gửi duyệt.
+BR-HTX-11: Sản phẩm ở trạng thái Chờ duyệt không được phép bán trên hệ thống.
+	Giao diện
+	Màn hình Tạo sản phẩm: nhập thông tin sản phẩm, thông tin vận hành, chứng nhận và chức năng Lưu nháp/Gửi duyệt.
+	
+
+UC-HTX-07 – Sửa sản phẩm
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-07 – Sửa sản phẩm
+	Danh sách chức năng
+	Sửa sản phẩm – FR-HTX-07
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là HTX, tôi muốn chỉnh sửa thông tin sản phẩm thuộc phạm vi quản lý theo trạng thái sản phẩm và quy định của hệ thống.
+	Điều kiện trước
+	1. HTX đã đăng nhập.
+2. Sản phẩm thuộc phạm vi quản lý của HTX.
+3. Sản phẩm đang ở trạng thái cho phép chỉnh sửa.
+	Kích hoạt UC
+	HTX chọn một sản phẩm và chọn chức năng Chỉnh sửa.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX mở danh sách sản phẩm.
+2. HTX chọn sản phẩm thuộc phạm vi quản lý.
+3. Hệ thống kiểm tra trạng thái sản phẩm.
+4. Hệ thống hiển thị các trường được phép chỉnh sửa.
+5. HTX cập nhật thông tin.
+6. HTX lưu thay đổi.
+7. Hệ thống kiểm tra và lưu thông tin mới.
+	Luồng thay thế
+	A1 – Sản phẩm bị từ chối: HTX bổ sung/chỉnh sửa theo lý do từ chối → lưu → gửi lại để Admin kiểm tra.
+A2 – Chỉnh sửa thông tin sản phẩm được phép: HTX cập nhật các trường thông tin sản phẩm thuộc phạm vi được chỉnh sửa theo trạng thái; các thông tin vận hành Preorder, hỏa tốc và thời gian chuẩn bị được thực hiện tại UC-HTX-12. 
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Sản phẩm đang được Admin kiểm tra: hệ thống khóa các trường thuộc phạm vi kiểm tra/phê duyệt.
+E2 – Sản phẩm không thuộc HTX: hệ thống không cho phép chỉnh sửa.
+	Điều kiện sau
+	Thông tin sản phẩm được cập nhật thành công nếu đáp ứng điều kiện chỉnh sửa.
+	Yêu cầu/Business Rule
+	BR-HTX-15: HTX chỉ được chỉnh sửa sản phẩm thuộc phạm vi quản lý và phải tuân thủ điều kiện chỉnh sửa theo trạng thái sản phẩm.
+	Giao diện
+	Màn hình Chỉnh sửa sản phẩm: hiển thị các trường được phép chỉnh sửa theo trạng thái sản phẩm.
+	
+
+UC-HTX-08 – Ngừng bán, ẩn sản phẩm
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-08 – Ngừng bán, ẩn sản phẩm
+	Danh sách chức năng
+	Ngừng bán, ẩn sản phẩm – FR-HTX-08
+	Độ ưu tiên
+	Trung bình – Should Have
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là HTX, tôi muốn ngừng bán hoặc ẩn sản phẩm của mình để kiểm soát trạng thái kinh doanh của sản phẩm.
+	Điều kiện trước
+	1. HTX đã đăng nhập.
+2. Sản phẩm thuộc phạm vi quản lý của HTX.
+3. Sản phẩm đang ở trạng thái cho phép ngừng bán/ẩn.
+	Kích hoạt UC
+	HTX mở sản phẩm và chọn Ngừng bán hoặc Ẩn sản phẩm.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX mở danh sách sản phẩm.
+2. HTX chọn sản phẩm cần ngừng bán hoặc ẩn.
+3. HTX chọn chức năng tương ứng.
+4. Hệ thống yêu cầu xác nhận.
+5. HTX xác nhận.
+6. Hệ thống cập nhật trạng thái sản phẩm.
+7. Hệ thống không hiển thị sản phẩm theo trạng thái bán/hiển thị tương ứng.
+	Luồng thay thế
+	A1 – Hủy thao tác: HTX không xác nhận → hệ thống giữ nguyên trạng thái sản phẩm.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Sản phẩm không thuộc phạm vi quản lý: hệ thống không cho phép thao tác.
+	Điều kiện sau
+	Sản phẩm được chuyển sang trạng thái ngừng bán hoặc ẩn theo thao tác của HTX.
+	Yêu cầu/Business Rule
+	BR-HTX-16: HTX được phép ngừng bán hoặc ẩn sản phẩm thuộc phạm vi quản lý.
+	Giao diện
+	Màn hình Chi tiết sản phẩm: hiển thị chức năng Ngừng bán/Ẩn sản phẩm và trạng thái hiện tại.
+	
+
+UC-HTX-09 – Phê duyệt sản phẩm
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-09 – Phê duyệt sản phẩm
+	Danh sách chức năng
+	Phê duyệt sản phẩm – FR-HTX-09
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Admin
+	Tác nhân phụ
+	Hệ thống; HTX
+	Mô tả
+	Là Admin, tôi muốn kiểm tra và phê duyệt hoặc từ chối sản phẩm để chỉ các sản phẩm đáp ứng yêu cầu mới được hiển thị và bán trên ứng dụng.
+	Điều kiện trước
+	1. Sản phẩm đã được HTX gửi duyệt.
+2. Sản phẩm ở trạng thái Chờ duyệt.
+3. Sản phẩm có thông tin và chứng nhận liên quan.
+4. Admin có quyền kiểm tra và phê duyệt sản phẩm.
+5. Hệ thống hoạt động bình thường.
+	Kích hoạt UC
+	Admin mở danh sách sản phẩm chờ duyệt và chọn sản phẩm cần xử lý.
+	Luồng sự kiện chính (Happy Case)
+	1. Admin mở danh sách sản phẩm chờ duyệt.
+2. Admin chọn sản phẩm.
+3. Hệ thống hiển thị thông tin sản phẩm, chứng nhận và dữ liệu xác minh.
+4. Admin kiểm tra thông tin sản phẩm, chứng nhận liên quan và dữ liệu xác minh. 
+5. Admin xác nhận Phê duyệt sản phẩm.
+6. Hệ thống lưu kết quả phê duyệt.
+7. Hệ thống cập nhật sản phẩm thành Đã duyệt.
+8. Sản phẩm được phép chuyển sang trạng thái Đang bán theo quy định.
+9. Hệ thống hiển thị sản phẩm trên App.
+	Luồng thay thế
+	A1 – Thông tin/chứng nhận chưa đầy đủ: Admin yêu cầu bổ sung → hệ thống thông báo → HTX bổ sung/chỉnh sửa → gửi lại → Admin kiểm tra lại.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Từ chối sản phẩm: Admin chọn Từ chối → nhập lý do → hệ thống lưu kết quả → hiển thị lý do cho HTX.
+E2 – HTX chỉnh sửa trong thời gian Admin kiểm tra: hệ thống khóa các trường thuộc phạm vi kiểm tra.
+E3 – Sản phẩm chưa được duyệt: hệ thống không cho chuyển sang trạng thái Đang bán.
+	Điều kiện sau
+	Trường hợp phê duyệt: sản phẩm được cập nhật Đã duyệt và được hiển thị trên App.
+Trường hợp từ chối: sản phẩm không được hiển thị; HTX nhận lý do và có thể chỉnh sửa/gửi lại.
+	Yêu cầu/Business Rule
+	BR-HTX-12: Admin phải kiểm tra thông tin sản phẩm và hồ sơ chứng nhận liên quan trước khi phê duyệt sản phẩm.
+BR-HTX-13: Khi từ chối sản phẩm, Admin phải ghi nhận lý do từ chối.
+BR-HTX-14: Chỉ sản phẩm đã được Admin phê duyệt mới được phép chuyển sang trạng thái Đang bán.
+	Giao diện
+	Màn hình Danh sách sản phẩm chờ duyệt – Admin; Màn hình Chi tiết sản phẩm – Admin; chức năng Duyệt/Từ chối và hiển thị lý do từ chối.
+	
+
+UC-HTX-10 – Quản lý chứng nhận
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-10 – Quản lý chứng nhận
+	Danh sách chức năng
+	Quản lý chứng nhận – FR-HTX-10
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là HTX, tôi muốn thêm, gia hạn và theo dõi thời hạn chứng nhận để bảo đảm hồ sơ chứng nhận được quản lý đầy đủ và còn hiệu lực.
+	Điều kiện trước
+	1. HTX đã đăng nhập.
+2. HTX có quyền quản lý chứng nhận thuộc phạm vi của mình.
+	Kích hoạt UC
+	HTX chọn chức năng Quản lý chứng nhận.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX mở chức năng Quản lý chứng nhận.
+2. Hệ thống hiển thị danh sách chứng nhận.
+3. HTX chọn Thêm chứng nhận.
+4. HTX nhập loại chứng nhận, số chứng nhận, đơn vị cấp, ngày cấp, ngày hết hạn và tải ảnh chứng nhận.
+5. HTX lưu chứng nhận.
+6. Hệ thống ghi nhận thời hạn hiệu lực.
+7. Hệ thống theo dõi thời hạn và hiển thị cảnh báo khi chứng nhận sắp hết hạn hoặc đã hết hạn.
+8. HTX chọn Gia hạn khi cần và cập nhật thông tin chứng nhận mới.
+	Luồng thay thế
+	A1 – Gia hạn chứng nhận: HTX cập nhật thông tin chứng nhận mới → hệ thống lưu thời hạn hiệu lực mới.
+A2 – Xem chứng nhận: HTX mở chứng nhận → hệ thống hiển thị thông tin và trạng thái hiệu lực.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Thiếu trường bắt buộc: hệ thống không cho lưu và yêu cầu bổ sung.
+E2 – Chứng nhận hết hạn: hệ thống hiển thị cảnh báo trạng thái hết hạn.
+	Điều kiện sau
+	Chứng nhận được thêm hoặc gia hạn; hệ thống lưu thời hạn hiệu lực và cảnh báo theo trạng thái.
+	Yêu cầu/Business Rule
+	BR-HTX-17: Chứng nhận của HTX phải có tối thiểu loại chứng nhận, số chứng nhận, đơn vị cấp, ngày cấp, ngày hết hạn và ảnh chứng nhận theo quy định.
+BR-HTX-18: Hệ thống phải ghi nhận thời hạn hiệu lực của từng chứng nhận.
+BR-HTX-19: Hệ thống phải cảnh báo HTX khi chứng nhận sắp hết hạn hoặc đã hết hạn.
+BR-HTX-20: HTX được phép gia hạn chứng nhận thuộc phạm vi quản lý của mình.
+	Giao diện
+	Màn hình Danh sách chứng nhận; Màn hình Thêm/Gia hạn chứng nhận; hiển thị trạng thái hiệu lực và cảnh báo hết hạn.
+	
+
+UC-HTX-11 – Cập nhật tồn kho
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-11 – Cập nhật tồn kho
+	Danh sách chức năng
+	Cập nhật tồn kho – FR-HTX-11
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là HTX, tôi muốn cập nhật số lượng tồn kho của sản phẩm để hệ thống phản ánh đúng tình trạng hàng hóa và cảnh báo khi tồn kho thấp.
+	Điều kiện trước
+	1. HTX đã đăng nhập.
+2. Sản phẩm thuộc phạm vi quản lý của HTX.
+3. HTX có quyền cập nhật tồn kho.
+	Kích hoạt UC
+	HTX mở sản phẩm và chọn chức năng Cập nhật tồn kho.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX mở danh sách sản phẩm.
+2. HTX chọn sản phẩm cần cập nhật.
+3. Hệ thống hiển thị số lượng tồn kho hiện tại.
+4. HTX nhập số lượng tồn kho mới.
+5. HTX lưu thay đổi.
+6. Hệ thống cập nhật tồn kho.
+7. Hệ thống kiểm tra ngưỡng tồn thấp.
+8. Nếu đạt ngưỡng tồn thấp, hệ thống hiển thị cảnh báo.
+	Luồng thay thế
+	A1 – Tồn kho chưa đạt ngưỡng cảnh báo: hệ thống lưu số lượng mới và không hiển thị cảnh báo tồn thấp.
+A2 – Tồn kho giảm xuống ngưỡng cảnh báo: hệ thống lưu số lượng và hiển thị cảnh báo.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Sản phẩm không thuộc HTX: hệ thống không cho phép cập nhật.
+E2 – Dữ liệu tồn kho không hợp lệ: hệ thống không lưu và yêu cầu nhập lại.
+	Điều kiện sau
+	Số lượng tồn kho được cập nhật; hệ thống hiển thị cảnh báo khi đạt ngưỡng tồn thấp được cấu hình.
+	Yêu cầu/Business Rule
+	BR-HTX-21: HTX được cập nhật số lượng tồn kho đối với sản phẩm thuộc phạm vi quản lý.
+BR-HTX-22: Hệ thống phải cảnh báo khi số lượng tồn kho của sản phẩm đạt ngưỡng tồn thấp được cấu hình.
+	Giao diện
+	Màn hình Cập nhật tồn kho: hiển thị tồn kho hiện tại, trường nhập tồn kho mới và cảnh báo tồn thấp.
+	
+
+UC-HTX-12 – Cấu hình Preorder, hỗ trợ hỏa tốc và thời gian chuẩn bị
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-12 – Cấu hình Preorder, hỗ trợ hỏa tốc và thời gian chuẩn bị
+	Danh sách chức năng
+	Cấu hình Preorder, hỗ trợ hỏa tốc và thời gian chuẩn bị – FR-HTX-12
+	Độ ưu tiên
+	Trung bình – Should Have
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là HTX, tôi muốn cấu hình Preorder, khai báo hỗ trợ hỏa tốc và thời gian chuẩn bị để cung cấp thông tin vận hành cho việc xử lý đơn hàng.
+	Điều kiện trước
+	1. HTX đã đăng nhập.
+2. Sản phẩm thuộc phạm vi quản lý của HTX.
+3. Sản phẩm ở trạng thái cho phép cập nhật thông tin vận hành.
+	Kích hoạt UC
+	HTX mở thông tin vận hành của sản phẩm.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX mở sản phẩm.
+2. HTX chọn cấu hình thông tin vận hành.
+3. HTX khai báo sản phẩm có hỗ trợ Preorder hay không.
+4. Nếu hỗ trợ Preorder, HTX nhập số suất Preorder và khoảng thời gian giao dự kiến.
+5. HTX khai báo sản phẩm có hỗ trợ giao hỏa tốc hay không.
+6. HTX nhập thời gian chuẩn bị sản phẩm.
+7. HTX lưu thông tin.
+8. Hệ thống kiểm tra và cập nhật thông tin vận hành.
+	Luồng thay thế
+	A1 – Không hỗ trợ Preorder: HTX chọn không hỗ trợ → hệ thống không yêu cầu số suất và khoảng thời gian giao.
+A2 – Cập nhật thông tin vận hành sau phê duyệt: HTX thay đổi số suất Preorder hoặc khoảng thời gian giao → hệ thống kiểm tra và cập nhật theo quy định.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Bật Preorder khi sản phẩm chưa được Admin phê duyệt: hệ thống không cho phép bật Preorder.
+E2 – Hỗ trợ Preorder nhưng thiếu số suất hoặc khoảng thời gian giao: hệ thống không cho lưu.
+E3 – Thông tin vận hành không hợp lệ: hệ thống yêu cầu HTX chỉnh sửa.
+	Điều kiện sau
+	Thông tin Preorder, hỗ trợ hỏa tốc và thời gian chuẩn bị được cập nhật theo quy định.
+	Yêu cầu/Business Rule
+	BR-HTX-23: HTX phải khai báo sản phẩm có hỗ trợ Preorder hay không.
+BR-HTX-24: Nếu sản phẩm hỗ trợ Preorder, HTX phải khai báo số lượng suất Preorder và khoảng thời gian giao dự kiến.
+BR-HTX-25: HTX phải khai báo sản phẩm có hỗ trợ giao hỏa tốc hay không.
+BR-HTX-26: HTX phải khai báo thời gian chuẩn bị sản phẩm phục vụ việc xử lý đơn hàng.
+BR-HTX-27: Các thông tin vận hành như tồn kho, Preorder, hỗ trợ hỏa tốc và thời gian chuẩn bị phải được cập nhật theo quy định của hệ thống.
+	Giao diện
+	Màn hình Thông tin vận hành: cấu hình Preorder, số suất, khoảng thời gian giao, hỗ trợ hỏa tốc và thời gian chuẩn bị.
+	
+
+UC-HTX-13 – Truy xuất nguồn gốc bằng QR
+Hạng mục
+	Nội dung
+	Tên UC
+	UC-HTX-13 – Truy xuất nguồn gốc bằng QR
+	Danh sách chức năng
+	Truy xuất nguồn gốc bằng QR – FR-HTX-13
+	Độ ưu tiên
+	Trung bình – Should Have
+	Tác nhân chính
+	HTX
+	Tác nhân phụ
+	Hệ thống
+	Mô tả
+	Là HTX, tôi muốn quét mã QR trên bao bì để xem trang truy xuất nguồn gốc của sản phẩm và đối chiếu thông tin đã được hệ thống xác nhận.
+	Điều kiện trước
+	1. Sản phẩm có mã QR trên bao bì.
+2. Mã QR được liên kết với sản phẩm tương ứng.
+3. Hệ thống có thông tin truy xuất nguồn gốc đã được xác nhận.
+	Kích hoạt UC
+	HTX quét mã QR trên bao bì sản phẩm.
+	Luồng sự kiện chính (Happy Case)
+	1. HTX mở chức năng quét QR.
+2. HTX quét mã QR trên bao bì.
+3. Hệ thống đọc mã QR.
+4. Hệ thống xác định sản phẩm tương ứng.
+5. Hệ thống mở trang truy xuất nguồn gốc.
+6. Hệ thống hiển thị các thông tin truy xuất đã được xác nhận theo quy định.
+	Luồng thay thế
+	A1 – Mã QR hợp lệ nhưng thông tin chưa đầy đủ: hệ thống hiển thị phần thông tin đã được xác nhận.
+A2 – Quét lại mã QR: hệ thống thực hiện truy xuất lại thông tin của sản phẩm tương ứng.
+	Luồng rẽ nhánh/ngoại lệ
+	E1 – Mã QR không hợp lệ hoặc không liên kết sản phẩm: hệ thống thông báo không tìm thấy thông tin truy xuất.
+E2 – Người dùng cố chỉnh sửa thông tin truy xuất: hệ thống không cho phép chỉnh sửa thông qua chức năng quét QR.
+	Điều kiện sau
+	Trang truy xuất nguồn gốc của sản phẩm được hiển thị; dữ liệu chỉ ở chế độ xem.
+	Yêu cầu/Business Rule
+	BR-HTX-28: Mã QR trên bao bì phải liên kết với thông tin truy xuất nguồn gốc của sản phẩm tương ứng.
+BR-HTX-29: Trang truy xuất nguồn gốc chỉ được hiển thị thông tin đã được hệ thống xác nhận theo quy định.
+BR-HTX-30: Người dùng không được phép chỉnh sửa thông tin truy xuất nguồn gốc thông qua chức năng quét QR.
+	Giao diện
+	Màn hình Quét QR và Trang truy xuất nguồn gốc: hiển thị thông tin truy xuất đã được hệ thống xác nhận ở chế độ xem.

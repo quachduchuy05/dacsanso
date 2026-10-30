@@ -1,0 +1,285 @@
+# DAC-TA_FR-BCTK-03_Xuat-bao-cao.docx
+Nguồn: https://docs.google.com/document/d/1KsSyLo5ZohIErdYLtZFpM3IQUYYjx1nF/edit?usp=drivesdk&ouid=118008469128637664818&rtpof=true&sd=true
+
+ĐẶC TẢ YÊU CẦU PHẦN MỀM
+FR BCTK 03  XUẤT BÁO CÁO
+Thông tin tài liệu
+1. Mục đích và phạm vi
+1.1 Mục đích
+Cho phép người dùng có thẩm quyền tạo và tải tệp báo cáo từ dữ liệu đang xem, bảo đảm đúng bộ lọc, đúng phạm vi quyền, có thể truy vết và an toàn khi chia sẻ nội bộ.
+1.2 Trong phạm vi
+Xuất báo cáo theo loại, bộ lọc và định dạng được hỗ trợ.
+Xử lý đồng bộ hoặc bất đồng bộ tùy dung lượng.
+Theo dõi trạng thái yêu cầu xuất và tải tệp còn hiệu lực.
+Che dữ liệu nhạy cảm, chống nội dung nguy hiểm trong tệp và ghi nhật ký.
+1.3 Ngoài phạm vi
+Tự động gửi báo cáo định kỳ qua email: [CẦN CHỐT CÓ BỔ SUNG].
+Chỉnh sửa mẫu báo cáo bởi người dùng cuối.
+Công bố tệp bằng đường dẫn công khai.
+2. Thuật ngữ
+3. Tác nhân và phân quyền
+Quyền phải được kiểm tra cả lúc tạo yêu cầu và lúc tải tệp.
+4. Giả định và phụ thuộc
+Phụ thuộc FR-BCTK-01, FR-BCTK-02 và các nguồn dữ liệu báo cáo khác.
+Phụ thuộc FR-HT-03 để ghi yêu cầu xuất, kết quả và lượt tải.
+Người dùng đã đăng nhập; loại báo cáo đã có cấu hình cột và chính sách che dữ liệu.
+Thời gian lưu theo UTC, hiển thị theo Asia/Ho_Chi_Minh.
+5. Danh mục báo cáo và định dạng
+Danh mục cuối cùng và bộ cột của từng mẫu: [CẦN CHỐT].
+6. Ca sử dụng
+UC-BCTK-03-01 – Tạo tệp báo cáo
+Tác nhân: Admin, QLNN.
+Kích hoạt: Chọn “Xuất báo cáo”.
+Tiền điều kiện: Đã đăng nhập, có quyền, bộ lọc hợp lệ.
+Hậu điều kiện: Export job được tạo; tệp thành công hoặc lỗi có thể truy vết.
+Luồng chính
+1. Hệ thống nhận loại báo cáo và bộ lọc từ màn hình nguồn hoặc do người dùng chọn.
+2. Người dùng chọn định dạng và xác nhận yêu cầu.
+3. Hệ thống kiểm tra quyền, phạm vi, bộ lọc và giới hạn dữ liệu.
+4. Hệ thống chốt data_as_of và lưu bộ lọc chụp nhanh.
+5. Hệ thống tạo export job ở trạng thái QUEUED.
+6. Tiến trình xuất chuyển trạng thái RUNNING, truy vấn dữ liệu và áp dụng chính sách cột/che dữ liệu.
+7. Hệ thống tạo tệp, kiểm tra tính toàn vẹn và lưu ở vùng riêng tư.
+8. Job chuyển SUCCEEDED; người dùng nhận thông báo và có thể tải tệp.
+Luồng thay thế/ngoại lệ
+A1. Khối lượng nhỏ: hệ thống có thể xử lý đồng bộ nhưng vẫn phải tạo mã job và nhật ký.
+A2. Không có dữ liệu: tạo tệp chỉ có tiêu đề cột hoặc không tạo tệp [CẦN CHỐT].
+E1. Bộ lọc không hợp lệ: từ chối và hiển thị BCTK03-V01.
+E2. Vượt giới hạn dòng/kích thước: yêu cầu thu hẹp bộ lọc hoặc xử lý theo cơ chế phân tách [CẦN CHỐT].
+E3. Tạo tệp lỗi: job chuyển FAILED, lưu mã lỗi và cho phép thử lại nếu lỗi có thể phục hồi.
+UC-BCTK-03-02 – Theo dõi và tải tệp
+1. Người dùng mở danh sách yêu cầu xuất của mình hoặc phạm vi được quản lý.
+2. Hệ thống hiển thị trạng thái QUEUED/RUNNING/SUCCEEDED/FAILED/EXPIRED.
+3. Người dùng chọn tải một job SUCCEEDED còn hạn.
+4. Hệ thống kiểm tra lại quyền hiện tại và chủ sở hữu/phạm vi.
+5. Hệ thống cấp đường dẫn tải ngắn hạn và ghi nhật ký tải.
+Ngoại lệ
+E1. Tệp hết hạn: chuyển EXPIRED và hiển thị BCTK03-E02.
+E2. Quyền đã bị thu hồi: từ chối tải dù tệp đã tạo thành công.
+7. Yêu cầu chức năng
+8. Mô hình dữ liệu export job
+Quy tắc đặt tên đề xuất: {report_type}_{from}_{to}_{generatedAt}.{ext}; không đưa dữ liệu cá nhân vào tên tệp.
+9. Quy tắc nghiệp vụ và kiểm tra hợp lệ
+BR-BCTK03-01: Tệp phải dùng cùng định nghĩa chỉ số và data_as_of với màn hình nguồn.
+BR-BCTK03-02: Công thức CSV bắt đầu bằng =, +, -, @ hoặc ký tự nguy hiểm phải được vô hiệu hóa.
+BR-BCTK03-03: CSV dùng UTF-8 có BOM; ngày giờ thể hiện rõ múi giờ; tiền VND là số nguyên.
+BR-BCTK03-04: Không được nhúng mật khẩu, OTP, token, khóa API hoặc trường bị cấm vào tệp.
+BR-BCTK03-05: Tệp hết hạn phải bị vô hiệu hóa và được dọn khỏi vùng lưu trữ theo chính sách.
+BR-BCTK03-06: Thử lại tạo một lần xử lý mới có liên kết tới job gốc; không ghi đè bằng cách mất lịch sử.
+10. Yêu cầu phi chức năng
+11. Thông báo
+12. Tiêu chí nghiệm thu
+13. Truy vết
+14. Vấn đề cần chốt
+1. Danh mục báo cáo, mẫu cột, định dạng và quyền của từng vai trò.
+2. Giới hạn dòng/kích thước, ngưỡng đồng bộ–bất đồng bộ và SLA xử lý.
+3. Thời hạn lưu tệp, thời hạn liên kết tải và chính sách dọn dữ liệu.
+4. Xử lý báo cáo không có dữ liệu; có hỗ trợ PDF, chia tệp và gửi định kỳ hay không.
+5. Quy tắc che dữ liệu cá nhân/tài chính cho từng mẫu.
+Thuộc tính
+Giá trị
+Mã tài liệu
+SRS-FR-BCTK-03
+Phiên bản
+0.1 – Bản chuẩn hóa chờ phê duyệt
+Ngày cập nhật
+14/10/2026
+Phân hệ
+Báo cáo – Thống kê
+Yêu cầu nguồn
+FR-BCTK-03
+Đối tượng sử dụng
+Admin, Cơ quan QLNN
+Thuật ngữ
+Định nghĩa
+Export job
+Yêu cầu tạo tệp báo cáo có vòng đời và mã định danh riêng
+data_as_of
+Thời điểm chốt ảnh dữ liệu dùng để tạo báo cáo
+Bộ lọc chụp nhanh
+Bản sao bất biến của điều kiện lọc tại lúc yêu cầu xuất
+Tệp hết hạn
+Tệp đã quá thời hạn lưu và không còn tải được
+CSV injection
+Công thức nguy hiểm có thể chạy khi mở CSV bằng phần mềm bảng tính
+Tác nhân
+Quyền
+Admin
+Xuất loại báo cáo và phạm vi dữ liệu theo quyền được cấp
+Cơ quan QLNN
+Chỉ xuất báo cáo, cột và phạm vi thuộc nhiệm vụ quản lý
+Tiến trình xuất
+Kiểm tra yêu cầu, tạo tệp, lưu tệp riêng tư và cập nhật trạng thái
+Loại báo cáo
+Nguồn
+Admin
+QLNN
+Định dạng
+Tổng quan vận hành
+FR-BCTK-01
+Có
+Theo phạm vi
+XLSX, CSV, PDF [CẦN CHỐT PDF]
+Doanh thu và đối soát
+FR-BCTK-02
+Theo quyền tài chính
+Theo phạm vi
+XLSX, CSV
+Danh sách HTX/sản phẩm
+Dữ liệu danh mục
+Có
+Theo phạm vi
+XLSX, CSV
+Đơn hàng
+Dữ liệu đơn hàng
+Có
+Theo phạm vi
+XLSX, CSV
+Nhật ký thao tác
+FR-HT-03
+Theo quyền kiểm toán
+Không
+XLSX, CSV
+Mã
+Yêu cầu
+FR-BCTK-03.01
+Hệ thống phải hỗ trợ chọn loại báo cáo, bộ lọc và định dạng theo cấu hình.
+FR-BCTK-03.02
+Hệ thống phải kiểm tra quyền và phạm vi dữ liệu trước khi tạo job.
+FR-BCTK-03.03
+Hệ thống phải lưu bất biến bộ lọc, data_as_of, người yêu cầu và định dạng.
+FR-BCTK-03.04
+Hệ thống phải quản lý trạng thái QUEUED, RUNNING, SUCCEEDED, FAILED, EXPIRED.
+FR-BCTK-03.05
+Hệ thống phải tạo tệp với đúng mẫu cột, kiểu dữ liệu, đơn vị và múi giờ.
+FR-BCTK-03.06
+Hệ thống phải áp dụng che/loại bỏ trường nhạy cảm theo vai trò.
+FR-BCTK-03.07
+Hệ thống phải bảo vệ CSV/XLSX khỏi công thức nguy hiểm do dữ liệu người dùng nhập.
+FR-BCTK-03.08
+Hệ thống phải lưu tệp ở vùng riêng tư và chỉ cấp liên kết tải ngắn hạn.
+FR-BCTK-03.09
+Hệ thống phải kiểm tra lại quyền khi người dùng tải tệp.
+FR-BCTK-03.10
+Hệ thống phải cho phép xem trạng thái, số dòng, thời điểm tạo/hết hạn và lỗi phù hợp.
+FR-BCTK-03.11
+Hệ thống phải hỗ trợ thử lại job lỗi có thể phục hồi mà không làm thay đổi bộ lọc chụp nhanh.
+FR-BCTK-03.12
+Hệ thống phải ghi nhật ký tạo job, kết quả và tải tệp theo FR-HT-03.
+Trường
+Bắt buộc
+Mô tả
+export_job_id
+Có
+UUID duy nhất
+report_type
+Có
+Loại báo cáo
+requested_by
+Có
+Mã người dùng
+requester_role
+Có
+Vai trò tại thời điểm yêu cầu
+filter_snapshot
+Có
+Bộ lọc bất biến
+data_as_of
+Có
+Thời điểm chốt dữ liệu
+format
+Có
+xlsx/csv/pdf theo cấu hình
+status
+Có
+Trạng thái job
+row_count
+Khi thành công
+Số dòng dữ liệu
+file_name, file_ref
+Khi thành công
+Tên và tham chiếu lưu trữ riêng tư
+checksum
+Khi thành công
+SHA-256 hoặc cơ chế tương đương
+created_at, started_at, completed_at, expires_at
+Theo trạng thái
+Mốc thời gian UTC
+error_code
+Khi lỗi
+Mã lỗi an toàn cho vận hành
+correlation_id
+Có
+Mã truy vết xuyên hệ thống
+Mã
+Yêu cầu
+NFR-BCTK03-01
+Job ≤ 10.000 dòng hoàn tất trong ≤ 30 giây; job ≤ 100.000 dòng hoàn tất trong ≤ 5 phút ở tải thông thường [CẦN CHỐT].
+NFR-BCTK03-02
+Tệp được lưu tối đa 7 ngày và liên kết tải có hiệu lực tối đa 10 phút [CẦN CHỐT].
+NFR-BCTK03-03
+100% yêu cầu tạo/tải phải kiểm tra xác thực và phân quyền phía máy chủ.
+NFR-BCTK03-04
+Tiến trình phải retry lỗi tạm thời tối đa 3 lần với backoff; sau đó chuyển FAILED [CẦN CHỐT].
+NFR-BCTK03-05
+Nội dung tệp và checksum phải bất biến sau khi job SUCCEEDED.
+Mã
+Nội dung
+BCTK03-V01
+Bộ lọc hoặc định dạng xuất không hợp lệ.
+BCTK03-A01
+Bạn không có quyền xuất hoặc tải báo cáo này.
+BCTK03-E01
+Tạo báo cáo không thành công. Bạn có thể thử lại.
+BCTK03-E02
+Tệp đã hết hạn. Vui lòng tạo báo cáo mới.
+BCTK03-L01
+Khối lượng dữ liệu vượt giới hạn cho phép. Vui lòng thu hẹp bộ lọc.
+Mã
+Given
+When
+Then
+AC-BCTK03-01
+Admin có quyền và bộ lọc hợp lệ
+Yêu cầu XLSX
+Job thành công và tệp có đúng cột, dữ liệu, bộ lọc
+AC-BCTK03-02
+QLNN chỉ có quyền địa bàn A
+Cố xuất địa bàn B
+Hệ thống từ chối và không tạo tệp
+AC-BCTK03-03
+Báo cáo có dữ liệu lớn
+Yêu cầu xuất
+Job chạy bất đồng bộ và hiển thị trạng thái
+AC-BCTK03-04
+Job gặp lỗi tạm thời
+Tiến trình xử lý
+Hệ thống retry; nếu vẫn lỗi thì chuyển FAILED và có mã lỗi
+AC-BCTK03-05
+Một trường CSV bắt đầu bằng ký tự công thức
+Xuất CSV
+Giá trị được vô hiệu hóa, không chạy như công thức
+AC-BCTK03-06
+Job thành công nhưng quyền người dùng bị thu hồi
+Tải tệp
+Hệ thống từ chối tải
+AC-BCTK03-07
+Tệp đã quá expires_at
+Người dùng tải
+Hệ thống từ chối và báo BCTK03-E02
+AC-BCTK03-08
+Báo cáo màn hình và tệp dùng cùng data_as_of
+Đối chiếu
+Tổng số liệu khớp nhau
+AC-BCTK03-09
+Người dùng tạo và tải tệp
+Kiểm tra nhật ký
+Có sự kiện tương ứng, không chứa dữ liệu bí mật
+Yêu cầu nguồn
+Ca sử dụng
+Yêu cầu chi tiết
+Tiêu chí nghiệm thu
+FR-BCTK-03
+UC-BCTK-03-01, 02
+FR-BCTK-03.01 → 12
+AC-BCTK03-01 → 09

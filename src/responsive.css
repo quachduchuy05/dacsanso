@@ -1,0 +1,56 @@
+/* Reflow long user content; horizontal scrolling belongs to table/nav regions. */
+#root { min-width: 0; }
+.shop-hero-content { min-width: 0; max-width: 100%; }
+.shop-hero h1, .shop-hero-content > p { overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .shop-header-inner { gap: 6px; }
+  .shop-brand { min-width: 0; flex: 1; font-size: clamp(16px, 4.8vw, 20px); }
+  .shop-brand-mark, .shop-header-actions { flex-shrink: 0; }
+  .shop-brand > span:last-child { min-width: 0; white-space: normal; line-height: 1.2; }
+  .shop-hero { min-height: 0; }
+  .shop-hero-content { padding-block: clamp(32px, 7vh, 56px); }
+  .shop-hero h1 { font-size: clamp(28px, 8vw, 38px); line-height: 1.15; margin-block: 22px 18px; }
+  .shop-hero-eyebrow { max-width: 100%; font-size: 10px; letter-spacing: 1px; white-space: normal; }
+  .shop-hero-eyebrow svg { flex-shrink: 0; }
+  .shop-hero-content > p { font-size: 12px; line-height: 1.7; }
+  .shop-hero-buttons { flex-wrap: wrap; margin-top: 24px; }
+  .shop-hero-buttons .shop-button { min-width: 0; max-width: 100%; flex: 1 1 140px; padding-inline: 12px; gap: 8px; }
+  .shop-hero-stats { margin-top: 30px; padding-top: 20px; }
+}
+.app-sheet { max-height: min(90vh, calc(100vh - 3.5rem)); overflow-wrap: anywhere; }
+@supports (height: 100dvh) {
+  .app-sheet { max-height: min(90dvh, calc(100dvh - 3.5rem)); }
+}
+.app-sheet-header, .app-sheet-body, .app-sheet-footer {
+  padding-left: max(1.25rem, env(safe-area-inset-left));
+  padding-right: max(1.25rem, env(safe-area-inset-right));
+}
+.app-sheet-body { scrollbar-gutter: stable; }
+.app-sheet-title { overflow-wrap: anywhere; }
+.app-sheet-footer button { min-width: 0; overflow-wrap: anywhere; }
+.shop-applied-filters { flex-wrap: wrap; }
+.shop-applied-filters > span { max-width: 100%; min-width: 0; overflow-wrap: anywhere; }
+.shop-product-info h3, .shop-product-region, .catalog-chips button { overflow-wrap: anywhere; }
+.shop-product-price, .shop-rating { flex-wrap: wrap; }
+.shop-filter-panel label { min-width: 0; }
+.auth-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.auth-google-holder { min-width: 0; max-width: 100%; }
+.auth-description, .auth-google p, .auth-error { overflow-wrap: anywhere; }
+@media (max-width: 767px) {
+  .auth-layout { grid-template-columns: minmax(0, 1fr); }
+  .catalog-sort { flex-wrap: wrap; }
+  .catalog-sort select { min-width: 0; max-width: 100%; }
+  .auth-form-panel { padding-inline: clamp(1rem, 5vw, 1.5625rem); }
+}
+/* Keep actions reachable on landscape phones and when the viewport is short. */
+@media (max-height: 480px) {
+  .app-sheet-overlay { padding-block: .25rem; }
+  .app-sheet { max-height: calc(100vh - .5rem); border-radius: 1rem; }
+  .app-sheet-header { padding-block: 0; }
+  .app-sheet-title { font-size: 1rem; line-height: 1.3; }
+  .app-sheet-footer { max-height: 42vh; overflow-y: auto; overscroll-behavior: contain; }
+  @supports (height: 100dvh) {
+    .app-sheet { max-height: calc(100dvh - .5rem); }
+    .app-sheet-footer { max-height: 42dvh; }
+  }
+}

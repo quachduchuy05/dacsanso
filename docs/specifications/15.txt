@@ -1,0 +1,2432 @@
+# SRS_App-Dac-san-Bac-Giang_Module-MH_v1.1_Cao Nguyen.docx
+Nguồn: https://docs.google.com/document/d/1KYEgeuNZAS6urTtfpWlQbUNutSWxfkGr/edit?usp=drivesdk&ouid=118008469128637664818&rtpof=true&sd=true
+
+APP ĐẶC SẢN BẮC GIANG
+Tài liệu đặc tả yêu cầu phần mềm
+Module Mua hàng (MH): danh mục, danh sách sản phẩm; tìm kiếm, lọc, sắp xếp; chi tiết sản phẩm; giỏ hàng; chia sẻ sản phẩm
+Mã dự án:........
+Mã tài liệu:.......
+Phiên bản 1.1
+Phiên bản tài liệu
+BẢNG DANH MỤC HÌNH ẢNH
+Mọi sơ đồ đã chèn trực tiếp vào tài liệu. File gốc (PlantUML .puml và wireframe .html) nằm trong gói SRS_Module-MH_v1.1_file-goc-so-do.zip gửi kèm.
+Mục Lục
+1. Bài toán và kỹ thuật giải quyết	6
+2. Sơ đồ phân rã chức năng	8
+3. Các định nghĩa, thuật ngữ, từ viết tắt	8
+4. Tài liệu tham khảo	10
+5. Đối tượng sử dụng tài liệu	11
+6. Đặc tả yêu cầu	11
+6.1. Danh sách tác nhân	11
+6.2. Yêu cầu chức năng	12
+6.3. Yêu cầu phi chức năng	15
+6.4. Quy tắc nghiệp vụ (Business rule)	17
+7. Mô hình hóa quy trình nghiệp vụ (BPMN)	27
+7.1. Quy trình tổng quát	27
+7.2. Xác định hình thức bán của sản phẩm	31
+7.3. Trạng thái dòng giỏ hàng	32
+8. Mô hình tổng thể phần mềm (nếu có)	34
+9. Mô hình UML	35
+9.1. Biểu đồ và đặc tả trường hợp sử dụng (Use Case diagram)	35
+9.1.1. Biểu đồ tổng quát nhóm chức năng	35
+9.1.2. Biểu đồ và đặc tả trường hợp của từng chức năng	37
+9.1.2.1. Đặc tả trường hợp sử dụng “Xem danh mục và danh sách sản phẩm”	38
+9.1.2.2. Đặc tả trường hợp sử dụng “Tìm kiếm sản phẩm”	40
+9.1.2.3. Đặc tả trường hợp sử dụng “Lọc và sắp xếp sản phẩm”	42
+9.1.2.4. Đặc tả trường hợp sử dụng “Xem chi tiết sản phẩm”	44
+9.1.2.5. Đặc tả trường hợp sử dụng “Thêm sản phẩm vào giỏ hàng”	47
+9.1.2.6. Đặc tả trường hợp sử dụng “Xem giỏ hàng”	51
+9.1.2.7. Đặc tả trường hợp sử dụng “Cập nhật giỏ hàng”	54
+9.1.2.8. Đặc tả trường hợp sử dụng “Chia sẻ sản phẩm”	58
+9.1.2.9. Đặc tả trường hợp sử dụng “Mở sản phẩm từ link chia sẻ”	60
+10. Thiết kế và mô tả giao diện	62
+10.1. Quy tắc chung (common design)	62
+10.2. Danh sách và mô tả giao diện sử dụng	66
+10.2.1. Màn hình Danh sách sản phẩm (SCR-MH-01)	66
+10.2.2. Màn hình Tìm kiếm (SCR-MH-02)	69
+10.2.3. Bảng Lọc và bảng Sắp xếp (SCR-MH-03)	71
+10.2.4. Màn hình Chi tiết sản phẩm (SCR-MH-04) và hộp thoại Yêu cầu đăng nhập (SCR-MH-05)	73
+10.2.5. Màn hình Giỏ hàng (SCR-MH-06)	77
+10.2.6. Bảng Chia sẻ sản phẩm (SCR-MH-07) và Trang web sản phẩm (SCR-MH-08)	80
+11. Biểu đồ thực thể liên kết (ERD diagram)	82
+12. Danh sách dịch vụ api cung cấp ra bên ngoài	87
+13. Thiết kế phương án và giải pháp an toàn, bảo mật (nếu có)	88
+14. Mô hình triển khai tích hợp với các hệ thống khác (nếu có)	88
+Phụ lục A. Tham số cấu hình đề xuất	91
+Phụ lục B. Cần xác nhận	92
+Phụ lục C. Ma trận truy vết FR, UC, BR, màn hình, tiêu chí nghiệm thu	97
+Phụ lục D. Tiêu chí nghiệm thu	98
+Phụ lục E. Thay đổi so với bản 1.0	102
+Bài toán và kỹ thuật giải quyết
+Bài toán: App Đặc sản Bắc Giang là app mobile bán đặc sản có truy xuất nguồn gốc, kết nối Khách hàng ở thành phố với HTX sản xuất. Giai đoạn 1 phục vụ cư dân Vinhomes Smart City (Hà Nội); kênh bán đầu tiên là các hội nhóm Facebook của khu cư dân. Để mua được hàng, Khách hàng cần tìm và chọn được sản phẩm đúng gốc, xem được chứng nhận, biết sản phẩm đang có sẵn hay phải đặt trước theo mùa vụ, và gom được các sản phẩm muốn mua trước khi đặt hàng. Nhiều đặc sản bán theo mùa vụ và tồn kho của HTX có hạn: nếu chỉ bán hàng có sẵn thì khi hết hàng hoặc ngoài vụ Khách hàng không mua được, còn HTX không biết trước lượng đặt để lên kế hoạch thu hoạch.
+Hiện trạng (giả định của BA từ mô tả dự án, chưa có khảo sát):
+Cư dân mua đặc sản qua bài đăng trong hội nhóm Facebook của khu: xem ảnh, nhắn tin hoặc bình luận để đặt, chuyển khoản cho bên đăng bài.
+Khách hàng không có cách kiểm chứng nguồn gốc, chứng nhận; không biết còn hàng hay bao giờ vào vụ cho tới khi nhắn hỏi.
+HTX không bán trực tiếp tới cư dân và không có số liệu đặt trước; dự án không biết đơn đến từ hội nhóm nào.
+Giải pháp: Phát triển nhóm chức năng khám phá sản phẩm và giỏ hàng thuộc module Mua hàng (MH), gồm 5 phần: danh mục và danh sách sản phẩm; tìm kiếm, lọc, sắp xếp; chi tiết sản phẩm; giỏ hàng; chia sẻ sản phẩm. Bốn nguyên tắc nghiệp vụ xuyên suốt tài liệu:
+Khách hàng xem được sản phẩm khi chưa đăng nhập (BR-MH-01).
+Thêm sản phẩm vào giỏ hàng thì phải đăng nhập (BR-MH-02).
+Hàng thường và hàng Preorder nằm ở hai giỏ tách biệt (BR-MH-21).
+Sản phẩm có tồn kho bằng 0 hoặc chưa vào vụ đều chuyển sang Preorder, không có ngoại lệ (BR-MH-04).
+Phạm vi của tài liệu:
+Xem danh mục, danh sách sản phẩm; tìm kiếm, lọc, sắp xếp sản phẩm.
+Xem chi tiết sản phẩm, gồm phần hiển thị chứng nhận và lối vào trang truy xuất nguồn gốc.
+Giỏ hàng: thêm, xem, cập nhật, chuyển giỏ, chọn sản phẩm để chuyển sang đặt hàng.
+Chia sẻ sản phẩm bằng link kèm mã giới thiệu; mở sản phẩm từ link chia sẻ.
+Ngoài phạm vi, tài liệu chỉ tham chiếu:
+Đăng ký, đăng nhập, cấp mã giới thiệu cho tài khoản Khách hàng: module Tài khoản (TK).
+Đặt hàng, thanh toán, đặt cọc Preorder, hộp quà và lời nhắn, mã ưu đãi, giữ tồn kho, gắn mã giới thiệu vào đơn: phần còn lại của module Mua hàng (MH).
+Vòng đời đơn, giao nhận: module Đơn hàng (DH). Đánh giá sản phẩm: module CSKH (CS).
+Đăng sản phẩm, giá, tồn kho, mùa vụ, đợt Preorder, chứng nhận, trang truy xuất nguồn gốc: module HTX.
+Duyệt sản phẩm, quản lý danh mục, tham số cấu hình, mã giới thiệu của hội nhóm Facebook, báo cáo: module Admin (AD).
+Các chức năng ngoài phạm vi mà tài liệu này phụ thuộc được liệt kê ở mục 14, bảng “Phụ thuộc giữa các module”. Mỗi chức năng chỉ mô tả một lần ở module sở hữu; tài liệu này chỉ tham chiếu.
+Nhu cầu theo vai trò:
+Sơ đồ phân rã chức năng
+Hình 1. Sơ đồ phân rã chức năng
+Các định nghĩa, thuật ngữ, từ viết tắt
+Tài liệu tham khảo
+Đối tượng sử dụng tài liệu
+BA (Business Analyst): viết, rà soát chéo và cập nhật yêu cầu.
+Lead BA: review, nghiệm thu đặc tả; dùng làm đầu vào cho thiết kế UI và BRD.
+Developer: dựa vào tài liệu để phát triển chức năng.
+Tester: thiết kế test case từ use case, quy tắc nghiệp vụ, bảng quyết định và tiêu chí nghiệm thu (Phụ lục D).
+BA các module TK, HTX, DH, CS, AD: đối chiếu các điểm phụ thuộc ở mục 14.
+Cách đọc: mỗi quy tắc nghiệp vụ chỉ viết một lần ở mục 6.4 (BR-MH-xx); nội dung thông báo chỉ viết một lần ở mục 10.1 (MSG-MH-xx). Các mục khác dẫn mã, không chép lại nội dung. Con số trong tài liệu là giá trị đề xuất, tập hợp ở Phụ lục A; các điểm chưa chốt ở Phụ lục B.
+Đặc tả yêu cầu
+Danh sách tác nhân
+Tên vai trò dùng thống nhất theo quy định của dự án: Khách hàng, HTX, Admin, Hệ thống, Đơn vị vận chuyển, Cơ quan quản lý nhà nước. Đơn vị vận chuyển và Cơ quan quản lý nhà nước không tham gia các chức năng trong tài liệu này. Tài khoản HTX, Admin, Cơ quan quản lý nhà nước xem được sản phẩm như Khách hàng chưa đăng nhập nhưng không có giỏ hàng (BR-MH-02).
+Yêu cầu chức năng
+Mỗi nhóm chức năng mang một mã FR-MH-xx; chức năng chi tiết mang mã FR-MH-xx.y. Cột Mô tả nêu mục đích, đầu vào, đầu ra và dẫn mã quy tắc (mục 6.4), mã thông báo (mục 10.1); nội dung quy tắc không chép lại ở đây. Mức ưu tiên theo MoSCoW do BA đề xuất, chờ Lead BA chốt (Phụ lục B). Mã FR là mã tạm, đối chiếu với file ma trận phân quyền khi có.
+Yêu cầu phi chức năng
+Các con số dưới đây là giá trị đề xuất riêng cho phần chức năng của tài liệu, chờ gộp vào yêu cầu phi chức năng chung của dự án.
+Quy tắc nghiệp vụ (Business rule)
+Đây là bảng quy tắc nghiệp vụ duy nhất của tài liệu. Yêu cầu chức năng, use case, mô tả giao diện và tiêu chí nghiệm thu dẫn quy tắc bằng mã BR-MH-xx. Cột Áp dụng ghi các use case dùng quy tắc.
+Mô hình hóa quy trình nghiệp vụ (BPMN)
+Quy trình tổng quát
+Quy trình chia thành hai phần để dễ đọc: phần A từ lúc mở app đến khi sản phẩm vào giỏ; phần B từ lúc mở giỏ đến khi chuyển sang đặt hàng. Số bước trong bảng trùng với số trên sơ đồ.
+Hình 2. Quy trình tổng quát, phần A: từ mở app đến thêm vào giỏ
+Hình 3. Quy trình tổng quát, phần B: từ giỏ hàng đến chuyển sang đặt hàng
+Xác định hình thức bán của sản phẩm
+Hình thức bán quyết định nút hiển thị và giỏ nhận sản phẩm; trạng thái nhận đặt cho biết sản phẩm có đang nhận đặt hay không. Hệ thống xác định lại cả hai mỗi khi hiển thị sản phẩm, khi thêm vào giỏ và khi kiểm tra lại giỏ (BR-MH-04 đến BR-MH-08).
+Hình 4. Hình thức bán và trạng thái nhận đặt của sản phẩm
+Bảng quyết định dưới đây là dạng đầy đủ của BR-MH-04 đến BR-MH-07. Mỗi sản phẩm tại một thời điểm rơi vào đúng một trường hợp. Trường hợp 6, 7, 8 cho thấy sản phẩm chưa vào vụ luôn là Preorder, kể cả khi HTX vẫn khai tồn kho > 0.
+Bảng quyết định hình thức bán và trạng thái nhận đặt:
+“Đợt Preorder: Có” nghĩa là sản phẩm có đợt Preorder đang mở, tức chưa qua hạn chốt nhận đặt (BR-MH-07).
+Trạng thái dòng giỏ hàng
+Mỗi dòng giỏ hàng tại một thời điểm có đúng một trạng thái dòng, do Hệ thống gán khi kiểm tra lại giỏ (BR-MH-26). Chỉ dòng “Hợp lệ” mới chọn được để đặt.
+Thứ tự ưu tiên khi một dòng thoả nhiều điều kiện: Chờ thanh toán; Ngừng bán; Hết hàng có sẵn hoặc Đã có hàng sẵn; Hết suất đặt trước hoặc Chưa mở đặt trước; Đang được giữ; Chỉ còn N; Hợp lệ.
+Đổi giá (MSG-MH-26) và đổi ngày giao dự kiến (MSG-MH-27) là ghi chú trên dòng, không phải trạng thái dòng: dòng vẫn “Hợp lệ” và vẫn chọn được để đặt (BR-MH-25).
+Chuyển dòng giữa hai giỏ luôn do Khách hàng quyết định vì Preorder có đặt cọc và ngày giao khác với Mua thường.
+Mô hình tổng thể phần mềm (nếu có)
+Mô hình dưới đây ở mức logic, dùng để chỉ ra các thành phần mà chức năng trong tài liệu chạm tới. Kiến trúc kỹ thuật chi tiết do Lead Dev quyết định.
+Hình 5. Mô hình tổng thể ở mức logic
+App mobile: một app dùng chung cho mọi vai trò; các chức năng trong tài liệu phục vụ vai trò Khách hàng.
+Máy chủ ứng dụng: cung cấp API danh mục và sản phẩm, tìm kiếm, giỏ hàng, chia sẻ; là nơi quyết định hình thức bán, trạng thái nhận đặt và trạng thái dòng giỏ hàng.
+Trang web sản phẩm: trang đích của link chia sẻ, phục vụ xem trước trên Facebook và trường hợp thiết bị chưa cài app.
+Module khác: TK (đăng nhập, mã giới thiệu của Khách hàng), HTX (sản phẩm, giá, tồn kho, mùa vụ, đợt Preorder, chứng nhận, truy xuất), MH phần đặt hàng và DH (đơn hàng, giữ tồn kho), CS (đánh giá), AD (danh mục, tham số, mã giới thiệu của hội nhóm).
+Mô hình UML
+Biểu đồ và đặc tả trường hợp sử dụng (Use Case diagram)
+Biểu đồ tổng quát nhóm chức năng
+Phần chức năng trong tài liệu gồm 9 use case của một tác nhân chính là Khách hàng. Khách hàng chưa đăng nhập dùng được UC-MH-01, 02, 03, 04, 08, 09; UC-MH-05, 06, 07 yêu cầu đăng nhập (BR-MH-02).
+Hình 6. Biểu đồ use case tổng quát
+Biểu đồ và đặc tả trường hợp của từng chức năng
+Hình dưới thể hiện quan hệ giữa các use case. Use case nền xám là hành vi dùng chung của Hệ thống; use case nền vàng thuộc module khác hoặc ngoài phạm vi tài liệu.
+Hình 7. Quan hệ giữa các use case
+Quy ước trong bảng use case: luồng thay thế đánh số theo bước của luồng chính mà nó rẽ ra (ví dụ 3a rẽ từ bước 3); ngoại lệ đánh E1, E2. Số bước trùng với số trên sơ đồ hoạt động đặt ngay sau bảng. Bảng use case dùng khuôn dạng của Template_SRS; chưa đối chiếu với mẫu use case của nhóm (Phụ lục B).
+Đặc tả trường hợp sử dụng “Xem danh mục và danh sách sản phẩm”
+Bảng mô tả trường hợp sử dụng:
+Biểu đồ hoạt động:
+Hình 8. Biểu đồ hoạt động UC-MH-01: Xem danh mục và danh sách sản phẩm
+Đặc tả trường hợp sử dụng “Tìm kiếm sản phẩm”
+Bảng mô tả trường hợp sử dụng:
+Biểu đồ hoạt động:
+Hình 9. Biểu đồ hoạt động UC-MH-02: Tìm kiếm sản phẩm
+Đặc tả trường hợp sử dụng “Lọc và sắp xếp sản phẩm”
+Bảng mô tả trường hợp sử dụng:
+Biểu đồ hoạt động:
+Hình 10. Biểu đồ hoạt động UC-MH-03: Lọc và sắp xếp sản phẩm
+Đặc tả trường hợp sử dụng “Xem chi tiết sản phẩm”
+Bảng mô tả trường hợp sử dụng:
+Biểu đồ hoạt động:
+Hình 11. Biểu đồ hoạt động UC-MH-04: Xem chi tiết sản phẩm
+Đặc tả trường hợp sử dụng “Thêm sản phẩm vào giỏ hàng”
+Bảng mô tả trường hợp sử dụng:
+Biểu đồ hoạt động:
+Hình 12. Biểu đồ hoạt động UC-MH-05: Thêm sản phẩm vào giỏ hàng, phần 1, kiểm tra đăng nhập (bước 1, 2)
+Biểu đồ hoạt động (tiếp):
+Hình 13. Biểu đồ hoạt động UC-MH-05: Thêm sản phẩm vào giỏ hàng, phần 2, xác định giỏ nhận và thêm dòng (bước 3 đến 6)
+Đặc tả trường hợp sử dụng “Xem giỏ hàng”
+Bảng mô tả trường hợp sử dụng:
+Biểu đồ hoạt động:
+Hình 14. Biểu đồ hoạt động UC-MH-06: Xem giỏ hàng
+Đặc tả trường hợp sử dụng “Cập nhật giỏ hàng”
+Bảng mô tả trường hợp sử dụng:
+Biểu đồ hoạt động:
+Hình 15. Biểu đồ hoạt động UC-MH-07: Cập nhật giỏ hàng, phần 1, đổi số lượng, xoá, xử lý dòng (bước 1, 2)
+Biểu đồ hoạt động (tiếp):
+Hình 16. Biểu đồ hoạt động UC-MH-07: Cập nhật giỏ hàng, phần 2, chọn dòng và chuyển sang đặt hàng (bước 3 đến 7)
+Đặc tả trường hợp sử dụng “Chia sẻ sản phẩm”
+Bảng mô tả trường hợp sử dụng:
+Biểu đồ hoạt động:
+Hình 17. Biểu đồ hoạt động UC-MH-08: Chia sẻ sản phẩm
+Đặc tả trường hợp sử dụng “Mở sản phẩm từ link chia sẻ”
+Bảng mô tả trường hợp sử dụng:
+Biểu đồ hoạt động:
+Hình 18. Biểu đồ hoạt động UC-MH-09: Mở sản phẩm từ link chia sẻ
+Thiết kế và mô tả giao diện
+Quy tắc chung (common design)
+Các quy tắc dưới đây là đề xuất của BA cho phần chức năng trong tài liệu, để thống nhất với thiết kế UI chính thức. Hình trong mục 10.2 là wireframe minh hoạ bố cục và thành phần; màu sắc, kiểu chữ chính thức do thiết kế UI quyết định. Tên HTX, giá, ngày trong hình là dữ liệu minh hoạ; tình huống minh hoạ đặt vào đầu tháng 5/2027, trước vụ vải thiều.
+Bảng 1: Quy tắc cơ bản
+Bảng 2: Quy tắc trình bày
+Bảng 3: Thông báo
+Mọi thông báo của phần chức năng này được liệt kê một lần ở bảng dưới. Các mục khác của tài liệu dẫn mã MSG-MH-xx. N, K, M, L, X, Y, A, B và nội dung trong dấu < > là giá trị thay thế lúc hiển thị. M là số lượng tối đa mỗi dòng, L là số dòng tối đa mỗi giỏ, X% là tỷ lệ đặt cọc (Phụ lục A). Thông báo ngắn tự ẩn sau 3 giây.
+Danh sách và mô tả giao diện sử dụng
+Số ở cột STT trùng với số trong vòng tròn đỏ trên wireframe. Cột “Bắt buộc ?” đánh dấu x với thành phần luôn phải có dữ liệu hoặc luôn hiển thị.
+Màn hình Danh sách sản phẩm (SCR-MH-01)
+Hình 19. Wireframe SCR-MH-01: (a) danh sách mặc định; (b) danh sách đang lọc “Đặt trước”
+Mô tả giao diện
+Màn hình Tìm kiếm (SCR-MH-02)
+Hình 20. Wireframe SCR-MH-02: (a) lịch sử tìm kiếm; (b) gợi ý khi đang gõ
+Hình 21. Wireframe SCR-MH-02: (c) kết quả tìm kiếm; (d) không có kết quả
+Mô tả giao diện
+Bảng Lọc và bảng Sắp xếp (SCR-MH-03)
+Hình 22. Wireframe SCR-MH-03: (a) bảng lọc; (b) bảng sắp xếp
+Mô tả giao diện
+Màn hình Chi tiết sản phẩm (SCR-MH-04) và hộp thoại Yêu cầu đăng nhập (SCR-MH-05)
+Hình 23. Wireframe SCR-MH-04: (a) sản phẩm Mua thường “Còn hàng”; (b) sản phẩm Preorder “Nhận đặt trước”
+Hình 24. Wireframe: (c) SCR-MH-04 phần dưới, sản phẩm “Đang được giữ”; (d) hộp thoại SCR-MH-05
+Mô tả giao diện
+Màn hình Giỏ hàng (SCR-MH-06)
+Hình 25. Wireframe SCR-MH-06: (a) tab Hàng có sẵn; (b) tab Đặt trước
+Hình 26. Wireframe SCR-MH-06: (c) các trạng thái dòng khác; (d) giỏ trống
+Mô tả giao diện
+Bảng Chia sẻ sản phẩm (SCR-MH-07) và Trang web sản phẩm (SCR-MH-08)
+Hình 27. Wireframe: (a) bảng chia sẻ SCR-MH-07; (b) trang web sản phẩm SCR-MH-08
+Mô tả giao diện
+Ngày thay đổi
+Phiên bản
+Mô tả thay đổi
+Tác giả
+06/10/2026
+1.0
+Tạo mới tài liệu
+06/10/2026
+1.1
+Sửa theo kết quả review bản 1.0: mô hình hình thức bán, trạng thái dòng giỏ hàng, mã giới thiệu, use case, sơ đồ, wireframe
+Trang ký
+Trang ký
+Trang ký
+Trang ký
+Vai trò
+Tên và chức vụ
+Chữ ký
+Ngày
+Người tạo
+Phan Đăng cao nguyên
+Người xem xét
+
+Trần Anh Hoàng
+Người phê duyệt
+STT
+Tên ảnh
+Mục
+File gốc
+1
+Hình 1. Sơ đồ phân rã chức năng
+2
+d01_phan_ra_chuc_nang.puml
+2
+Hình 2. Quy trình tổng quát, phần A: từ mở app đến thêm vào giỏ
+7
+d02a_quy_trinh_phan_a.puml
+3
+Hình 3. Quy trình tổng quát, phần B: từ giỏ hàng đến chuyển sang đặt hàng
+7
+d02b_quy_trinh_phan_b.puml
+4
+Hình 4. Hình thức bán và trạng thái nhận đặt của sản phẩm
+7
+d03_trang_thai_hinh_thuc_ban.puml
+5
+Hình 5. Mô hình tổng thể ở mức logic
+8
+d04_mo_hinh_tong_the.puml
+6
+Hình 6. Biểu đồ use case tổng quát
+9
+d05_usecase_tong_quat.puml
+7
+Hình 7. Quan hệ giữa các use case
+9
+d06_usecase_chi_tiet.puml
+8
+Hình 8. Biểu đồ hoạt động UC-MH-01: Xem danh mục và danh sách sản phẩm
+9
+a01_xem_danh_sach.puml
+9
+Hình 9. Biểu đồ hoạt động UC-MH-02: Tìm kiếm sản phẩm
+9
+a02_tim_kiem.puml
+10
+Hình 10. Biểu đồ hoạt động UC-MH-03: Lọc và sắp xếp sản phẩm
+9
+a03_loc_sap_xep.puml
+11
+Hình 11. Biểu đồ hoạt động UC-MH-04: Xem chi tiết sản phẩm
+9
+a04_chi_tiet.puml
+12
+Hình 12. Biểu đồ hoạt động UC-MH-05: Thêm sản phẩm vào giỏ hàng, phần 1, kiểm tra đăng nhập (bước 1, 2)
+9
+a05a_dang_nhap.puml
+13
+Hình 13. Biểu đồ hoạt động UC-MH-05: Thêm sản phẩm vào giỏ hàng, phần 2, xác định giỏ nhận và thêm dòng (bước 3 đến 6)
+9
+a05b_them_dong.puml
+14
+Hình 14. Biểu đồ hoạt động UC-MH-06: Xem giỏ hàng
+9
+a06_xem_gio.puml
+15
+Hình 15. Biểu đồ hoạt động UC-MH-07: Cập nhật giỏ hàng, phần 1, đổi số lượng, xoá, xử lý dòng (bước 1, 2)
+9
+a07a_cap_nhat_dong.puml
+16
+Hình 16. Biểu đồ hoạt động UC-MH-07: Cập nhật giỏ hàng, phần 2, chọn dòng và chuyển sang đặt hàng (bước 3 đến 7)
+9
+a07b_chon_va_dat.puml
+17
+Hình 17. Biểu đồ hoạt động UC-MH-08: Chia sẻ sản phẩm
+9
+a08_chia_se.puml
+18
+Hình 18. Biểu đồ hoạt động UC-MH-09: Mở sản phẩm từ link chia sẻ
+9
+a09_mo_link.puml
+19
+Hình 19. Wireframe SCR-MH-01: (a) danh sách mặc định; (b) danh sách đang lọc “Đặt trước”
+10
+w1_danh_sach.html
+20
+Hình 20. Wireframe SCR-MH-02: (a) lịch sử tìm kiếm; (b) gợi ý khi đang gõ
+10
+w2ab_tim_kiem.html
+21
+Hình 21. Wireframe SCR-MH-02: (c) kết quả tìm kiếm; (d) không có kết quả
+10
+w2cd_tim_kiem.html
+22
+Hình 22. Wireframe SCR-MH-03: (a) bảng lọc; (b) bảng sắp xếp
+10
+w3ab_loc_sap_xep.html
+23
+Hình 23. Wireframe SCR-MH-04: (a) sản phẩm Mua thường “Còn hàng”; (b) sản phẩm Preorder “Nhận đặt trước”
+10
+w4ab_chi_tiet.html
+24
+Hình 24. Wireframe: (c) SCR-MH-04 phần dưới, sản phẩm “Đang được giữ”; (d) hộp thoại SCR-MH-05
+10
+w4cd_chi_tiet.html
+25
+Hình 25. Wireframe SCR-MH-06: (a) tab Hàng có sẵn; (b) tab Đặt trước
+10
+w5ab_gio_hang.html
+26
+Hình 26. Wireframe SCR-MH-06: (c) các trạng thái dòng khác; (d) giỏ trống
+10
+w5cd_gio_hang.html
+27
+Hình 27. Wireframe: (a) bảng chia sẻ SCR-MH-07; (b) trang web sản phẩm SCR-MH-08
+10
+w6ab_chia_se.html
+28
+Hình 28. Biểu đồ thực thể liên kết
+11
+e01_erd.puml
+Vai trò
+Mong muốn (theo mô tả dự án)
+Điểm đau (giả định của BA, chưa có kết quả khảo sát và persona)
+Đáp ứng trong tài liệu
+Khách hàng
+Mua được đặc sản đúng gốc; xem được chứng nhận và truy xuất; đặt trước theo mùa vụ.
+Mua qua hội nhóm Facebook khó kiểm chứng nguồn gốc.
+Không biết sản phẩm còn hàng hay bao giờ vào vụ.
+Ngại tạo tài khoản khi mới chỉ muốn xem.
+Xem sản phẩm không cần đăng nhập.
+Chi tiết có chứng nhận, truy xuất, mùa vụ.
+Hết hàng hoặc chưa vào vụ vẫn đặt trước được.
+HTX
+Thêm kênh bán tới Khách hàng ở thành phố; biết trước lượng đặt để lên kế hoạch thu hoạch.
+Sản phẩm hết hàng hoặc ngoài vụ thì mất khách.
+Không có số liệu đặt trước.
+Sản phẩm tự chuyển sang Preorder thay vì ẩn đi.
+Giỏ Preorder tách riêng, dẫn tới đơn đặt trước có đặt cọc.
+Admin
+Kiểm chứng mô hình với tập Khách hàng đầu tiên; đo hiệu quả từng hội nhóm Facebook.
+Không biết đơn đến từ bài đăng, hội nhóm nào.
+Link chia sẻ kèm mã giới thiệu của Khách hàng hoặc của hội nhóm.
+Ghi lượt chia sẻ và lượt mở link.
+Cơ quan quản lý nhà nước
+Theo dõi sản phẩm có chứng nhận; thêm kênh quảng bá sản phẩm OCOP.
+Chứng nhận của sản phẩm ít được Khách hàng nhìn thấy.
+Nhãn chứng nhận trên thẻ và chi tiết sản phẩm; bộ lọc theo chứng nhận.
+Thuật ngữ
+Định nghĩa/Giải thích
+Ghi chú
+Khách hàng
+Người dùng app để xem và mua đặc sản.
+Hai trạng thái: chưa đăng nhập, đã đăng nhập
+HTX
+Hợp tác xã sản xuất, đăng bán sản phẩm trên app.
+Admin
+Người vận hành app: duyệt HTX và sản phẩm, cấu hình danh mục và tham số.
+Hệ thống
+Phần mềm (app và máy chủ) tự động xử lý.
+Sản phẩm
+Mặt hàng đặc sản do HTX đăng, đã được Admin duyệt.
+Đơn vị bán
+Đơn vị mà Khách hàng chọn số lượng và HTX khai giá, tồn kho: túi, hộp, con, chai…
+Ví dụ “túi 1 kg”
+Danh mục
+Nhóm sản phẩm hiển thị cho Khách hàng.
+Admin quản lý
+Hình thức bán
+Cách bán của một sản phẩm tại một thời điểm, chỉ có hai giá trị: Mua thường hoặc Preorder. Do Hệ thống xác định.
+BR-MH-04
+Mua thường
+Mua hàng có sẵn: sản phẩm đang trong vụ (hoặc bán quanh năm) và tồn kho lớn hơn 0.
+Tên trên giao diện: “Hàng có sẵn”
+Preorder
+Đặt trước có đặt cọc, giao theo ngày giao dự kiến: áp dụng khi tồn kho bằng 0 hoặc sản phẩm chưa vào vụ.
+Tên trên giao diện: “Đặt trước”
+Trạng thái nhận đặt
+Khả năng nhận đặt của sản phẩm trong hình thức bán hiện tại. Mua thường: “Còn hàng”, “Đang được giữ”. Preorder: “Nhận đặt trước”, “Hết suất đặt trước”, “Chưa mở đặt trước”.
+BR-MH-06, 07
+Tồn kho
+Số lượng hàng có sẵn hiện có của sản phẩm ở module HTX, tính theo đơn vị bán: HTX khai báo và cập nhật, chức năng đặt hàng trừ khi bán được. Là căn cứ xác định hình thức bán.
+BR-MH-04, 06
+Tồn kho khả dụng
+Tồn kho trừ số lượng đang giữ cho các đơn ở trạng thái Chờ thanh toán. Là giới hạn số lượng đặt Mua thường.
+BR-MH-06
+Mùa vụ
+Khoảng thời gian thu hoạch của sản phẩm theo mùa, từ ngày bắt đầu vụ đến ngày kết thúc vụ.
+HTX khai báo
+Chưa vào vụ
+Ngày hiện tại nằm ngoài mùa vụ của sản phẩm, kể cả sau khi vụ vừa kết thúc.
+BR-MH-05
+Đợt Preorder
+Một lần mở nhận đặt trước của sản phẩm do HTX khai báo, gồm ngày giao dự kiến, hạn mức nhận đặt và hạn chốt nhận đặt. Đợt đang mở là đợt chưa qua hạn chốt.
+BR-MH-07
+Hạn mức còn lại
+Hạn mức nhận đặt của đợt Preorder trừ số lượng đã đặt cọc và số lượng đang Chờ thanh toán.
+BR-MH-07
+Giỏ hàng thường
+Giỏ chứa sản phẩm Mua thường.
+Tab “Hàng có sẵn”
+Giỏ Preorder
+Giỏ chứa sản phẩm Preorder.
+Tab “Đặt trước”
+Dòng giỏ hàng
+Một sản phẩm kèm số lượng trong một giỏ.
+Trạng thái dòng: mục 7.3
+Tạm tính
+Tổng tiền hàng của các dòng đang chọn, chưa gồm phí giao hàng, hộp quà, ưu đãi.
+Tiền cọc dự kiến
+Tạm tính của Giỏ Preorder nhân tỷ lệ đặt cọc.
+Tỷ lệ đề xuất 30%
+Hoả tốc
+Giao nhanh thẳng từ HTX, chỉ áp dụng cho sản phẩm được đánh dấu hỗ trợ.
+Chứng nhận
+Giấy chứng nhận của sản phẩm, ví dụ OCOP, VietGAP.
+Dữ liệu module HTX
+Truy xuất nguồn gốc
+Trang thông tin nguồn gốc sản phẩm, mở khi quét QR hoặc nhấn từ chi tiết sản phẩm.
+Chức năng module HTX
+Mã giới thiệu
+Mã định danh nguồn giới thiệu, gắn trong link chia sẻ. Hai loại: mã của Khách hàng và mã của hội nhóm Facebook.
+Tham số ref; BR-MH-31
+Link chia sẻ
+Đường dẫn tới một sản phẩm, mở được trong app hoặc trên trang web sản phẩm.
+FR, NFR, UC, BR
+Yêu cầu chức năng, yêu cầu phi chức năng, trường hợp sử dụng, quy tắc nghiệp vụ.
+MSG, SCR, AC
+Mã thông báo, mã màn hình, tiêu chí nghiệm thu.
+Mục 10.1, 10.2, Phụ lục D
+MH, TK, DH, CS, HTX, AD
+Mã module: Mua hàng; Tài khoản; Đơn hàng; CSKH; HTX; Admin.
+MoSCoW
+Mức ưu tiên: Must (bắt buộc), Should (nên có), Could (có thì tốt), Won’t (chưa làm).
+API
+Application Programming Interface.
+Giao tiếp giữa app và máy chủ
+CSDL
+Cơ sở dữ liệu.
+STT
+Nội dung
+Mô tả
+Tình trạng
+1
+Phân công giai đoạn 2 – App Đặc sản Bắc Giang (30/09/2026)
+Mô tả dự án, phạm vi giai đoạn 1, quy chuẩn đầu ra, quy định về tên vai trò và mã, các điểm cần chốt. Là căn cứ phạm vi và các giá trị đề xuất (tỷ lệ đặt cọc 30%, giữ tồn kho 15 phút).
+Đã có, đã dùng
+2
+Template_SRS.docx
+Mẫu tài liệu đặc tả yêu cầu phần mềm; tài liệu này trình bày theo mẫu.
+Đã có, đã dùng
+3
+Bốn nguyên tắc nghiệp vụ bổ sung của người giao việc (06/10/2026)
+Xem sản phẩm không cần đăng nhập; thêm vào giỏ phải đăng nhập; tách giỏ hàng thường và giỏ Preorder; tồn kho bằng 0 hoặc chưa vào vụ thì chuyển Preorder.
+Đã có, đã dùng
+4
+File ma trận phân quyền của Lead BA
+Mã chức năng FR chính thức và quyền theo vai trò.
+Chưa có trong tay; mã trong tài liệu là mã tạm (Phụ lục B, mục 1)
+5
+Dữ liệu sản phẩm (nhóm, mùa vụ, bảo quản)
+Nhóm sản phẩm, tháng thu hoạch, cách bảo quản, hạn dùng của 14 đặc sản.
+Chưa có trong tay; dữ liệu trong hình là minh hoạ
+6
+Bảng thuật ngữ chung và danh sách tham số cấu hình của dự án
+Tên gọi thống nhất và tham số dùng chung.
+Chưa có trong tay; tham số đề xuất ở Phụ lục A
+7
+Mẫu use case của nhóm và sơ đồ trạng thái đơn hàng (module DH)
+Khuôn dạng bảng use case; tên trạng thái đơn “Chờ thanh toán”.
+Chưa có trong tay; cần đối chiếu (Phụ lục B, mục 2 và 22)
+STT
+Tên tác nhân
+Mô tả
+1
+Khách hàng
+Người dùng app để xem và mua đặc sản.
+Chưa đăng nhập: xem danh mục, danh sách sản phẩm; tìm kiếm, lọc, sắp xếp; xem chi tiết sản phẩm; chia sẻ sản phẩm (link không kèm mã giới thiệu); mở link chia sẻ. Không có giỏ hàng.
+Đã đăng nhập bằng tài khoản Khách hàng: thêm sản phẩm vào giỏ, xem và cập nhật Giỏ hàng thường và Giỏ Preorder, chuyển sang đặt hàng, chia sẻ sản phẩm bằng link kèm mã giới thiệu của mình.
+2
+Hệ thống
+Tự động xác định hình thức bán và trạng thái nhận đặt; đưa sản phẩm vào đúng giỏ; kiểm tra lại giỏ hàng; tạo link chia sẻ; ghi lượt chia sẻ và lượt mở link.
+3
+HTX (gián tiếp)
+Khai báo sản phẩm, giá, tồn kho, mùa vụ, đợt Preorder, chứng nhận ở module HTX. Dữ liệu này là đầu vào của các chức năng trong tài liệu. Không thao tác trực tiếp trên các chức năng này.
+4
+Admin (gián tiếp)
+Duyệt sản phẩm, quản lý danh mục, cấu hình tham số, tạo mã giới thiệu của hội nhóm Facebook ở module AD; xem số liệu chia sẻ trong báo cáo.
+5
+Facebook (hệ thống ngoài)
+Nơi nhận link chia sẻ, hiển thị xem trước và đưa Khách hàng mở link.
+STT
+Đối tượng sử dụng
+Nhóm chức năng
+Chức năng chi tiết
+Mô tả
+Ưu tiên
+1
+Khách hàng
+FR-MH-01
+Danh mục, danh sách sản phẩm
+FR-MH-01.1
+Xem danh mục sản phẩm
+Hiển thị mục “Tất cả” và các danh mục để Khách hàng chọn nhóm đặc sản. Không yêu cầu đăng nhập.
+Đầu ra: tên, biểu tượng danh mục, theo thứ tự hiển thị do Admin cấu hình.
+Chỉ hiển thị danh mục đang bật và có ít nhất 1 sản phẩm đủ điều kiện hiển thị.
+Quy tắc: BR-MH-01, 03. Thông báo: MSG-MH-01, 02.
+Must
+1
+Khách hàng
+FR-MH-01
+Danh mục, danh sách sản phẩm
+FR-MH-01.2
+Xem danh sách sản phẩm
+Hiển thị sản phẩm của danh mục đang chọn (mặc định “Tất cả”) dạng lưới 2 cột; nhấn thẻ để mở chi tiết (FR-MH-03.1).
+Đầu ra trên mỗi thẻ: ảnh đại diện, tên, giá và đơn vị bán, tên HTX, đánh giá, nhãn chứng nhận, nhãn Hoả tốc, hình thức bán.
+Tải từng trang, kéo xuống để làm mới.
+Quy tắc: BR-MH-01, 03, 09, 10, 18, 37. Thông báo: MSG-MH-01, 02, 03.
+Must
+1
+Hệ thống
+FR-MH-01
+Danh mục, danh sách sản phẩm
+FR-MH-01.3
+Hiển thị hình thức bán trên thẻ sản phẩm
+Hệ thống xác định hình thức bán và trạng thái nhận đặt của từng sản phẩm rồi thể hiện trên thẻ.
+Quy tắc xác định: BR-MH-04, 05, 06, 07; bảng quyết định ở mục 7.2.
+Cách thể hiện: BR-MH-08.
+Must
+2
+Khách hàng
+FR-MH-02
+Tìm kiếm, lọc, sắp xếp
+FR-MH-02.1
+Tìm kiếm theo từ khoá
+Tìm sản phẩm theo từ khoá trên toàn bộ sản phẩm đang hiển thị. Không yêu cầu đăng nhập.
+Đầu vào: từ khoá (Text, 2–100 ký tự).
+Đầu ra: số kết quả và danh sách thẻ sản phẩm, sắp theo “Liên quan nhất”.
+Quy tắc: BR-MH-10, 11, 15, 38. Thông báo: MSG-MH-04, 05.
+Must
+2
+Khách hàng
+FR-MH-02
+Tìm kiếm, lọc, sắp xếp
+FR-MH-02.2
+Gợi ý và lịch sử tìm kiếm
+Gợi ý sản phẩm, danh mục, HTX trong lúc gõ; lưu và cho dùng lại các từ khoá đã tìm.
+Quy tắc: BR-MH-12 (gợi ý), BR-MH-13 (lịch sử).
+Should
+2
+Khách hàng
+FR-MH-02
+Tìm kiếm, lọc, sắp xếp
+FR-MH-02.3
+Lọc sản phẩm
+Thu hẹp danh sách sản phẩm hoặc kết quả tìm kiếm theo tiêu chí: hình thức bán, khoảng giá, chứng nhận, hỗ trợ hoả tốc, HTX, đánh giá.
+Hiển thị số nhóm tiêu chí đang áp dụng và thẻ tiêu chí; bỏ từng thẻ hoặc “Xoá bộ lọc”.
+Quy tắc: BR-MH-14, 16, 18. Thông báo: MSG-MH-06, 07.
+Ưu tiên: lọc theo hình thức bán và chứng nhận là Should; lọc theo khoảng giá, hoả tốc, HTX, đánh giá là Could vì giai đoạn 1 chỉ có 14 đặc sản.
+Should, Could
+2
+Khách hàng
+FR-MH-02
+Tìm kiếm, lọc, sắp xếp
+FR-MH-02.4
+Sắp xếp sản phẩm
+Chọn một tiêu chí sắp xếp: Mặc định, Liên quan nhất, Bán chạy, Mới nhất, Giá thấp đến cao, Giá cao đến thấp, Đánh giá cao.
+Quy tắc: BR-MH-09, 15, 16.
+Should
+3
+Khách hàng
+FR-MH-03
+Chi tiết sản phẩm
+FR-MH-03.1
+Xem chi tiết sản phẩm
+Hiển thị đầy đủ thông tin một sản phẩm. Không yêu cầu đăng nhập.
+Đầu ra: danh sách thông tin ở BR-MH-17; sản phẩm cùng danh mục theo BR-MH-38.
+Quy tắc: BR-MH-01, 03, 17, 20, 37, 38. Thông báo: MSG-MH-01, 02, 08.
+Must
+3
+Khách hàng
+FR-MH-03
+Chi tiết sản phẩm
+FR-MH-03.2
+Xem chứng nhận và truy xuất nguồn gốc
+Hiển thị chứng nhận còn hiệu lực của sản phẩm (loại, số, đơn vị cấp, ngày cấp, ngày hết hạn, ảnh) và lối vào trang truy xuất nguồn gốc.
+Trang truy xuất thuộc module HTX; tài liệu này chỉ tham chiếu (mục 14).
+Quy tắc: BR-MH-18.
+Must
+3
+Khách hàng
+FR-MH-03
+Chi tiết sản phẩm
+FR-MH-03.3
+Chọn số lượng
+Chọn số lượng muốn mua theo đơn vị bán trước khi thêm vào giỏ.
+Đầu vào: số lượng (số nguyên, mặc định 1).
+Quy tắc: BR-MH-19. Thông báo: MSG-MH-14, 15.
+Must
+3
+Hệ thống
+FR-MH-03
+Chi tiết sản phẩm
+FR-MH-03.4
+Xác định hình thức bán và trạng thái nhận đặt
+Hệ thống xác định hình thức bán và trạng thái nhận đặt mỗi lần hiển thị chi tiết, khi thêm vào giỏ và khi kiểm tra lại giỏ; Khách hàng không tự chọn.
+Quy tắc: BR-MH-04, 05, 06, 07, 08; bảng quyết định ở mục 7.2. Thông báo: MSG-MH-20, 21, 22.
+Must
+4
+Khách hàng (đã đăng nhập)
+FR-MH-04
+Giỏ hàng
+FR-MH-04.1
+Thêm sản phẩm vào giỏ
+Thêm sản phẩm với số lượng đã chọn vào giỏ từ màn hình chi tiết. Bắt buộc đăng nhập; chưa đăng nhập thì Hệ thống yêu cầu đăng nhập rồi thực hiện tiếp.
+Đầu vào: sản phẩm, số lượng. Đầu ra: dòng giỏ hàng được tạo hoặc cộng dồn; số trên biểu tượng giỏ.
+Quy tắc: BR-MH-02, 04, 06, 07, 19, 23, 24, 28. Thông báo: MSG-MH-09, 11 đến 23, 37.
+Must
+4
+Hệ thống
+FR-MH-04
+Giỏ hàng
+FR-MH-04.2
+Tách giỏ hàng thường và giỏ Preorder
+Mỗi Khách hàng có hai giỏ tách biệt; Hệ thống tự đưa sản phẩm vào giỏ theo hình thức bán lúc thêm. Mỗi lần đặt hàng chỉ gồm sản phẩm của một giỏ.
+Quy tắc: BR-MH-21.
+Must
+4
+Khách hàng (đã đăng nhập)
+FR-MH-04
+Giỏ hàng
+FR-MH-04.3
+Xem giỏ hàng
+Xem hai giỏ ở hai tab “Hàng có sẵn” và “Đặt trước”, các dòng nhóm theo HTX, kèm tạm tính; tab Đặt trước có ngày giao dự kiến và tiền cọc dự kiến.
+Quy tắc: BR-MH-02, 21, 22, 25, 27, 28, 37. Thông báo: MSG-MH-10, 11, 24.
+Must
+4
+Khách hàng (đã đăng nhập)
+FR-MH-04
+Giỏ hàng
+FR-MH-04.4
+Cập nhật số lượng, xoá sản phẩm
+Đổi số lượng từng dòng; xoá một dòng hoặc các dòng đã chọn, có bước xác nhận.
+Quy tắc: BR-MH-19, 29. Thông báo: MSG-MH-14, 15, 28, 29, 30.
+Must
+4
+Hệ thống
+FR-MH-04
+Giỏ hàng
+FR-MH-04.5
+Kiểm tra lại giỏ hàng
+Khi mở giỏ, khi làm mới và trước khi chuyển sang đặt hàng, Hệ thống kiểm tra lại từng dòng và gán trạng thái dòng theo mục 7.3; không tự thay đổi nội dung giỏ ngoài các trường hợp nêu ở quy tắc.
+Quy tắc: BR-MH-25, 26, 30. Thông báo: MSG-MH-25, 26, 27.
+Must
+4
+Khách hàng (đã đăng nhập)
+FR-MH-04
+Giỏ hàng
+FR-MH-04.6
+Chuyển sản phẩm giữa hai giỏ
+Chuyển dòng “Hết hàng có sẵn” sang Giỏ Preorder hoặc dòng “Đã có hàng sẵn” sang Giỏ hàng thường bằng một thao tác, có kiểm tra điều kiện của giỏ đích.
+Quy tắc: BR-MH-04, 07, 19, 23, 24, 26. Thông báo: MSG-MH-31, 32.
+Khi chưa có chức năng này, Khách hàng xoá dòng và thêm lại từ chi tiết sản phẩm.
+Should
+4
+Khách hàng (đã đăng nhập)
+FR-MH-04
+Giỏ hàng
+FR-MH-04.7
+Chọn sản phẩm và chuyển sang đặt hàng
+Chọn dòng theo từng dòng, theo HTX hoặc tất cả; nhấn “Đặt hàng (k)” hoặc “Đặt trước (k)” để chuyển các dòng hợp lệ sang chức năng đặt hàng (ngoài phạm vi, mục 14).
+Quy tắc: BR-MH-26, 27, 30. Thông báo: MSG-MH-33.
+Must
+5
+Khách hàng
+FR-MH-05
+Chia sẻ sản phẩm
+FR-MH-05.1
+Tạo và chia sẻ link sản phẩm
+Chia sẻ sản phẩm từ màn hình chi tiết qua Facebook, sao chép liên kết hoặc kênh khác. Không yêu cầu đăng nhập; đã đăng nhập thì link kèm mã giới thiệu của Khách hàng.
+Quy tắc: BR-MH-31, 32, 33, 36. Thông báo: MSG-MH-34, 35, 36.
+Must
+5
+Khách hàng
+FR-MH-05
+Chia sẻ sản phẩm
+FR-MH-05.2
+Mở sản phẩm từ link chia sẻ
+Nhấn link thì xem được sản phẩm: trong app nếu đã cài, trên trang web sản phẩm nếu chưa cài. Không yêu cầu đăng nhập.
+Quy tắc: BR-MH-20, 34. Thông báo: MSG-MH-08.
+Must
+5
+Hệ thống
+FR-MH-05
+Chia sẻ sản phẩm
+FR-MH-05.3
+Ghi nhận lượt chia sẻ, lượt mở link
+Ghi mỗi lượt chia sẻ và mỗi lượt mở link; lưu mã giới thiệu cho thiết bị mở link để chức năng đặt hàng gắn vào đơn. Dữ liệu phục vụ chỉ số “Hiệu quả từng hội nhóm Facebook”.
+Quy tắc: BR-MH-32, 35.
+Must
+STT
+Yêu cầu
+Mô tả
+1
+NFR-MH-01
+Hiệu năng
+Đo trên mạng 4G, dữ liệu 1.000 sản phẩm, tính với 95% lượt yêu cầu:
+Danh sách sản phẩm, kết quả tìm kiếm, lọc, sắp xếp hiển thị ≤ 2 giây.
+Gợi ý tìm kiếm ≤ 500 ms.
+Chi tiết sản phẩm hiển thị nội dung chính ≤ 2 giây; ảnh tải sau.
+Thêm vào giỏ, đổi số lượng phản hồi ≤ 1 giây; mở giỏ 50 dòng ≤ 2 giây.
+Bảng chia sẻ hiển thị ≤ 1 giây; trang web sản phẩm tải ≤ 3 giây.
+2
+NFR-MH-02
+Khả dụng
+Các chức năng xem sản phẩm và giỏ hàng hoạt động 24/7; thời gian sẵn sàng ≥ 99,5% mỗi tháng.
+3
+NFR-MH-03
+Tính đúng của dữ liệu bán
+Giá, tồn kho, tồn kho khả dụng, hình thức bán và trạng thái nhận đặt hiển thị không chậm quá 60 giây so với dữ liệu gốc. Máy chủ là nơi quyết định: luôn kiểm tra lại khi thêm vào giỏ, khi mở giỏ và trước khi chuyển sang đặt hàng.
+4
+NFR-MH-04
+Dễ dùng, phù hợp người lớn tuổi
+Cỡ chữ nội dung tối thiểu 16 pt; vùng chạm tối thiểu 44 × 44 pt.
+Độ tương phản giữa chữ và nền ≥ 4,5:1.
+Tăng cỡ chữ của hệ điều hành đến 130% không vỡ bố cục.
+Thông báo bằng tiếng Việt, nêu cách xử lý (mục 10.1).
+Không dùng màu làm dấu hiệu duy nhất để phân biệt Mua thường và Preorder: luôn kèm chữ.
+5
+NFR-MH-05
+Tương thích
+iOS 15 trở lên và Android 8 trở lên; màn hình từ 4,7 inch.
+6
+NFR-MH-06
+Bảo mật
+Mọi kết nối dùng HTTPS (TLS 1.2 trở lên).
+API giỏ hàng yêu cầu token đăng nhập; chỉ chủ tài khoản đọc và sửa giỏ của mình.
+API công khai (danh mục, sản phẩm, tìm kiếm, ghi lượt mở link) giới hạn 60 yêu cầu mỗi phút cho mỗi thiết bị.
+Từ khoá tìm kiếm được kiểm tra và làm sạch phía máy chủ.
+7
+NFR-MH-07
+Kết nối kém
+Mất kết nối: hiển thị dữ liệu đã tải gần nhất kèm MSG-MH-02. Thao tác với giỏ khi mất kết nối báo lỗi (MSG-MH-23, 29), không ghi nhận cục bộ.
+8
+NFR-MH-08
+Khả năng mở rộng
+Dữ liệu và giao diện không khoá cứng tiếng Việt, đồng Việt Nam và vùng giao Hà Nội, để sẵn sàng cho đa ngôn ngữ, đa tiền tệ và mở rộng vùng giao ở giai đoạn sau.
+9
+NFR-MH-09
+Đo lường
+Ghi các sự kiện: xem danh mục, xem sản phẩm, tìm kiếm (từ khoá, số kết quả), lọc, thêm vào giỏ (hình thức bán), chia sẻ (kênh), mở link (mã giới thiệu). Dữ liệu phục vụ các chỉ số thành công giai đoạn 1.
+10
+NFR-MH-10
+Dữ liệu cá nhân
+Lịch sử tìm kiếm chỉ lưu trên thiết bị.
+Lượt chia sẻ lưu mã tài khoản nếu Khách hàng đã đăng nhập (chính là chủ mã giới thiệu trong link).
+Lượt mở link lưu mã định danh thiết bị ẩn danh; nếu Khách hàng mở link đang đăng nhập thì lưu thêm mã tài khoản, chỉ để nhận biết chủ mã tự mở link (BR-MH-35). Không lưu tên, số điện thoại.
+Link chia sẻ và mã giới thiệu không chứa, không suy ra được thông tin cá nhân.
+Mã
+Nhóm
+Nội dung quy tắc
+Áp dụng
+BR-MH-01
+Truy cập
+Khách hàng chưa đăng nhập được xem danh mục, danh sách sản phẩm, tìm kiếm, lọc, sắp xếp, xem chi tiết sản phẩm (gồm chứng nhận, truy xuất nguồn gốc, đánh giá), chia sẻ sản phẩm và mở link chia sẻ. App không yêu cầu đăng nhập khi mở.
+UC-MH-01, 02, 03, 04, 08, 09
+BR-MH-02
+Truy cập
+Thêm vào giỏ, xem giỏ và cập nhật giỏ bắt buộc đăng nhập bằng tài khoản Khách hàng.
+Chưa đăng nhập: Hệ thống hiển thị hộp thoại theo thao tác (MSG-MH-09 khi thêm vào giỏ, MSG-MH-10 khi mở giỏ) với ba lựa chọn Đăng nhập, Đăng ký, Để sau.
+Đăng nhập hoặc đăng ký thành công: Hệ thống đưa Khách hàng về đúng màn hình trước đó, giữ sản phẩm và số lượng đã chọn, thực hiện tiếp thao tác đang dở.
+Chọn “Để sau” hoặc rời màn hình đăng nhập giữa chừng: không thực hiện thao tác, ở lại màn hình trước đó.
+Thao tác đang dở chỉ được giữ trong phiên mở app hiện tại.
+Tài khoản HTX, Admin, Cơ quan quản lý nhà nước không có giỏ hàng: hiển thị MSG-MH-11.
+UC-MH-05, 06, 07
+BR-MH-03
+Hiển thị sản phẩm
+Sản phẩm chỉ hiển thị khi thoả đồng thời: (1) đã được Admin duyệt; (2) HTX để trạng thái đang bán, không tạm ẩn; (3) tài khoản HTX đang hoạt động; (4) danh mục của sản phẩm đang bật. Giai đoạn 1 không hiển thị nhóm sản phẩm để sau (rượu, gỏi cá mè).
+UC-MH-01, 02, 03, 04, 09
+BR-MH-04
+Hình thức bán
+Hình thức bán chỉ có hai giá trị. Hệ thống xác định cho từng sản phẩm tại ba thời điểm: khi hiển thị, khi thêm vào giỏ, khi kiểm tra lại giỏ.
+Mua thường: sản phẩm đang trong vụ hoặc bán quanh năm, VÀ tồn kho > 0.
+Preorder: tồn kho = 0 HOẶC sản phẩm chưa vào vụ. Không có ngoại lệ.
+Tồn kho ở đây là tồn kho hiện có ở module HTX, không trừ lượng đang giữ cho đơn Chờ thanh toán (BR-MH-06). Khách hàng không tự chọn hình thức bán. Bảng quyết định ở mục 7.2.
+UC-MH-01, 04, 05, 06, 07
+BR-MH-05
+Hình thức bán
+Sản phẩm có mùa vụ được coi là chưa vào vụ khi ngày hiện tại nằm ngoài khoảng từ ngày bắt đầu vụ đến ngày kết thúc vụ do HTX khai báo.
+Ngày bắt đầu và ngày kết thúc tính là trong vụ.
+Sau ngày kết thúc vụ cũng là chưa vào vụ (chưa vào vụ kế tiếp).
+Ngày hiện tại tính theo giờ Việt Nam.
+Sản phẩm bán quanh năm không xét điều kiện mùa vụ.
+UC-MH-01, 04, 05
+BR-MH-06
+Hình thức bán
+Tồn kho khả dụng = tồn kho − số lượng đang giữ cho các đơn ở trạng thái Chờ thanh toán. Tồn kho khả dụng chỉ dùng để giới hạn số lượng đặt Mua thường, không dùng để xác định hình thức bán.
+“Còn hàng”: sản phẩm Mua thường có tồn kho khả dụng > 0.
+“Đang được giữ”: sản phẩm Mua thường có tồn kho > 0 nhưng tồn kho khả dụng = 0. Sản phẩm vẫn là Mua thường, không chuyển Preorder; nút thêm vào giỏ bị khoá kèm MSG-MH-20.
+Tồn kho thay đổi theo hai nguồn: HTX cập nhật ở module HTX; chức năng đặt hàng trừ số lượng đã bán khi đơn Mua thường thành công (thanh toán online thành công, hoặc đơn trả tiền khi nhận hàng được tạo). Thời điểm giữ và nhả theo chức năng đặt hàng (đề xuất của dự án: giữ khi đơn vào Chờ thanh toán, nhả sau 15 phút); khi nhả, tồn kho không đổi. Việc hoàn tồn kho khi đơn đã trừ bị huỷ hoặc trả hàng thuộc chức năng đặt hàng và module DH. Thêm vào giỏ không giữ tồn kho.
+UC-MH-04, 05, 06, 07
+BR-MH-07
+Hình thức bán
+Sản phẩm Preorder nhận đặt theo đợt Preorder do HTX khai báo; mỗi đợt bắt buộc có ngày giao dự kiến và hạn mức nhận đặt. Mỗi sản phẩm có tối đa một đợt Preorder đang mở.
+Đợt Preorder đang mở là đợt chưa qua hạn chốt nhận đặt; khi HTX không khai hạn chốt riêng thì hạn chốt là hết ngày liền trước ngày giao dự kiến.
+“Nhận đặt trước”: có đợt Preorder đang mở và hạn mức còn lại > 0.
+“Hết suất đặt trước”: có đợt Preorder đang mở nhưng hạn mức còn lại = 0.
+“Chưa mở đặt trước”: không có đợt Preorder đang mở.
+Hạn mức còn lại = hạn mức − số lượng trong đơn Preorder đã đặt cọc − số lượng trong đơn Preorder đang Chờ thanh toán. Suất đang giữ cho đơn Chờ thanh toán được trả lại khi đơn huỷ hoặc hết hạn, nên “Hết suất đặt trước” có thể trở lại “Nhận đặt trước”. Ở cả ba trạng thái, sản phẩm vẫn thuộc hình thức Preorder, vẫn xem và chia sẻ được. Giới hạn về ngày giao dự kiến xa nhất và cách HTX khai hạn chốt thuộc module HTX (mục 14; Phụ lục B, mục 8 và 34).
+UC-MH-01, 04, 05, 06, 07
+BR-MH-08
+Hình thức bán
+Cách thể hiện theo trạng thái nhận đặt:
+“Còn hàng”: thẻ không gắn nhãn hình thức bán; chi tiết ghi “Còn hàng” (hoặc “Còn N <đơn vị bán>” khi tồn kho khả dụng ≤ 10); nút “Thêm vào giỏ”.
+“Đang được giữ”: thẻ như “Còn hàng”; chi tiết ghi “Đang được giữ” kèm MSG-MH-20; nút “Thêm vào giỏ” bị khoá.
+“Nhận đặt trước”: thẻ gắn nhãn “Đặt trước” và dòng “Giao dự kiến dd/MM/yyyy”; chi tiết hiển thị lý do (“Chưa vào vụ” hoặc “Hết hàng có sẵn”), ngày giao dự kiến, tỷ lệ đặt cọc; nút “Thêm vào giỏ đặt trước”.
+“Hết suất đặt trước”, “Chưa mở đặt trước”: thẻ gắn nhãn “Đặt trước” và tên trạng thái, ảnh làm mờ; chi tiết ghi tên trạng thái, ẩn bộ chọn số lượng, nút bị khoá.
+Nhãn “Hoả tốc” chỉ hiển thị khi sản phẩm được HTX đánh dấu hỗ trợ hoả tốc và đang ở hình thức Mua thường.
+UC-MH-01, 04
+BR-MH-09
+Danh sách
+Thứ tự mặc định của danh sách gồm ba nhóm: (1) sản phẩm Mua thường; (2) sản phẩm Preorder “Nhận đặt trước”; (3) sản phẩm Preorder “Hết suất đặt trước”, “Chưa mở đặt trước”. Trong cùng nhóm: số lượng đã bán trong 30 ngày gần nhất giảm dần; bằng nhau thì sản phẩm được duyệt sau xếp trước; vẫn bằng nhau thì theo mã sản phẩm tăng dần.
+UC-MH-01, 03
+BR-MH-10
+Danh sách
+Danh sách tải 20 sản phẩm mỗi lần; khi Khách hàng cuộn tới cuối thì tải 20 sản phẩm tiếp theo cho tới khi hết. Kéo xuống ở đầu danh sách thì tải lại 20 sản phẩm đầu, giữ danh mục, từ khoá, bộ lọc và tiêu chí sắp xếp.
+UC-MH-01, 02, 03
+BR-MH-11
+Tìm kiếm
+Tìm trên tên sản phẩm, tên danh mục, tên HTX của toàn bộ sản phẩm thoả BR-MH-03, không phụ thuộc danh mục đang chọn.
+Không phân biệt chữ hoa, chữ thường; không phân biệt có dấu, không dấu (“vai thieu” tìm ra “Vải thiều”).
+Từ khoá nhiều từ: mọi từ đều phải khớp (điều kiện VÀ); mỗi từ khớp một phần ở bất kỳ trường nào trong ba trường trên.
+Từ khoá hợp lệ dài 2–100 ký tự sau khi cắt khoảng trắng đầu và cuối; ô nhập không nhận quá 100 ký tự.
+UC-MH-02
+BR-MH-12
+Tìm kiếm
+Gợi ý tìm kiếm xuất hiện từ ký tự thứ 2, cập nhật sau khi Khách hàng ngừng gõ 300 ms. Tối đa 8 gợi ý, theo thứ tự: tối đa 5 sản phẩm, tối đa 2 danh mục, tối đa 1 HTX; chỉ gồm gợi ý khớp từ khoá theo BR-MH-11.
+Chọn gợi ý là sản phẩm: mở chi tiết sản phẩm.
+Chọn gợi ý là danh mục: mở danh sách của danh mục đó, bỏ từ khoá.
+Chọn gợi ý là HTX: mở danh sách lọc theo HTX đó, bỏ từ khoá.
+UC-MH-02
+BR-MH-13
+Tìm kiếm
+Lịch sử tìm kiếm lưu trên thiết bị, tối đa 10 từ khoá gần nhất, mới nhất xếp trên, không lưu trùng (từ khoá tìm lại được đưa lên đầu). Khách hàng xoá được từng từ khoá hoặc toàn bộ. Chỉ lưu từ khoá đã nhấn “Tìm”.
+UC-MH-02
+BR-MH-14
+Lọc
+Các nhóm tiêu chí lọc:
+Hình thức bán: “Hàng có sẵn” (sản phẩm Mua thường, cả hai trạng thái nhận đặt); “Đặt trước” (sản phẩm Preorder, cả ba trạng thái nhận đặt).
+Khoảng giá: giá từ, giá đến (đ), số nguyên ≥ 0, giá từ ≤ giá đến, được để trống một đầu.
+Chứng nhận: chọn nhiều, theo loại chứng nhận còn hiệu lực có ở sản phẩm đang hiển thị.
+Hỗ trợ hoả tốc.
+HTX: chọn nhiều, theo các HTX có sản phẩm đang hiển thị.
+Đánh giá: từ 4 sao trở lên.
+Các nhóm kết hợp theo điều kiện VÀ; các giá trị trong cùng một nhóm kết hợp theo điều kiện HOẶC. Danh mục không nằm trong bảng lọc: Khách hàng chọn danh mục trên thanh danh mục.
+UC-MH-03
+BR-MH-15
+Sắp xếp
+Mỗi thời điểm chỉ áp dụng một tiêu chí sắp xếp:
+Mặc định: theo BR-MH-09; là mặc định của danh sách sản phẩm.
+Liên quan nhất: chỉ có khi đang tìm theo từ khoá và là mặc định của kết quả tìm kiếm. Sản phẩm khớp ở tên sản phẩm xếp trước, rồi khớp ở tên danh mục, rồi khớp ở tên HTX; trong cùng mức theo BR-MH-09.
+Bán chạy: số lượng đã bán trong 30 ngày gần nhất giảm dần.
+Mới nhất: ngày duyệt giảm dần.
+Giá thấp đến cao, Giá cao đến thấp: theo giá bán hiện hành (BR-MH-37).
+Đánh giá cao: điểm trung bình giảm dần; bằng điểm thì nhiều lượt đánh giá hơn xếp trước; sản phẩm chưa có đánh giá xếp cuối.
+Với mọi tiêu chí, các sản phẩm bằng nhau xếp theo mã sản phẩm tăng dần.
+UC-MH-02, 03
+BR-MH-16
+Lọc, sắp xếp
+Giữ trạng thái xem:
+Mở chi tiết sản phẩm rồi quay lại: giữ từ khoá, danh mục, bộ lọc, tiêu chí sắp xếp và vị trí cuộn.
+Đổi danh mục: giữ bộ lọc và tiêu chí sắp xếp.
+“Xoá bộ lọc”: bỏ mọi tiêu chí lọc; không bỏ từ khoá, danh mục, tiêu chí sắp xếp.
+Đóng hẳn app: bỏ tất cả.
+Số trên nút Lọc là số nhóm tiêu chí đang áp dụng.
+UC-MH-02, 03
+BR-MH-17
+Chi tiết
+Thông tin trên chi tiết sản phẩm: ảnh; tên; giá và đơn vị bán; quy cách; hình thức bán và trạng thái nhận đặt; chứng nhận; nút truy xuất nguồn gốc; HTX (tên, địa chỉ); mùa vụ (tháng thu hoạch); cách bảo quản; hạn dùng; mô tả; thông tin giao hàng (chỉ giao trong Hà Nội, hỗ trợ hoả tốc nếu có); điểm đánh giá trung bình, số lượt và 3 đánh giá mới nhất; sản phẩm cùng danh mục (BR-MH-38). Trường không có dữ liệu thì ẩn cả nhãn.
+UC-MH-04
+BR-MH-18
+Chi tiết
+Chỉ hiển thị chứng nhận còn hiệu lực: ngày hết hạn từ ngày hiện tại trở đi, hoặc chứng nhận không có ngày hết hạn. Chứng nhận hết hạn không hiển thị với Khách hàng, không dùng cho nhãn và bộ lọc.
+UC-MH-01, 03, 04
+BR-MH-19
+Số lượng
+Số lượng là số nguyên tính theo đơn vị bán, tối thiểu 1, mặc định 1.
+Trần mỗi dòng giỏ hàng: 99.
+Mua thường: không vượt tồn kho khả dụng.
+Preorder: không vượt hạn mức còn lại.
+Hệ thống không tự sửa số lượng của Khách hàng: nhập vượt giới hạn thì giữ số lượng hợp lệ trước đó và báo MSG-MH-14 (vượt tồn kho khả dụng hoặc hạn mức còn lại) hoặc MSG-MH-15 (vượt trần 99). Nút “+” bị khoá khi đạt giới hạn. Thao tác giảm số lượng luôn được chấp nhận, kể cả khi số lượng sau khi giảm vẫn vượt giới hạn (dòng khi đó vẫn ở trạng thái “Chỉ còn N”). Nhập không hợp lệ (để trống, 0, số âm, số thập phân, chữ) thì trả về số lượng hợp lệ trước đó.
+UC-MH-04, 05, 07
+BR-MH-20
+Chi tiết
+Mở một sản phẩm không còn thoả BR-MH-03 hoặc không tồn tại (từ link chia sẻ, giỏ hàng, gợi ý): hiển thị MSG-MH-08 và khối “Sản phẩm khác” theo BR-MH-38.
+UC-MH-04, 09
+BR-MH-21
+Giỏ hàng
+Mỗi Khách hàng có 2 giỏ tách biệt: Giỏ hàng thường (sản phẩm Mua thường) và Giỏ Preorder (sản phẩm Preorder).
+Hệ thống tự đưa sản phẩm vào giỏ theo hình thức bán tại thời điểm thêm; Khách hàng không chọn giỏ.
+Hai giỏ hiển thị thành 2 tab “Hàng có sẵn (n)” và “Đặt trước (m)”; n, m là số dòng của từng giỏ.
+Mỗi lần đặt hàng chỉ gồm sản phẩm của một giỏ; không chọn chung dòng của hai giỏ.
+UC-MH-05, 06, 07
+BR-MH-22
+Giỏ hàng
+Trong mỗi giỏ, các dòng được nhóm theo HTX; nhóm có dòng cập nhật gần nhất xếp trên; trong nhóm, dòng thêm sau xếp trên. Việc tách đơn theo HTX và tính phí giao hàng thuộc chức năng đặt hàng.
+UC-MH-06
+BR-MH-23
+Giỏ hàng
+Mỗi sản phẩm chỉ có một dòng trong một giỏ. Thêm sản phẩm đã có trong giỏ thì cộng dồn số lượng vào dòng hiện có. Tổng sau khi cộng dồn vượt giới hạn ở BR-MH-19 thì không thêm và báo MSG-MH-16, trong đó K là số lượng đang có trong giỏ, N là số lượng còn thêm được. Dòng hiện có đang ở trạng thái “Chờ thanh toán” thì không cộng dồn, không tạo dòng mới, báo MSG-MH-37.
+UC-MH-05, 07
+BR-MH-24
+Giỏ hàng
+Mỗi giỏ chứa tối đa 50 dòng. Giỏ đã đủ 50 dòng thì không thêm được sản phẩm mới (MSG-MH-17); vẫn cộng dồn được cho sản phẩm đã có trong giỏ. Giới hạn tính riêng cho từng giỏ.
+UC-MH-05, 07
+BR-MH-25
+Giỏ hàng
+Giỏ hàng dùng giá bán hiện hành tại thời điểm xem, không chốt giá lúc thêm vào giỏ. Giá hiện hành khác giá của lần xem giỏ trước (lần đầu: giá lúc thêm) thì dòng hiển thị MSG-MH-26; ghi chú giữ tới khi Khách hàng rời màn hình Giỏ hàng, sau đó giá mới trở thành mốc so sánh. Quy tắc tương tự cho ngày giao dự kiến của dòng Preorder (MSG-MH-27). Giá được chốt khi tạo đơn (chức năng đặt hàng).
+UC-MH-06, 07
+BR-MH-26
+Giỏ hàng
+Hệ thống kiểm tra lại từng dòng khi mở giỏ, khi kéo xuống để làm mới và trước khi chuyển sang đặt hàng, rồi gán cho mỗi dòng một trạng thái dòng theo bảng ở mục 7.3.
+Hệ thống không tự sửa số lượng, không tự chuyển dòng giữa hai giỏ, không tự xoá dòng (trừ BR-MH-28).
+Dòng không ở trạng thái “Hợp lệ” thì không chọn được để đặt.
+Giỏ đang mở có dòng cần Khách hàng xem lại (dòng không “Hợp lệ”, không tính dòng “Chờ thanh toán”; hoặc dòng có ghi chú thay đổi): hiển thị MSG-MH-25 với N là số dòng đó, tính riêng cho từng giỏ.
+UC-MH-06, 07
+BR-MH-27
+Giỏ hàng
+Chọn dòng để đặt:
+Dòng mới thêm mặc định được chọn. Dòng không “Hợp lệ” tự bỏ chọn và khoá ô chọn.
+Ô chọn của nhóm HTX: chọn hoặc bỏ chọn mọi dòng “Hợp lệ” của HTX đó. “Chọn tất cả”: mọi dòng “Hợp lệ” của tab đang mở.
+Trạng thái chọn lưu theo tài khoản, riêng cho từng giỏ.
+Tạm tính = tổng (giá bán hiện hành × số lượng) của các dòng đang chọn; chưa gồm phí giao hàng, hộp quà, ưu đãi.
+Tab Đặt trước hiển thị thêm tiền cọc dự kiến = tạm tính × tỷ lệ đặt cọc, làm tròn lên đến đồng. Số tiền cọc phải trả do chức năng đặt hàng chốt.
+Nút “Đặt hàng (k)”, “Đặt trước (k)”: k là số dòng đang chọn; nút bị khoá khi k = 0.
+UC-MH-06, 07
+BR-MH-28
+Giỏ hàng
+Giỏ hàng lưu theo tài khoản trên máy chủ, đồng bộ giữa các thiết bị, không mất khi đăng xuất.
+Số trên biểu tượng giỏ = tổng số dòng của hai giỏ; lớn hơn 99 thì hiển thị “99+”; ẩn khi bằng 0 hoặc chưa đăng nhập.
+Dòng không được Khách hàng thay đổi (thêm, cộng dồn, đổi số lượng, chuyển giỏ) trong 90 ngày liên tục thì Hệ thống tự xoá. Xem giỏ, chọn hoặc bỏ chọn không tính là thay đổi. Dòng đang “Chờ thanh toán” không bị xoá.
+UC-MH-05, 06, 07
+BR-MH-29
+Giỏ hàng
+Xoá dòng phải qua bước xác nhận MSG-MH-28. Nhấn “−” khi số lượng đang là 1 được xử lý như nhấn “Xoá”. Xoá nhiều dòng đã chọn dùng một lần xác nhận. Dòng đang “Chờ thanh toán” không xoá được.
+UC-MH-07
+BR-MH-30
+Giỏ hàng
+Liên kết với đơn hàng (do chức năng đặt hàng gọi):
+Đơn được tạo và vào trạng thái Chờ thanh toán: các dòng đã đặt chuyển sang trạng thái dòng “Chờ thanh toán”, bị khoá, không sửa, không xoá, không tính vào tạm tính.
+Thanh toán thành công (đơn Mua thường) hoặc đặt cọc thành công (đơn Preorder): các dòng đó bị xoá khỏi giỏ.
+Đơn bị huỷ hoặc hết hạn thanh toán: các dòng trở lại giỏ như trước khi đặt và được kiểm tra lại theo BR-MH-26.
+Đơn trả tiền khi nhận hàng (COD) không qua Chờ thanh toán: các dòng đã đặt bị xoá khỏi giỏ ngay khi đơn được tạo.
+Các dòng không được chọn giữ nguyên.
+UC-MH-06, 07
+BR-MH-31
+Chia sẻ
+Link chia sẻ có dạng https://<tên miền>/sp/<mã sản phẩm>?ref=<mã giới thiệu>. Link không chứa kênh chia sẻ và không chứa thông tin cá nhân. Có hai loại mã giới thiệu:
+Mã của Khách hàng: do module TK cấp cho mỗi tài khoản Khách hàng. Khách hàng đã đăng nhập chia sẻ thì link kèm mã này; chưa đăng nhập thì link không có tham số ref.
+Mã của hội nhóm Facebook: do Admin tạo ở module AD cho từng hội nhóm, dùng trong bài đăng chính thức của dự án; Admin lấy link sản phẩm kèm mã của hội nhóm ở module AD (mục 14). Chỉ số “Hiệu quả từng hội nhóm Facebook” tính theo mã này.
+Hai loại mã dùng chung dạng link và chung cách ghi nhận ở BR-MH-35.
+UC-MH-08, 09
+BR-MH-32
+Chia sẻ
+Kênh chia sẻ: Facebook, Sao chép liên kết, Khác (bảng chia sẻ của hệ điều hành). Hệ thống ghi một lượt chia sẻ tại thời điểm Khách hàng chọn kênh, gồm: sản phẩm, kênh (fb, copy, other), mã giới thiệu và tài khoản (nếu đã đăng nhập), thời điểm. Đóng bảng chia sẻ mà không chọn kênh thì không ghi. App không biết bài đã được đăng thành công hay chưa.
+UC-MH-08
+BR-MH-33
+Chia sẻ
+Link khi đăng lên Facebook hiển thị xem trước gồm ảnh đại diện, tên sản phẩm, giá và tên HTX, lấy từ thẻ Open Graph của trang web sản phẩm.
+UC-MH-08
+BR-MH-34
+Chia sẻ
+Mở link chia sẻ:
+Thiết bị đã cài app: mở thẳng chi tiết sản phẩm trong app, không yêu cầu đăng nhập.
+Thiết bị chưa cài app hoặc mở trên máy tính: mở trang web sản phẩm (ảnh, tên, giá, HTX, hình thức bán) với nút “Tải ứng dụng”.
+Sau khi cài: nếu lần mở app đầu tiên diễn ra trong 7 ngày kể từ lượt mở link trên cùng thiết bị thì app mở chi tiết sản phẩm đó và mang theo mã giới thiệu; quá 7 ngày hoặc không xác định được lượt mở link thì app mở màn hình mở đầu, không gắn mã.
+UC-MH-09
+BR-MH-35
+Chia sẻ
+Khi một link được mở, Hệ thống xử lý theo thứ tự:
+Bước 1, kiểm tra sản phẩm: mã sản phẩm không tồn tại thì hiển thị MSG-MH-08, không ghi lượt mở.
+Bước 2, ghi lượt mở link: sản phẩm, mã giới thiệu, thiết bị, mở trong app hay trên web, thời điểm.
+Bước 3, lưu mã giới thiệu cho thiết bị trong 7 ngày nếu mã tồn tại; mã của lượt mở sau thay mã của lượt mở trước. Link không có mã hoặc mã không tồn tại thì không lưu.
+Khách hàng đang đăng nhập mở link có mã của chính mình: vẫn ghi lượt mở, không lưu mã.
+Sản phẩm tồn tại nhưng không còn thoả BR-MH-03: vẫn thực hiện bước 2, 3 rồi hiển thị MSG-MH-08.
+Việc gắn mã giới thiệu vào đơn thuộc chức năng đặt hàng.
+UC-MH-08, 09
+BR-MH-36
+Chia sẻ
+Chia sẻ sản phẩm không yêu cầu đăng nhập. Chỉ chia sẻ được sản phẩm đang hiển thị (BR-MH-03), ở mọi hình thức bán và mọi trạng thái nhận đặt.
+UC-MH-08
+BR-MH-37
+Giá bán
+Mỗi sản phẩm có một giá bán hiện hành cho một đơn vị bán, do HTX khai báo.
+Giá áp dụng như nhau cho Mua thường và Preorder; giai đoạn 1 không có giá đặt trước riêng.
+Giá hiển thị là giá Khách hàng phải trả cho tiền hàng, đã gồm thuế (nếu có).
+Giai đoạn 1 không bán theo cân thực tế: sản phẩm có khối lượng dao động (ví dụ gà đồi) bán theo đơn vị bán cố định, khoảng khối lượng ghi ở quy cách.
+Định dạng: dấu chấm phân cách hàng nghìn, kèm “đ” và đơn vị bán, ví dụ “48.000 đ/túi”.
+UC-MH-01, 04, 06
+BR-MH-38
+Sản phẩm gợi ý
+Ba khối sản phẩm gợi ý, mỗi khối tối đa 6 sản phẩm thoả BR-MH-03, xếp theo BR-MH-09:
+“Sản phẩm cùng danh mục” ở chi tiết sản phẩm: cùng danh mục, không gồm sản phẩm đang xem.
+“Sản phẩm bán chạy” khi tìm kiếm không có kết quả: trên toàn bộ sản phẩm.
+“Sản phẩm khác” khi sản phẩm không còn bán: trên toàn bộ sản phẩm.
+Không đủ 6 thì hiển thị số hiện có; không có sản phẩm nào thì ẩn khối.
+UC-MH-02, 04, 09
+STT
+Tên bước
+Mô tả
+Phần A: từ mở app đến thêm vào giỏ
+Phần A: từ mở app đến thêm vào giỏ
+Phần A: từ mở app đến thêm vào giỏ
+1.
+Mở app
+Khách hàng mở app. App không yêu cầu đăng nhập (BR-MH-01).
+2.
+Hiển thị danh mục và danh sách sản phẩm
+Hệ thống hiển thị danh mục và các sản phẩm đủ điều kiện hiển thị, kèm hình thức bán của từng sản phẩm (BR-MH-03, 04, 08).
+3.
+Tìm kiếm, lọc, sắp xếp
+Khách hàng tìm theo từ khoá, lọc theo tiêu chí hoặc sắp xếp lại danh sách nếu cần.
+4.
+Chọn sản phẩm
+Khách hàng chọn một sản phẩm để xem chi tiết.
+5.
+Hiển thị chi tiết sản phẩm
+Hệ thống xác định hình thức bán và trạng thái nhận đặt, hiển thị chi tiết sản phẩm cùng nút “Thêm vào giỏ” (Mua thường) hoặc “Thêm vào giỏ đặt trước” (Preorder).
+6.
+Chia sẻ sản phẩm
+Nếu muốn, Khách hàng chia sẻ link sản phẩm lên Facebook; link kèm mã giới thiệu khi Khách hàng đã đăng nhập.
+7.
+Chọn số lượng, nhấn nút thêm vào giỏ
+Khách hàng chọn số lượng rồi nhấn “Thêm vào giỏ” hoặc “Thêm vào giỏ đặt trước”.
+8.
+Kiểm tra đăng nhập
+Hệ thống kiểm tra trạng thái đăng nhập. Chưa đăng nhập thì hiển thị hộp thoại MSG-MH-09 (BR-MH-02).
+9.
+Đăng nhập hoặc đăng ký
+Khách hàng đăng nhập hoặc đăng ký (module TK). Hệ thống quay lại đúng sản phẩm, giữ số lượng đã chọn. Khách hàng chọn “Để sau” thì dừng, không thêm.
+10.
+Xác định lại hình thức bán, kiểm tra số lượng
+Hệ thống xác định lại hình thức bán và trạng thái nhận đặt tại thời điểm thêm, kiểm tra số lượng và giới hạn của giỏ (BR-MH-04, 19, 23, 24).
+11a.
+Thêm vào Giỏ hàng thường
+Sản phẩm Mua thường (đang trong vụ hoặc bán quanh năm, tồn kho > 0) và còn tồn kho khả dụng: Hệ thống thêm vào Giỏ hàng thường.
+11b.
+Thêm vào Giỏ Preorder
+Sản phẩm Preorder (tồn kho = 0 hoặc chưa vào vụ) đang nhận đặt trước: Hệ thống thêm vào Giỏ Preorder.
+STT
+Tên bước
+Mô tả
+Phần B: từ giỏ hàng đến chuyển sang đặt hàng
+Phần B: từ giỏ hàng đến chuyển sang đặt hàng
+Phần B: từ giỏ hàng đến chuyển sang đặt hàng
+12.
+Mở giỏ hàng
+Khách hàng nhấn biểu tượng giỏ hàng (yêu cầu đăng nhập).
+13.
+Kiểm tra lại giỏ hàng
+Hệ thống kiểm tra lại từng dòng, gán trạng thái dòng (mục 7.3) và hiển thị 2 tab “Hàng có sẵn”, “Đặt trước”.
+14.
+Cập nhật giỏ hàng
+Khách hàng chỉnh số lượng, xoá dòng, xử lý các dòng cần kiểm tra (cập nhật số lượng, chuyển giỏ) và chọn dòng cần đặt.
+15.
+Nhấn nút đặt
+Khách hàng nhấn “Đặt hàng (k)” ở tab Hàng có sẵn hoặc “Đặt trước (k)” ở tab Đặt trước.
+16.
+Kiểm tra các dòng được chọn
+Hệ thống kiểm tra lại các dòng được chọn. Có dòng không còn “Hợp lệ” thì dừng, báo MSG-MH-33 và quay lại bước 14.
+17.
+Chuyển sang đặt hàng
+Hệ thống chuyển các dòng được chọn sang chức năng đặt hàng (ngoài phạm vi tài liệu): Giỏ hàng thường sang đặt hàng và thanh toán; Giỏ Preorder sang đặt trước và đặt cọc.
+18.
+Cập nhật giỏ theo kết quả đơn
+Theo kết quả của chức năng đặt hàng, Hệ thống khoá, xoá hoặc trả lại các dòng đã đặt (BR-MH-30).
+TH
+Mùa vụ
+Tồn kho
+Tồn kho khả dụng
+Đợt Preorder
+Hình thức bán
+Trạng thái nhận đặt
+Nút ở chi tiết và giỏ nhận
+1
+Trong vụ hoặc bán quanh năm
+> 0
+> 0
+Không xét
+Mua thường
+Còn hàng
+“Thêm vào giỏ”; Giỏ hàng thường
+2
+Trong vụ hoặc bán quanh năm
+> 0
+= 0
+Không xét
+Mua thường
+Đang được giữ
+Nút bị khoá; MSG-MH-20
+3
+Trong vụ hoặc bán quanh năm
+= 0
+= 0
+Có, hạn mức còn lại > 0
+Preorder
+Nhận đặt trước
+“Thêm vào giỏ đặt trước”; Giỏ Preorder
+4
+Trong vụ hoặc bán quanh năm
+= 0
+= 0
+Có, hạn mức còn lại = 0
+Preorder
+Hết suất đặt trước
+Nút bị khoá; MSG-MH-21
+5
+Trong vụ hoặc bán quanh năm
+= 0
+= 0
+Không có
+Preorder
+Chưa mở đặt trước
+Nút bị khoá; MSG-MH-22
+6
+Chưa vào vụ
+Bất kỳ, kể cả > 0
+Không xét
+Có, hạn mức còn lại > 0
+Preorder
+Nhận đặt trước
+“Thêm vào giỏ đặt trước”; Giỏ Preorder
+7
+Chưa vào vụ
+Bất kỳ, kể cả > 0
+Không xét
+Có, hạn mức còn lại = 0
+Preorder
+Hết suất đặt trước
+Nút bị khoá; MSG-MH-21
+8
+Chưa vào vụ
+Bất kỳ, kể cả > 0
+Không xét
+Không có
+Preorder
+Chưa mở đặt trước
+Nút bị khoá; MSG-MH-22
+#
+Trạng thái dòng
+Giỏ
+Điều kiện
+Thao tác của Khách hàng
+Hiển thị trên dòng
+1
+Hợp lệ
+Cả hai
+Sản phẩm thoả BR-MH-03; hình thức bán khớp với giỏ; số lượng trong giới hạn BR-MH-19.
+Chọn để đặt, đổi số lượng, xoá.
+Không gắn nhãn.
+2
+Chỉ còn N
+Cả hai
+Hình thức bán khớp với giỏ nhưng số lượng lớn hơn N. N là tồn kho khả dụng (Giỏ hàng thường) hoặc hạn mức còn lại (Giỏ Preorder), N > 0.
+Nhấn “Cập nhật số lượng” để đặt số lượng bằng N; tự giảm số lượng (BR-MH-19); xoá.
+Nhãn “Chỉ còn N <đơn vị bán>”, nút “Cập nhật số lượng”.
+3
+Đang được giữ
+Giỏ hàng thường
+Sản phẩm vẫn Mua thường, tồn kho khả dụng = 0.
+Chờ và làm mới giỏ; xoá.
+Nhãn “Đang được giữ”, MSG-MH-20.
+4
+Hết hàng có sẵn
+Giỏ hàng thường
+Sản phẩm đã chuyển sang Preorder (tồn kho = 0 hoặc hết vụ).
+Nhấn “Chuyển sang Đặt trước”; đổi số lượng theo hạn mức còn lại; xoá.
+Nhãn theo lý do: “Hết hàng có sẵn” (tồn kho = 0) hoặc “Chưa vào vụ”; nút “Chuyển sang Đặt trước” chỉ hiện khi sản phẩm “Nhận đặt trước”.
+5
+Đã có hàng sẵn
+Giỏ Preorder
+Sản phẩm đã trở lại Mua thường.
+Nhấn “Chuyển sang Hàng có sẵn”; đổi số lượng theo tồn kho khả dụng; xoá.
+Nhãn “Đã có hàng sẵn”; nút “Chuyển sang Hàng có sẵn” chỉ hiện khi sản phẩm “Còn hàng”.
+6
+Hết suất đặt trước
+Giỏ Preorder
+Sản phẩm vẫn Preorder, hạn mức còn lại = 0.
+Chờ và làm mới giỏ; xoá.
+Nhãn “Hết suất đặt trước”, MSG-MH-21.
+7
+Chưa mở đặt trước
+Giỏ Preorder
+Sản phẩm vẫn Preorder, không còn đợt Preorder đang mở.
+Xoá.
+Nhãn “Chưa mở đặt trước”.
+8
+Ngừng bán
+Cả hai
+Sản phẩm không còn thoả BR-MH-03.
+Xoá.
+Nhãn “Ngừng bán”, dòng làm mờ.
+9
+Chờ thanh toán
+Cả hai
+Dòng thuộc một đơn đang ở trạng thái Chờ thanh toán (BR-MH-30).
+Không sửa, không xoá.
+Nhãn “Chờ thanh toán”, dòng bị khoá.
+Mã UC
+Tên UC
+Tác nhân chính
+FR liên quan
+Độ ưu tiên
+UC-MH-01
+Xem danh mục và danh sách sản phẩm
+Khách hàng
+FR-MH-01.1, 01.2, 01.3
+Must
+UC-MH-02
+Tìm kiếm sản phẩm
+Khách hàng
+FR-MH-02.1, 02.2
+Must
+UC-MH-03
+Lọc và sắp xếp sản phẩm
+Khách hàng
+FR-MH-02.3, 02.4
+Should
+UC-MH-04
+Xem chi tiết sản phẩm
+Khách hàng
+FR-MH-03.1 đến 03.4
+Must
+UC-MH-05
+Thêm sản phẩm vào giỏ hàng
+Khách hàng
+FR-MH-04.1, 04.2, 03.4
+Must
+UC-MH-06
+Xem giỏ hàng
+Khách hàng (đã đăng nhập)
+FR-MH-04.2, 04.3, 04.5
+Must
+UC-MH-07
+Cập nhật giỏ hàng
+Khách hàng (đã đăng nhập)
+FR-MH-04.4 đến 04.7
+Must
+UC-MH-08
+Chia sẻ sản phẩm
+Khách hàng
+FR-MH-05.1, 05.3
+Must
+UC-MH-09
+Mở sản phẩm từ link chia sẻ
+Khách hàng
+FR-MH-05.2, 05.3
+Must
+Thành phần
+Mô tả
+ID
+UC-MH-01
+Tên UC
+Xem danh mục và danh sách sản phẩm
+Độ ưu tiên
+Must
+Tác nhân chính (actors)
+Khách hàng (chưa đăng nhập hoặc đã đăng nhập)
+Tác nhân phụ
+Hệ thống
+Mô tả
+Là Khách hàng, tôi muốn xem các danh mục và danh sách đặc sản đang bán mà không phải đăng nhập, để chọn sản phẩm cần mua.
+Điều kiện trước (Pre)
+App đã cài và có kết nối mạng.
+Không yêu cầu đăng nhập.
+Luồng sự kiện chính
+1. Khách hàng mở app hoặc chọn tab “Sản phẩm”.
+2. Hệ thống hiển thị thanh danh mục (“Tất cả” và các danh mục) và 20 sản phẩm đầu của “Tất cả” theo thứ tự mặc định.
+3. Hệ thống hiển thị trên mỗi thẻ sản phẩm: ảnh đại diện, tên, giá và đơn vị bán, tên HTX, đánh giá, nhãn chứng nhận, nhãn Hoả tốc và hình thức bán.
+4. Khách hàng chọn một danh mục.
+5. Hệ thống hiển thị 20 sản phẩm đầu của danh mục đó, giữ bộ lọc và tiêu chí sắp xếp đang áp dụng.
+6. Khách hàng cuộn tới cuối danh sách.
+7. Hệ thống tải thêm 20 sản phẩm tiếp theo cho tới khi hết.
+8. Khách hàng chọn một sản phẩm.
+9. Hệ thống mở chi tiết sản phẩm (UC-MH-04).
+Luồng thay thế
+2a. Không có sản phẩm nào đủ điều kiện hiển thị (ở bước 5: danh mục vừa hết sản phẩm): Hệ thống hiển thị MSG-MH-03.
+4a. Khách hàng mở tìm kiếm (UC-MH-02) hoặc lọc, sắp xếp (UC-MH-03).
+6a. Khách hàng kéo xuống ở đầu danh sách: Hệ thống tải lại 20 sản phẩm đầu, giữ danh mục, bộ lọc và tiêu chí sắp xếp.
+8a. Khách hàng nhấn biểu tượng giỏ hàng: chuyển UC-MH-06.
+Luồng rẽ nhánh (ngoại lệ)
+E1. Mất kết nối hoặc lỗi máy chủ: nếu chưa có dữ liệu tải trước đó, Hệ thống hiển thị MSG-MH-01 và nút “Thử lại”; nếu đã có, Hệ thống giữ dữ liệu đó trên màn hình và hiển thị MSG-MH-02.
+Điều kiện sau
+Danh sách hiển thị đúng điều kiện BR-MH-03; dữ liệu không thay đổi.
+Sự kiện xem danh mục được ghi nhận (NFR-MH-09).
+Quy tắc nghiệp vụ
+BR-MH-01, 03, 04, 05, 07, 08, 09, 10, 18, 37
+Yêu cầu phi chức năng
+Hiển thị danh sách ≤ 2 giây (NFR-MH-01).
+Cỡ chữ, vùng chạm theo NFR-MH-04.
+Thành phần
+Mô tả
+ID
+UC-MH-02
+Tên UC
+Tìm kiếm sản phẩm
+Độ ưu tiên
+Must
+Tác nhân chính (actors)
+Khách hàng (chưa đăng nhập hoặc đã đăng nhập)
+Tác nhân phụ
+Hệ thống
+Mô tả
+Là Khách hàng, tôi muốn tìm sản phẩm theo từ khoá, kể cả khi gõ không dấu, để nhanh chóng thấy đặc sản mình cần.
+Điều kiện trước (Pre)
+Khách hàng đang ở màn hình danh sách sản phẩm.
+Không yêu cầu đăng nhập.
+Luồng sự kiện chính
+1. Khách hàng nhấn ô tìm kiếm.
+2. Hệ thống mở màn hình tìm kiếm và hiển thị lịch sử tìm kiếm.
+3. Khách hàng nhập từ khoá.
+4. Từ ký tự thứ 2, Hệ thống hiển thị gợi ý gồm sản phẩm, danh mục, HTX.
+5. Khách hàng nhấn “Tìm” trên bàn phím.
+6. Hệ thống tìm trên toàn bộ sản phẩm, hiển thị số kết quả và 20 sản phẩm đầu sắp theo “Liên quan nhất”, lưu từ khoá vào lịch sử.
+7. Khách hàng chọn một sản phẩm.
+8. Hệ thống mở chi tiết sản phẩm (UC-MH-04).
+Luồng thay thế
+2a. Chưa có lịch sử tìm kiếm: Hệ thống chỉ hiển thị ô nhập.
+3a. Khách hàng chọn một từ khoá trong lịch sử: chuyển bước 6 với từ khoá đó.
+3b. Khách hàng xoá một từ khoá hoặc nhấn “Xoá tất cả”: Hệ thống xoá khỏi lịch sử, ở lại bước 2.
+5a. Khách hàng chọn một gợi ý. Gợi ý là sản phẩm: mở chi tiết sản phẩm (UC-MH-04). Gợi ý là danh mục: mở danh sách của danh mục đó. Gợi ý là HTX: mở danh sách lọc theo HTX đó.
+5b. Từ khoá dưới 2 ký tự: Hệ thống hiển thị MSG-MH-04, không tìm.
+6a. Không có kết quả: Hệ thống hiển thị MSG-MH-05 và khối “Sản phẩm bán chạy”.
+6b. Khách hàng lọc hoặc sắp xếp kết quả: chuyển UC-MH-03.
+Luồng rẽ nhánh (ngoại lệ)
+E1. Mất kết nối hoặc lỗi máy chủ: nếu chưa có dữ liệu tải trước đó, Hệ thống hiển thị MSG-MH-01 và nút “Thử lại”; nếu đã có, Hệ thống giữ dữ liệu đó trên màn hình và hiển thị MSG-MH-02.
+Điều kiện sau
+Từ khoá đã tìm được lưu vào lịch sử trên thiết bị.
+Sự kiện tìm kiếm (từ khoá, số kết quả) được ghi nhận (NFR-MH-09).
+Quy tắc nghiệp vụ
+BR-MH-01, 03, 10, 11, 12, 13, 15, 16, 38
+Yêu cầu phi chức năng
+Gợi ý ≤ 500 ms; kết quả ≤ 2 giây (NFR-MH-01).
+Giới hạn 60 yêu cầu mỗi phút cho mỗi thiết bị (NFR-MH-06).
+Thành phần
+Mô tả
+ID
+UC-MH-03
+Tên UC
+Lọc và sắp xếp sản phẩm
+Độ ưu tiên
+Should
+Tác nhân chính (actors)
+Khách hàng (chưa đăng nhập hoặc đã đăng nhập)
+Tác nhân phụ
+Hệ thống
+Mô tả
+Là Khách hàng, tôi muốn lọc và sắp xếp danh sách theo nhu cầu (có sẵn hay đặt trước, giá, chứng nhận) để chọn sản phẩm nhanh hơn.
+Điều kiện trước (Pre)
+Khách hàng đang ở danh sách sản phẩm hoặc kết quả tìm kiếm.
+Luồng sự kiện chính
+1. Khách hàng nhấn “Lọc”.
+2. Hệ thống mở bảng lọc với các nhóm tiêu chí, đánh dấu sẵn các tiêu chí đang áp dụng.
+3. Khách hàng chọn tiêu chí và nhấn “Áp dụng”.
+4. Hệ thống đóng bảng lọc, hiển thị 20 sản phẩm đầu thoả điều kiện, số sản phẩm, các thẻ tiêu chí đang áp dụng và số nhóm tiêu chí trên nút Lọc.
+5. Khách hàng nhấn “Sắp xếp”.
+6. Hệ thống hiển thị các tiêu chí sắp xếp, đánh dấu tiêu chí đang chọn.
+7. Khách hàng chọn một tiêu chí.
+8. Hệ thống sắp lại danh sách và cuộn về đầu danh sách.
+Luồng thay thế
+1a. Khách hàng chỉ sắp xếp, không lọc: bắt đầu từ bước 5.
+3a. Khách hàng nhấn “Đặt lại”: Hệ thống bỏ chọn mọi tiêu chí trong bảng lọc; bảng lọc vẫn mở.
+3b. Khách hàng đóng bảng lọc mà không nhấn “Áp dụng”: Hệ thống giữ nguyên bộ lọc trước đó.
+3c. Giá từ lớn hơn giá đến: Hệ thống hiển thị MSG-MH-06, không áp dụng.
+4a. Không có sản phẩm thoả điều kiện: Hệ thống hiển thị MSG-MH-07 và nút “Xoá bộ lọc”.
+4b. Khách hàng bỏ một thẻ tiêu chí hoặc nhấn “Xoá bộ lọc”: Hệ thống cập nhật danh sách ngay.
+Luồng rẽ nhánh (ngoại lệ)
+E1. Mất kết nối hoặc lỗi máy chủ: nếu chưa có dữ liệu tải trước đó, Hệ thống hiển thị MSG-MH-01 và nút “Thử lại”; nếu đã có, Hệ thống giữ dữ liệu đó trên màn hình và hiển thị MSG-MH-02.
+Điều kiện sau
+Bộ lọc và tiêu chí sắp xếp được giữ theo BR-MH-16.
+Sự kiện lọc được ghi nhận (NFR-MH-09).
+Quy tắc nghiệp vụ
+BR-MH-01, 03, 09, 10, 14, 15, 16, 18
+Yêu cầu phi chức năng
+Kết quả lọc, sắp xếp ≤ 2 giây (NFR-MH-01).
+Thành phần
+Mô tả
+ID
+UC-MH-04
+Tên UC
+Xem chi tiết sản phẩm
+Độ ưu tiên
+Must
+Tác nhân chính (actors)
+Khách hàng (chưa đăng nhập hoặc đã đăng nhập)
+Tác nhân phụ
+Hệ thống; module HTX (trang truy xuất); module CS (đánh giá)
+Mô tả
+Là Khách hàng, tôi muốn xem đầy đủ thông tin, chứng nhận, nguồn gốc và tình trạng hàng của một sản phẩm để quyết định mua ngay hay đặt trước.
+Điều kiện trước (Pre)
+Khách hàng chọn sản phẩm từ danh sách, kết quả tìm kiếm, giỏ hàng hoặc link chia sẻ.
+Không yêu cầu đăng nhập.
+Luồng sự kiện chính
+1. Khách hàng chọn một sản phẩm.
+2. Hệ thống kiểm tra sản phẩm còn đủ điều kiện hiển thị, xác định hình thức bán và trạng thái nhận đặt.
+3. Sản phẩm “Còn hàng”: Hệ thống hiển thị chi tiết sản phẩm, dòng “Còn hàng” (hoặc “Còn N <đơn vị bán>”), bộ chọn số lượng và nút “Thêm vào giỏ”.
+4. Khách hàng xem ảnh, chứng nhận, thông tin HTX, thông tin sản phẩm, đánh giá.
+5. Khách hàng chọn số lượng.
+6. Khách hàng nhấn nút thêm vào giỏ (UC-MH-05) hoặc nhấn “Chia sẻ” (UC-MH-08).
+Luồng thay thế
+3a. Sản phẩm “Nhận đặt trước”: Hệ thống hiển thị nhãn “Đặt trước”, khối thông tin Preorder (lý do, ngày giao dự kiến, tỷ lệ đặt cọc), bộ chọn số lượng và nút “Thêm vào giỏ đặt trước”.
+3b. Sản phẩm “Đang được giữ”: Hệ thống hiển thị “Đang được giữ” kèm MSG-MH-20, khoá nút “Thêm vào giỏ”.
+3c. Sản phẩm “Hết suất đặt trước” hoặc “Chưa mở đặt trước”: Hệ thống hiển thị nhãn “Đặt trước” và tên trạng thái, ẩn bộ chọn số lượng, khoá nút.
+4a. Khách hàng nhấn “Xem chứng nhận”: Hệ thống hiển thị loại, số, đơn vị cấp, ngày cấp, ngày hết hạn và ảnh chứng nhận.
+4b. Khách hàng nhấn “Truy xuất nguồn gốc”: Hệ thống mở trang truy xuất của sản phẩm (module HTX).
+4c. Khách hàng nhấn “Xem tất cả đánh giá”: Hệ thống mở danh sách đánh giá (module CS).
+4d. Khách hàng chọn một sản phẩm cùng danh mục: quay lại bước 1 với sản phẩm đó.
+5a. Số lượng vượt giới hạn hoặc không hợp lệ: Hệ thống giữ số lượng hợp lệ trước đó và báo MSG-MH-14 hoặc MSG-MH-15.
+Luồng rẽ nhánh (ngoại lệ)
+E1. Sản phẩm không còn đủ điều kiện hiển thị: Hệ thống hiển thị MSG-MH-08 và khối “Sản phẩm khác”.
+E2. Mất kết nối hoặc lỗi máy chủ: nếu chưa có dữ liệu tải trước đó, Hệ thống hiển thị MSG-MH-01 và nút “Thử lại”; nếu đã có, Hệ thống giữ dữ liệu đó trên màn hình và hiển thị MSG-MH-02.
+Điều kiện sau
+Sự kiện xem sản phẩm được ghi nhận (NFR-MH-09).
+Dữ liệu không thay đổi.
+Quy tắc nghiệp vụ
+BR-MH-01, 03, 04, 05, 06, 07, 08, 17, 18, 19, 20, 37, 38
+Yêu cầu phi chức năng
+Nội dung chính hiển thị ≤ 2 giây (NFR-MH-01).
+Hình thức bán hiển thị không chậm quá 60 giây so với dữ liệu gốc (NFR-MH-03).
+Thành phần
+Mô tả
+ID
+UC-MH-05
+Tên UC
+Thêm sản phẩm vào giỏ hàng
+Độ ưu tiên
+Must
+Tác nhân chính (actors)
+Khách hàng
+Tác nhân phụ
+Hệ thống; module TK (đăng nhập, đăng ký)
+Mô tả
+Là Khách hàng, tôi muốn thêm sản phẩm vào giỏ để mua sau; hàng có sẵn và hàng đặt trước được để riêng để tôi biết mình sẽ đặt và thanh toán thế nào.
+Điều kiện trước (Pre)
+Khách hàng đang ở chi tiết của sản phẩm có trạng thái “Còn hàng” hoặc “Nhận đặt trước” và đã chọn số lượng.
+Trạng thái đăng nhập được kiểm tra trong luồng, không phải điều kiện trước.
+Luồng sự kiện chính
+1. Khách hàng nhấn “Thêm vào giỏ” (sản phẩm Mua thường).
+2. Hệ thống kiểm tra đăng nhập: Khách hàng đã đăng nhập bằng tài khoản Khách hàng.
+3. Hệ thống xác định lại hình thức bán và trạng thái nhận đặt tại thời điểm thêm: Mua thường, “Còn hàng”.
+4. Hệ thống kiểm tra số lượng, số lượng cộng dồn và số dòng của giỏ nhận: hợp lệ.
+5. Hệ thống thêm một dòng vào Giỏ hàng thường (hoặc cộng dồn vào dòng đã có) và đánh dấu dòng được chọn.
+6. Hệ thống cập nhật số trên biểu tượng giỏ và hiển thị MSG-MH-12 kèm lối tắt “Xem giỏ”.
+Luồng thay thế
+1a. Sản phẩm Preorder: Khách hàng nhấn “Thêm vào giỏ đặt trước”. Bước 3 cho kết quả Preorder, “Nhận đặt trước”; bước 5 thêm vào Giỏ Preorder; bước 6 hiển thị MSG-MH-13.
+2a. Khách hàng chưa đăng nhập: Hệ thống hiển thị MSG-MH-09 với các lựa chọn Đăng nhập, Đăng ký, Để sau. Đăng nhập hoặc đăng ký thành công (module TK): Hệ thống quay lại chi tiết sản phẩm, giữ số lượng đã chọn, tiếp tục bước 3. Chọn “Để sau” hoặc rời màn hình đăng nhập: kết thúc, không thêm.
+2b. Tài khoản đang đăng nhập không phải tài khoản Khách hàng: Hệ thống hiển thị MSG-MH-11, kết thúc.
+3a. Màn hình đang hiển thị Mua thường nhưng kết quả là Preorder, “Nhận đặt trước”: Hệ thống hỏi MSG-MH-18. Chọn “Đặt trước”: tiếp tục bước 4 với Giỏ Preorder. Chọn “Không”: kết thúc, cập nhật lại màn hình chi tiết.
+3b. Màn hình đang hiển thị Preorder nhưng kết quả là Mua thường, “Còn hàng”: Hệ thống hỏi MSG-MH-19. Chọn “Thêm”: tiếp tục bước 4 với Giỏ hàng thường. Chọn “Không”: kết thúc, cập nhật lại màn hình chi tiết.
+3c. Kết quả là “Đang được giữ”: Hệ thống hiển thị MSG-MH-20, không thêm, cập nhật lại màn hình chi tiết.
+3d. Kết quả là “Hết suất đặt trước” hoặc “Chưa mở đặt trước”: Hệ thống hiển thị MSG-MH-21 hoặc MSG-MH-22, không thêm, cập nhật lại màn hình chi tiết.
+4a. Số lượng vượt tồn kho khả dụng hoặc hạn mức còn lại: Hệ thống hiển thị MSG-MH-14, không thêm.
+4b. Sản phẩm đã có trong giỏ và tổng sau cộng dồn vượt giới hạn: Hệ thống hiển thị MSG-MH-16, không thêm.
+4c. Giỏ nhận đã đủ 50 dòng và sản phẩm chưa có trong giỏ: Hệ thống hiển thị MSG-MH-17, không thêm.
+4d. Giỏ nhận đang có dòng “Chờ thanh toán” của chính sản phẩm đó: Hệ thống hiển thị MSG-MH-37, không thêm.
+Luồng rẽ nhánh (ngoại lệ)
+E1. Sản phẩm không còn đủ điều kiện hiển thị: Hệ thống hiển thị MSG-MH-08, không thêm.
+E2. Phiên đăng nhập hết hạn: xử lý như 2a.
+E3. Mất kết nối hoặc lỗi máy chủ: Hệ thống hiển thị MSG-MH-23; giỏ không thay đổi.
+Điều kiện sau
+Dòng giỏ hàng được tạo hoặc cộng dồn ở đúng giỏ theo hình thức bán tại thời điểm thêm.
+Tồn kho không bị giữ.
+Sự kiện thêm vào giỏ (kèm hình thức bán) được ghi nhận (NFR-MH-09).
+Quy tắc nghiệp vụ
+BR-MH-02, 04, 05, 06, 07, 19, 21, 23, 24, 28
+Yêu cầu phi chức năng
+Phản hồi ≤ 1 giây (NFR-MH-01).
+Máy chủ là nơi quyết định hình thức bán và số lượng (NFR-MH-03).
+Thành phần
+Mô tả
+ID
+UC-MH-06
+Tên UC
+Xem giỏ hàng
+Độ ưu tiên
+Must
+Tác nhân chính (actors)
+Khách hàng (đã đăng nhập)
+Tác nhân phụ
+Hệ thống; module TK khi chưa đăng nhập
+Mô tả
+Là Khách hàng, tôi muốn xem các sản phẩm đã chọn, tách riêng hàng có sẵn và hàng đặt trước, với giá và tình trạng mới nhất.
+Điều kiện trước (Pre)
+Không có điều kiện về dữ liệu; giỏ có thể trống.
+Trạng thái đăng nhập được kiểm tra trong luồng.
+Luồng sự kiện chính
+1. Khách hàng nhấn biểu tượng giỏ hàng.
+2. Hệ thống kiểm tra đăng nhập: Khách hàng đã đăng nhập bằng tài khoản Khách hàng.
+3. Hệ thống kiểm tra lại từng dòng của hai giỏ và gán trạng thái dòng (mục 7.3).
+4. Hệ thống hiển thị 2 tab “Hàng có sẵn (n)” và “Đặt trước (m)”, mở tab “Hàng có sẵn”.
+5. Hệ thống hiển thị các dòng nhóm theo HTX; mỗi dòng gồm ô chọn, ảnh, tên, quy cách, giá, số lượng, thành tiền.
+6. Hệ thống hiển thị tạm tính của các dòng đang chọn và nút “Đặt hàng (k)”.
+7. Khách hàng chuyển sang tab “Đặt trước”.
+8. Hệ thống hiển thị các dòng của Giỏ Preorder kèm ngày giao dự kiến của từng dòng, tạm tính, tiền cọc dự kiến và nút “Đặt trước (k)”.
+Luồng thay thế
+2a. Khách hàng chưa đăng nhập: Hệ thống hiển thị MSG-MH-10. Đăng nhập hoặc đăng ký thành công: tiếp tục bước 3. Chọn “Để sau”: kết thúc, ở lại màn hình trước đó.
+2b. Tài khoản đang đăng nhập không phải tài khoản Khách hàng: Hệ thống hiển thị MSG-MH-11, kết thúc.
+3a. Có dòng cần Khách hàng xem lại theo BR-MH-26: Hệ thống hiển thị nhãn hoặc ghi chú trên từng dòng và MSG-MH-25.
+4a. Giỏ hàng thường trống, Giỏ Preorder có dòng: Hệ thống mở tab “Đặt trước”.
+4b. Tab đang mở không có dòng nào: Hệ thống hiển thị MSG-MH-24 và nút “Xem sản phẩm”.
+4c. Khách hàng mở giỏ bằng lối tắt “Xem giỏ” ngay sau khi thêm sản phẩm (MSG-MH-12, 13): Hệ thống mở tab của giỏ vừa nhận sản phẩm.
+5a. Khách hàng nhấn ảnh hoặc tên sản phẩm: chuyển UC-MH-04.
+5b. Khách hàng thao tác trên giỏ (đổi số lượng, xoá, chuyển giỏ, chọn, đặt): chuyển UC-MH-07.
+Luồng rẽ nhánh (ngoại lệ)
+E1. Mất kết nối hoặc lỗi máy chủ: nếu chưa có dữ liệu tải trước đó, Hệ thống hiển thị MSG-MH-01 và nút “Thử lại”; nếu đã có, Hệ thống giữ dữ liệu đó trên màn hình và hiển thị MSG-MH-02.
+Điều kiện sau
+Giỏ hàng phản ánh giá, tồn kho, hình thức bán tại thời điểm xem.
+Số lượng và vị trí các dòng không bị Hệ thống tự thay đổi (BR-MH-26); chỉ trạng thái dòng và trạng thái chọn của dòng không hợp lệ được cập nhật.
+Quy tắc nghiệp vụ
+BR-MH-02, 04, 06, 07, 21, 22, 25, 26, 27, 28, 30, 37
+Yêu cầu phi chức năng
+Mở giỏ 50 dòng ≤ 2 giây (NFR-MH-01).
+Chỉ chủ tài khoản xem được giỏ của mình (NFR-MH-06).
+Thành phần
+Mô tả
+ID
+UC-MH-07
+Tên UC
+Cập nhật giỏ hàng
+Độ ưu tiên
+Must
+Tác nhân chính (actors)
+Khách hàng (đã đăng nhập)
+Tác nhân phụ
+Hệ thống; chức năng đặt hàng (nhận các dòng được chọn)
+Mô tả
+Là Khách hàng, tôi muốn đổi số lượng, xoá, chuyển sản phẩm giữa hai giỏ và chọn sản phẩm cần đặt, để giỏ hàng đúng với thứ tôi muốn mua.
+Điều kiện trước (Pre)
+Khách hàng đang ở màn hình Giỏ hàng (UC-MH-06) và giỏ có ít nhất 1 dòng.
+Luồng sự kiện chính
+1. Khách hàng đổi số lượng của một dòng bằng “+”, “−” hoặc nhập số.
+2. Hệ thống kiểm tra số lượng, lưu số lượng mới, cập nhật thành tiền của dòng, tạm tính và tiền cọc dự kiến.
+3. Khách hàng chọn các dòng cần đặt: từng dòng, cả nhóm HTX hoặc “Chọn tất cả”.
+4. Hệ thống cập nhật tạm tính, tiền cọc dự kiến và số k trên nút đặt.
+5. Khách hàng nhấn “Đặt hàng (k)” ở tab Hàng có sẵn.
+6. Hệ thống kiểm tra lại các dòng được chọn: tất cả “Hợp lệ”.
+7. Hệ thống chuyển các dòng được chọn sang chức năng đặt hàng (ngoài phạm vi tài liệu).
+Luồng thay thế
+1a. Khách hàng nhấn “Xoá”, hoặc nhấn “−” khi số lượng là 1: Hệ thống hỏi MSG-MH-28. Chọn “Xoá”: Hệ thống xoá dòng, cập nhật tạm tính và số trên biểu tượng giỏ. Chọn “Không”: giữ nguyên.
+1b. Khách hàng chọn nhiều dòng rồi nhấn “Xoá đã chọn”: Hệ thống hỏi MSG-MH-28 một lần cho N dòng; xử lý như 1a.
+1c. Trên dòng “Chỉ còn N”, Khách hàng nhấn “Cập nhật số lượng”: Hệ thống đặt số lượng bằng N; dòng trở lại “Hợp lệ”.
+1d. Trên dòng “Hết hàng có sẵn”, Khách hàng nhấn “Chuyển sang Đặt trước”: Hệ thống kiểm tra điều kiện của Giỏ Preorder rồi hỏi MSG-MH-31. Chọn “Chuyển”: Hệ thống chuyển dòng sang Giỏ Preorder (cộng dồn nếu đã có sản phẩm đó), hiển thị MSG-MH-32.
+1e. Trên dòng “Đã có hàng sẵn”, Khách hàng nhấn “Chuyển sang Hàng có sẵn”: Hệ thống kiểm tra điều kiện của Giỏ hàng thường, chuyển dòng (cộng dồn nếu đã có), hiển thị MSG-MH-32.
+1f. Ở 1d, 1e, giỏ đích không nhận được (vượt số lượng, đủ 50 dòng, hoặc trạng thái nhận đặt vừa thay đổi sau khi hiển thị): Hệ thống hiển thị thông báo tương ứng (MSG-MH-14, 16, 17, 20, 21, 22, 37), giữ nguyên dòng. Với trường hợp vượt số lượng, Khách hàng giảm số lượng của dòng rồi chuyển lại.
+2a. Tăng số lượng vượt giới hạn: Hệ thống giữ số lượng trước đó, hiển thị MSG-MH-14 hoặc MSG-MH-15. Giảm số lượng luôn được chấp nhận (BR-MH-19).
+2b. Nhập không hợp lệ (để trống, 0, số âm, số thập phân, chữ): Hệ thống trả về số lượng trước đó.
+2c. Dòng không cho sửa số lượng (Đang được giữ, Hết suất đặt trước, Chưa mở đặt trước, Ngừng bán, Chờ thanh toán): bộ chỉnh số lượng bị khoá. Dòng “Hết hàng có sẵn”, “Đã có hàng sẵn” cho sửa số lượng theo giới hạn của giỏ đích.
+5a. Ở tab Đặt trước, Khách hàng nhấn “Đặt trước (k)”: bước 7 chuyển sang chức năng đặt trước có đặt cọc.
+5b. Không có dòng nào được chọn: nút đặt bị khoá.
+6a. Có dòng được chọn không còn “Hợp lệ”: Hệ thống dừng, bỏ chọn các dòng đó, hiển thị MSG-MH-33 và cuộn tới dòng đầu tiên cần xử lý.
+Luồng rẽ nhánh (ngoại lệ)
+E1. Mất kết nối hoặc lỗi máy chủ: Hệ thống trả lại giá trị trước thao tác và hiển thị MSG-MH-29.
+E2. Dòng đã bị sửa hoặc xoá trên thiết bị khác: Hệ thống tải lại giỏ hàng và hiển thị MSG-MH-30.
+Điều kiện sau
+Giỏ hàng được lưu trên máy chủ với thay đổi mới nhất.
+Khi chuyển sang đặt hàng: các dòng được chọn được giao cho chức năng đặt hàng; trạng thái các dòng đó sau khi tạo đơn theo BR-MH-30.
+Quy tắc nghiệp vụ
+BR-MH-02, 04, 06, 07, 19, 21, 23, 24, 25, 26, 27, 28, 29, 30
+Yêu cầu phi chức năng
+Đổi số lượng phản hồi ≤ 1 giây (NFR-MH-01).
+Không ghi nhận thay đổi cục bộ khi mất kết nối (NFR-MH-07).
+Thành phần
+Mô tả
+ID
+UC-MH-08
+Tên UC
+Chia sẻ sản phẩm
+Độ ưu tiên
+Must
+Tác nhân chính (actors)
+Khách hàng (chưa đăng nhập hoặc đã đăng nhập)
+Tác nhân phụ
+Hệ thống; Facebook; module TK (mã giới thiệu)
+Mô tả
+Là Khách hàng, tôi muốn chia sẻ một sản phẩm lên hội nhóm Facebook của khu cư dân bằng link có mã giới thiệu của tôi, để giới thiệu cho hàng xóm.
+Điều kiện trước (Pre)
+Khách hàng đang ở chi tiết của một sản phẩm đang hiển thị.
+Không yêu cầu đăng nhập.
+Luồng sự kiện chính
+1. Khách hàng (đã đăng nhập) nhấn “Chia sẻ”.
+2. Hệ thống tạo link sản phẩm kèm mã giới thiệu của Khách hàng.
+3. Hệ thống hiển thị bảng chia sẻ: xem trước sản phẩm, link và ba kênh Facebook, Sao chép liên kết, Khác.
+4. Khách hàng chọn “Facebook”.
+5. Hệ thống ghi lượt chia sẻ với kênh fb.
+6. Hệ thống mở trình chia sẻ của Facebook với link sản phẩm.
+7. Khách hàng hoàn tất đăng bài trên Facebook; bài đăng hiển thị xem trước sản phẩm.
+Luồng thay thế
+2a. Khách hàng chưa đăng nhập: Hệ thống tạo link không kèm mã giới thiệu; bảng chia sẻ hiển thị MSG-MH-36. Khách hàng nhấn dòng gợi ý và đăng nhập thành công: quay lại bước 2. Không nhấn: tiếp tục bước 4 với link không kèm mã.
+3a. Khách hàng đóng bảng chia sẻ: kết thúc, không ghi lượt chia sẻ.
+4a. Khách hàng chọn “Sao chép liên kết”: Hệ thống ghi lượt chia sẻ với kênh copy, sao chép link và hiển thị MSG-MH-34.
+4b. Khách hàng chọn “Khác”: Hệ thống ghi lượt chia sẻ với kênh other và mở bảng chia sẻ của hệ điều hành.
+6a. Thiết bị chưa cài Facebook: Hệ thống mở trang chia sẻ của Facebook trên trình duyệt.
+Luồng rẽ nhánh (ngoại lệ)
+E1. Không tạo được link do mất kết nối hoặc lỗi máy chủ: Hệ thống hiển thị MSG-MH-35.
+Điều kiện sau
+Lượt chia sẻ được ghi tại thời điểm Khách hàng chọn kênh.
+App không xác nhận được bài đã đăng thành công trên Facebook hay chưa.
+Quy tắc nghiệp vụ
+BR-MH-01, 31, 32, 33, 35, 36
+Yêu cầu phi chức năng
+Bảng chia sẻ hiển thị ≤ 1 giây (NFR-MH-01).
+Link không chứa thông tin cá nhân (NFR-MH-10).
+Thành phần
+Mô tả
+ID
+UC-MH-09
+Tên UC
+Mở sản phẩm từ link chia sẻ
+Độ ưu tiên
+Must
+Tác nhân chính (actors)
+Khách hàng (người nhận link; có thể chưa cài app, chưa có tài khoản)
+Tác nhân phụ
+Hệ thống; Facebook; App Store, Google Play
+Mô tả
+Là Khách hàng nhận được link, tôi muốn nhấn link là xem được ngay sản phẩm, kể cả khi chưa cài app hay chưa đăng nhập.
+Điều kiện trước (Pre)
+Có link chia sẻ sản phẩm.
+Luồng sự kiện chính
+1. Khách hàng nhấn link sản phẩm trên Facebook hoặc kênh khác.
+2. Thiết bị đã cài app: app được mở.
+3. Hệ thống kiểm tra sản phẩm trong link: tồn tại và đủ điều kiện hiển thị.
+4. Hệ thống ghi lượt mở link và lưu mã giới thiệu cho thiết bị trong 7 ngày.
+5. Hệ thống mở chi tiết sản phẩm (UC-MH-04), không yêu cầu đăng nhập.
+Luồng thay thế
+2a. Thiết bị chưa cài app hoặc mở trên máy tính: Hệ thống mở trang web sản phẩm (ảnh, tên, giá, HTX, hình thức bán) với nút “Tải ứng dụng”; bước 3, 4 thực hiện trên trang web. Sau khi cài, nếu lần mở app đầu tiên trong 7 ngày kể từ lượt mở link: app mở chi tiết sản phẩm đó và mang theo mã giới thiệu; nếu không: app mở màn hình mở đầu, không gắn mã.
+4a. Link không có mã giới thiệu hoặc mã không tồn tại: Hệ thống ghi lượt mở, không lưu mã.
+4b. Khách hàng đang đăng nhập là chủ mã giới thiệu: Hệ thống ghi lượt mở, không lưu mã.
+Luồng rẽ nhánh (ngoại lệ)
+E1. Mã sản phẩm không tồn tại: Hệ thống hiển thị MSG-MH-08 và khối “Sản phẩm khác”, không ghi lượt mở.
+E2. Sản phẩm tồn tại nhưng không còn đủ điều kiện hiển thị: Hệ thống thực hiện bước 4 rồi hiển thị MSG-MH-08 và khối “Sản phẩm khác”.
+E3. Mất kết nối hoặc lỗi máy chủ: nếu chưa có dữ liệu tải trước đó, Hệ thống hiển thị MSG-MH-01 và nút “Thử lại”; nếu đã có, Hệ thống giữ dữ liệu đó trên màn hình và hiển thị MSG-MH-02.
+Điều kiện sau
+Lượt mở link được ghi nhận.
+Mã giới thiệu được lưu cho thiết bị để chức năng đặt hàng gắn vào đơn trong thời hạn 7 ngày.
+Quy tắc nghiệp vụ
+BR-MH-01, 03, 20, 31, 34, 35, 38
+Yêu cầu phi chức năng
+Trang web sản phẩm tải ≤ 3 giây (NFR-MH-01).
+Dữ liệu lưu về lượt mở link theo NFR-MH-10.
+STT
+Nội dung
+Mô tả
+Ghi chú
+1
+Font chữ
+Font không chân có đủ dấu tiếng Việt
+Thiết kế UI chốt
+2
+Cỡ chữ nội dung
+Tối thiểu 16 pt
+NFR-MH-04
+3
+Cỡ chữ tiêu đề màn hình
+20–22 pt, đậm
+4
+Cỡ chữ ghi chú
+Tối thiểu 13 pt
+5
+Vùng chạm
+Tối thiểu 44 × 44 pt
+NFR-MH-04
+6
+Độ tương phản
+Chữ và nền ≥ 4,5:1
+NFR-MH-04
+STT
+Nội dung
+Mô tả
+Ghi chú
+1
+Nút chính
+Nền màu chủ đạo, chữ trắng; mỗi màn hình một nút chính (“Thêm vào giỏ”, “Đặt hàng (k)”, “Áp dụng”)
+2
+Nút của Preorder
+Màu riêng, khác nút Mua thường; chữ trên nút luôn có “đặt trước”: “Thêm vào giỏ đặt trước” ở chi tiết, “Đặt trước (k)” ở giỏ
+Không phân biệt chỉ bằng màu
+3
+Nút phụ
+Viền, nền trắng
+4
+Nút bị khoá
+Nền xám, chữ xám đậm, kèm lý do ở ngay cạnh
+BR-MH-08
+5
+Nhãn hình thức bán
+“Đặt trước” đặt ở góc trên trái ảnh sản phẩm
+BR-MH-08
+6
+Định dạng tiền
+Dấu chấm phân cách hàng nghìn, kèm “đ”: 48.000 đ
+BR-MH-37
+7
+Định dạng ngày
+dd/MM/yyyy; ngày giao dự kiến luôn ghi “Giao dự kiến dd/MM/yyyy”
+8
+Thành công
+Thông báo ngắn tự ẩn sau 3 giây
+Ví dụ MSG-MH-12
+9
+Lỗi
+Thông báo màu đỏ kèm biểu tượng, nêu cách xử lý
+10
+Trạng thái trống
+Hình minh hoạ, một câu giải thích và một nút hành động
+Ví dụ MSG-MH-24
+11
+Đang tải
+Khung xương (skeleton) cho danh sách và chi tiết
+Mã
+Nội dung hiển thị
+Dạng hiển thị
+Khi nào hiển thị
+MSG-MH-01
+Không tải được dữ liệu. Vui lòng thử lại.
+Trạng thái lỗi, nút “Thử lại”
+Mất kết nối hoặc lỗi máy chủ khi tải danh sách, chi tiết, giỏ hàng và chưa có dữ liệu tải trước đó
+MSG-MH-02
+Chưa cập nhật được dữ liệu mới. Kiểm tra kết nối mạng và thử lại.
+Banner
+Mất kết nối hoặc lỗi máy chủ khi đang hiển thị dữ liệu đã tải trước đó
+MSG-MH-03
+Chưa có sản phẩm để hiển thị.
+Trạng thái trống
+Không có sản phẩm nào đủ điều kiện hiển thị ở danh mục đang chọn (kể cả “Tất cả”)
+MSG-MH-04
+Nhập ít nhất 2 ký tự.
+Lỗi tại ô nhập
+Nhấn “Tìm” khi từ khoá dưới 2 ký tự
+MSG-MH-05
+Không tìm thấy sản phẩm phù hợp với “<từ khoá>”.
+Trạng thái trống
+Tìm kiếm không có kết quả
+MSG-MH-06
+Giá từ phải nhỏ hơn hoặc bằng giá đến.
+Lỗi tại ô nhập
+Nhấn “Áp dụng” khi giá từ lớn hơn giá đến
+MSG-MH-07
+Không có sản phẩm phù hợp với bộ lọc.
+Trạng thái trống, nút “Xoá bộ lọc”
+Lọc không có kết quả
+MSG-MH-08
+Sản phẩm hiện không còn bán.
+Trạng thái trống, kèm sản phẩm khác
+Mở sản phẩm không còn đủ điều kiện hiển thị hoặc không tồn tại
+MSG-MH-09
+Đăng nhập để thêm sản phẩm vào giỏ hàng.
+Hộp thoại: Đăng nhập, Đăng ký, Để sau
+Khách hàng chưa đăng nhập nhấn nút thêm vào giỏ
+MSG-MH-10
+Đăng nhập để xem giỏ hàng.
+Hộp thoại: Đăng nhập, Đăng ký, Để sau
+Khách hàng chưa đăng nhập nhấn biểu tượng giỏ hàng
+MSG-MH-11
+Giỏ hàng chỉ dành cho tài khoản Khách hàng.
+Hộp thoại: Đóng
+Tài khoản đang đăng nhập không phải tài khoản Khách hàng
+MSG-MH-12
+Đã thêm vào giỏ Hàng có sẵn.
+Thông báo ngắn, lối tắt “Xem giỏ”
+Thêm vào Giỏ hàng thường thành công
+MSG-MH-13
+Đã thêm vào giỏ Đặt trước. Giao dự kiến dd/MM/yyyy.
+Thông báo ngắn, lối tắt “Xem giỏ”
+Thêm vào Giỏ Preorder thành công
+MSG-MH-14
+Chỉ còn N <đơn vị bán>.
+Thông báo ngắn
+Số lượng vượt tồn kho khả dụng (Mua thường) hoặc hạn mức còn lại (Preorder)
+MSG-MH-15
+Mỗi sản phẩm đặt tối đa M <đơn vị bán>.
+Thông báo ngắn
+Số lượng vượt trần M của một dòng giỏ hàng
+MSG-MH-16
+Giỏ đã có K <đơn vị bán>. Bạn thêm được tối đa N <đơn vị bán> nữa. (N = 0: Giỏ đã có K <đơn vị bán>, bạn không thêm được nữa.)
+Thông báo ngắn
+Tổng số lượng sau khi cộng dồn vượt giới hạn
+MSG-MH-17
+Giỏ đã đủ L sản phẩm. Vui lòng xoá bớt để thêm sản phẩm mới.
+Thông báo ngắn
+Thêm sản phẩm mới khi giỏ nhận đã đủ số dòng tối đa L
+MSG-MH-18
+Sản phẩm vừa chuyển sang đặt trước. Thêm vào giỏ Đặt trước? Giao dự kiến dd/MM/yyyy, đặt cọc X% khi đặt.
+Hộp thoại: Đặt trước, Không
+Lúc thêm vào giỏ, sản phẩm đã chuyển từ Mua thường sang Preorder
+MSG-MH-19
+Sản phẩm đã có hàng sẵn. Thêm vào giỏ Hàng có sẵn?
+Hộp thoại: Thêm, Không
+Lúc thêm vào giỏ, sản phẩm đã chuyển từ Preorder sang Mua thường
+MSG-MH-20
+Sản phẩm đang được giữ cho đơn chờ thanh toán. Vui lòng thử lại sau ít phút.
+Ghi chú tại chỗ hoặc thông báo ngắn
+Sản phẩm Mua thường có tồn kho khả dụng bằng 0 (trạng thái “Đang được giữ”)
+MSG-MH-21
+Đã hết suất đặt trước của đợt này. Suất có thể mở lại khi có đơn chưa đặt cọc bị huỷ.
+Ghi chú tại chỗ hoặc thông báo ngắn
+Sản phẩm Preorder ở trạng thái “Hết suất đặt trước”
+MSG-MH-22
+Sản phẩm chưa mở đặt trước.
+Ghi chú tại chỗ hoặc thông báo ngắn
+Sản phẩm Preorder ở trạng thái “Chưa mở đặt trước”
+MSG-MH-23
+Chưa thêm được vào giỏ. Vui lòng thử lại.
+Thông báo lỗi
+Mất kết nối hoặc lỗi máy chủ khi thêm vào giỏ
+MSG-MH-24
+Giỏ hàng của bạn đang trống.
+Trạng thái trống, nút “Xem sản phẩm”
+Giỏ đang mở không có dòng nào
+MSG-MH-25
+Có N sản phẩm cần bạn kiểm tra trước khi đặt.
+Banner
+Giỏ đang mở có N dòng cần Khách hàng xem lại: dòng không “Hợp lệ” (không tính dòng “Chờ thanh toán”) hoặc dòng có ghi chú thay đổi
+MSG-MH-26
+Giá đã thay đổi từ X thành Y.
+Ghi chú trên dòng
+Giá hiện hành khác giá lần xem giỏ trước
+MSG-MH-27
+Ngày giao dự kiến đã đổi từ A thành B.
+Ghi chú trên dòng
+Ngày giao dự kiến của dòng Preorder khác lần xem giỏ trước
+MSG-MH-28
+Xoá sản phẩm khỏi giỏ hàng? (nhiều dòng: Xoá N sản phẩm đã chọn khỏi giỏ hàng?)
+Hộp thoại: Xoá, Không
+Nhấn “Xoá”, nhấn “−” khi số lượng là 1, hoặc “Xoá đã chọn”
+MSG-MH-29
+Chưa cập nhật được giỏ hàng. Vui lòng thử lại.
+Thông báo lỗi
+Mất kết nối hoặc lỗi máy chủ khi cập nhật giỏ
+MSG-MH-30
+Giỏ hàng đã thay đổi trên thiết bị khác. Đã tải lại giỏ hàng.
+Thông báo ngắn
+Dòng đang thao tác đã bị sửa hoặc xoá từ thiết bị khác
+MSG-MH-31
+Chuyển sang giỏ Đặt trước? Giao dự kiến dd/MM/yyyy, đặt cọc X% khi đặt.
+Hộp thoại: Chuyển, Không
+Nhấn “Chuyển sang Đặt trước” trên dòng “Hết hàng có sẵn”
+MSG-MH-32
+Đã chuyển sang giỏ Đặt trước. (hoặc: Đã chuyển sang giỏ Hàng có sẵn.)
+Thông báo ngắn
+Chuyển dòng giữa hai giỏ thành công
+MSG-MH-33
+Vui lòng xử lý các sản phẩm được đánh dấu trước khi đặt.
+Thông báo lỗi
+Nhấn nút đặt khi có dòng được chọn không còn “Hợp lệ”
+MSG-MH-34
+Đã sao chép liên kết.
+Thông báo ngắn
+Chọn kênh “Sao chép liên kết”
+MSG-MH-35
+Chưa tạo được liên kết chia sẻ. Vui lòng thử lại.
+Thông báo lỗi
+Mất kết nối hoặc lỗi máy chủ khi tạo link
+MSG-MH-36
+Đăng nhập để link có mã giới thiệu của bạn.
+Dòng gợi ý, nhấn được
+Khách hàng chưa đăng nhập mở bảng chia sẻ
+MSG-MH-37
+Sản phẩm đang nằm trong đơn chờ thanh toán. Hoàn tất hoặc huỷ đơn đó rồi thử lại.
+Thông báo ngắn
+Thêm hoặc chuyển sản phẩm vào giỏ đang có dòng “Chờ thanh toán” của chính sản phẩm đó
+STT
+Tên
+Dạng hiển thị
+Loại dữ liệu
+Bắt buộc ?
+Mô tả
+1
+Ô tìm kiếm
+Input chỉ đọc
+Text
+x
+Chữ gợi ý “Tìm đặc sản, HTX…”. Nhấn mở màn hình Tìm kiếm (SCR-MH-02).
+2
+Biểu tượng giỏ hàng
+Icon kèm số
+Number
+x
+Số theo BR-MH-28. Nhấn mở Giỏ hàng (SCR-MH-06); chưa đăng nhập thì hiện hộp thoại SCR-MH-05.
+3
+Thanh danh mục
+Chip cuộn ngang, chọn một
+Lookup (Danh mục)
+x
+“Tất cả” và các danh mục theo FR-MH-01.1. Mặc định “Tất cả”.
+4
+Nút Lọc
+Button kèm số
+Number
+x
+Mở bảng lọc (SCR-MH-03). Hiển thị “Lọc · N”, N là số nhóm tiêu chí đang áp dụng; N = 0 thì chỉ ghi “Lọc”.
+5
+Nút Sắp xếp
+Button
+Lookup (tiêu chí)
+x
+Ghi tên tiêu chí đang chọn. Nhấn mở bảng sắp xếp (SCR-MH-03).
+6
+Số sản phẩm
+Label
+Number
+x
+“N sản phẩm” theo danh mục và bộ lọc hiện tại.
+7
+Thẻ sản phẩm
+Card, lưới 2 cột
+x
+Nhấn mở Chi tiết sản phẩm (SCR-MH-04). Tải 20 thẻ mỗi lần (BR-MH-10).
+8
+Ảnh đại diện
+Image
+Ảnh tỉ lệ 1:1
+x
+Ảnh đầu tiên của sản phẩm; lỗi tải thì hiện ảnh mặc định. Làm mờ khi “Hết suất đặt trước”, “Chưa mở đặt trước”.
+9
+Nhãn hình thức bán
+Tag
+Enum
+“Đặt trước” khi sản phẩm Preorder; không hiển thị khi Mua thường (BR-MH-08).
+10
+Nhãn Hoả tốc
+Tag
+Boolean
+Hiển thị khi sản phẩm hỗ trợ hoả tốc và đang Mua thường.
+11
+Tên sản phẩm
+Label
+Text, tối đa 2 dòng
+x
+Quá 2 dòng thì cắt và thêm “…”.
+12
+Giá và đơn vị bán
+Label
+Currency, Text
+x
+Ví dụ “48.000 đ/túi” (BR-MH-37).
+13
+Tên HTX
+Label
+Text, 1 dòng
+x
+14
+Đánh giá
+Label
+Số thập phân 1 chữ số và số lượt
+Ví dụ “★ 4,8 (36)”. Ẩn khi chưa có đánh giá.
+15
+Nhãn chứng nhận
+Tag
+Text
+Tối đa 2 nhãn loại chứng nhận còn hiệu lực (BR-MH-18).
+16
+Dòng trạng thái Preorder
+Label
+Date hoặc Enum
+Chỉ trên thẻ Preorder: “Giao dự kiến dd/MM/yyyy”, “Hết suất đặt trước” hoặc “Chưa mở đặt trước”.
+17
+Thẻ tiêu chí đang áp dụng
+Chip có nút “×”, link “Xoá bộ lọc”
+Text
+Mỗi tiêu chí lọc một thẻ; nhấn “×” để bỏ. “Xoá bộ lọc” bỏ mọi tiêu chí (BR-MH-16).
+18
+Thanh điều hướng của app
+Tab bar
+x
+Ngoài phạm vi tài liệu; tab “Sản phẩm” mở màn hình này.
+STT
+Tên
+Dạng hiển thị
+Loại dữ liệu
+Bắt buộc ?
+Mô tả
+1
+Nút quay lại
+Icon
+Navigation
+x
+Quay về màn hình trước, giữ danh mục, bộ lọc đang chọn.
+2
+Ô nhập từ khoá
+Input
+Text (2–100 ký tự)
+x
+Tự mở bàn phím khi vào màn hình. Không nhận quá 100 ký tự. Lỗi MSG-MH-04 hiện ngay dưới ô.
+3
+Nút xoá từ khoá
+Icon
+Hiện khi ô có nội dung. Xoá nội dung ô nhập, quay về trạng thái lịch sử.
+4
+Lịch sử tìm kiếm
+List
+Text
+Tối đa 10 từ khoá, mới nhất ở trên (BR-MH-13). Nhấn để tìm lại.
+5
+Xoá một từ khoá
+Icon “×”
+Xoá từ khoá đó khỏi lịch sử.
+6
+Xoá tất cả
+Link
+Xoá toàn bộ lịch sử tìm kiếm trên thiết bị.
+7
+Danh sách gợi ý
+List
+Text kèm loại
+Tối đa 8 dòng, có ghi loại: Sản phẩm, Danh mục, HTX (BR-MH-12). Phần khớp từ khoá in đậm.
+8
+Số kết quả
+Label
+Number
+x
+“N kết quả” cho từ khoá đang tìm.
+9
+Nút Lọc, Sắp xếp
+Button
+x
+Như SCR-MH-01. Mặc định sắp theo “Liên quan nhất”.
+10
+Danh sách kết quả
+Card, lưới 2 cột
+Thẻ sản phẩm như SCR-MH-01.
+11
+Thông báo không có kết quả
+Trạng thái trống
+Text
+MSG-MH-05.
+12
+Sản phẩm bán chạy
+Card, lưới 2 cột
+Tối đa 6 sản phẩm, chỉ hiển thị khi không có kết quả (BR-MH-38).
+STT
+Tên
+Dạng hiển thị
+Loại dữ liệu
+Bắt buộc ?
+Mô tả
+1
+Tiêu đề và nút đóng
+Label, Icon
+x
+Đóng bảng lọc; thay đổi chưa nhấn “Áp dụng” không có hiệu lực.
+2
+Hình thức bán
+Chip, chọn nhiều
+Enum
+“Hàng có sẵn”, “Đặt trước” (BR-MH-14).
+3
+Khoảng giá
+2 Input
+Number (≥ 0)
+Giá từ, giá đến (đ). Được để trống một đầu. Lỗi MSG-MH-06 hiện ngay dưới ô.
+4
+Chứng nhận
+Checkbox, chọn nhiều
+Lookup (loại chứng nhận)
+Chỉ liệt kê loại chứng nhận còn hiệu lực có ở sản phẩm đang hiển thị.
+5
+Hỗ trợ hoả tốc
+Switch
+Boolean
+Bật: chỉ hiện sản phẩm hỗ trợ hoả tốc.
+6
+HTX
+Checkbox, chọn nhiều
+Lookup (HTX)
+Các HTX có sản phẩm đang hiển thị.
+7
+Đánh giá
+Chip
+Boolean
+“Từ 4 sao”: chỉ hiện sản phẩm có điểm trung bình từ 4,0.
+8
+Đặt lại
+Button
+x
+Bỏ chọn mọi tiêu chí trong bảng lọc; bảng lọc vẫn mở.
+9
+Áp dụng
+Button
+Submit
+x
+Áp dụng bộ lọc, đóng bảng, cập nhật danh sách.
+10
+Tiêu đề bảng sắp xếp và nút đóng
+Label, Icon
+x
+Đóng bảng, giữ tiêu chí đang chọn.
+11
+Tiêu chí sắp xếp
+Radio, chọn một
+Enum
+x
+Các tiêu chí ở BR-MH-15; “Liên quan nhất” chỉ có khi đang tìm theo từ khoá. Chọn là áp dụng ngay và đóng bảng.
+STT
+Tên
+Dạng hiển thị
+Loại dữ liệu
+Bắt buộc ?
+Mô tả
+1
+Nút quay lại
+Icon
+Navigation
+x
+Quay về màn hình trước, giữ trạng thái xem (BR-MH-16).
+2
+Nút Chia sẻ
+Icon
+x
+Mở bảng chia sẻ (SCR-MH-07).
+3
+Biểu tượng giỏ hàng
+Icon kèm số
+Number
+x
+Như SCR-MH-01.
+4
+Ảnh sản phẩm
+Carousel
+Ảnh
+x
+Vuốt để xem; hiển thị vị trí “1/5”; nhấn để phóng to.
+5
+Tên sản phẩm
+Label
+Text
+x
+Hiển thị đầy đủ.
+6
+Giá, đơn vị bán, quy cách
+Label
+Currency, Text
+x
+Ví dụ “48.000 đ/túi”, “Túi 1 kg” (BR-MH-37).
+7
+Đánh giá
+Label
+Số thập phân, số lượt
+Ẩn khi chưa có đánh giá.
+8
+Trạng thái nhận đặt
+Tag
+Enum
+x
+“Còn hàng” hoặc “Còn N <đơn vị bán>”; “Đang được giữ”; “Đặt trước”; “Hết suất đặt trước”; “Chưa mở đặt trước” (BR-MH-08).
+9
+Khối thông tin Preorder
+Khối ghi chú
+Text, Date, %
+Chỉ khi “Nhận đặt trước”: lý do (“Chưa vào vụ” hoặc “Hết hàng có sẵn”), ngày giao dự kiến, tỷ lệ đặt cọc.
+10
+Chứng nhận
+Tag, Link
+Text, Date
+Loại chứng nhận còn hiệu lực và ngày hết hạn. “Xem chứng nhận” mở chi tiết và ảnh chứng nhận. Ẩn khi không có.
+11
+Truy xuất nguồn gốc
+Dòng điều hướng
+x
+Mở trang truy xuất của sản phẩm (module HTX).
+12
+HTX
+Dòng thông tin
+Text
+x
+Tên và địa chỉ HTX.
+13
+Thông tin sản phẩm
+Dòng mở rộng
+Text
+Mùa vụ (tháng thu hoạch), cách bảo quản, hạn dùng, mô tả. Trường trống thì ẩn (BR-MH-17).
+14
+Giao hàng
+Dòng thông tin
+Text
+x
+“Chỉ giao trong Hà Nội”; có hoả tốc thì ghi thêm.
+15
+Đánh giá gần nhất
+List, Link
+Text
+3 đánh giá mới nhất và “Xem tất cả đánh giá” (module CS).
+16
+Sản phẩm cùng danh mục
+Card cuộn ngang
+Tối đa 6 sản phẩm (BR-MH-38).
+17
+Bộ chọn số lượng
+Stepper
+Number (1–99)
+x
+Mặc định 1; giới hạn theo BR-MH-19. Khoá khi “Đang được giữ”; ẩn khi “Hết suất đặt trước”, “Chưa mở đặt trước”.
+18
+Nút thêm vào giỏ
+Button
+Submit
+x
+“Thêm vào giỏ” khi Mua thường; “Thêm vào giỏ đặt trước” khi Preorder. Bị khoá kèm lý do (MSG-MH-20, 21, 22) khi không nhận đặt.
+19
+Nội dung hộp thoại
+Dialog
+Text
+x
+MSG-MH-09 khi nhấn nút thêm vào giỏ, kèm dòng phụ “Sản phẩm và số lượng bạn chọn sẽ được giữ lại.”; MSG-MH-10 khi nhấn biểu tượng giỏ hàng.
+20
+Đăng nhập
+Button
+Navigation
+x
+Mở màn hình đăng nhập (module TK); xong thì quay lại và thực hiện tiếp thao tác đang dở (BR-MH-02).
+21
+Đăng ký
+Button
+Navigation
+x
+Mở màn hình đăng ký (module TK); xong thì quay lại và thực hiện tiếp thao tác đang dở.
+22
+Để sau
+Link
+x
+Đóng hộp thoại, không thực hiện thao tác.
+STT
+Tên
+Dạng hiển thị
+Loại dữ liệu
+Bắt buộc ?
+Mô tả
+1
+Nút quay lại và tiêu đề
+Icon, Label
+Navigation
+x
+Tiêu đề “Giỏ hàng”. Quay về màn hình trước.
+2
+Tab giỏ
+Tab
+Text kèm số
+x
+“Hàng có sẵn (n)” và “Đặt trước (m)”; n, m là số dòng của từng giỏ (BR-MH-21). Tab Đặt trước có ghi chú cố định “Sản phẩm đặt trước được đặt riêng và có đặt cọc.”
+3
+Thông báo cần kiểm tra
+Banner
+Text
+MSG-MH-25. Hiện khi giỏ đang mở có dòng cần Khách hàng xem lại (BR-MH-26).
+4
+Nhóm HTX
+Checkbox, Label
+Text
+x
+Tên HTX. Ô chọn áp dụng cho mọi dòng “Hợp lệ” của HTX (BR-MH-27).
+5
+Ô chọn dòng
+Checkbox
+Boolean
+x
+Khoá với dòng không “Hợp lệ”.
+6
+Ảnh, tên, quy cách
+Image, Label
+Text
+x
+Nhấn mở chi tiết sản phẩm.
+7
+Giá
+Label
+Currency
+x
+Giá bán hiện hành (BR-MH-25).
+8
+Bộ chỉnh số lượng
+Stepper
+Number (1–99)
+x
+Giới hạn theo BR-MH-19. Nhấn “−” khi số lượng là 1 thì hỏi xoá. Khoá với các dòng nêu ở UC-MH-07, 2c.
+9
+Thành tiền dòng
+Label
+Currency
+x
+Giá × số lượng.
+10
+Nút xoá dòng
+Icon
+x
+Hỏi MSG-MH-28 trước khi xoá. Ẩn với dòng “Chờ thanh toán”.
+11
+Nhãn trạng thái dòng
+Tag
+Enum
+Theo bảng ở mục 7.3; không hiển thị với dòng “Hợp lệ”.
+12
+Nút xử lý dòng
+Button
+“Cập nhật số lượng”, “Chuyển sang Đặt trước” hoặc “Chuyển sang Hàng có sẵn”, theo trạng thái dòng.
+13
+Ghi chú thay đổi
+Label
+Text
+MSG-MH-26 (đổi giá), MSG-MH-27 (đổi ngày giao dự kiến).
+14
+Ngày giao dự kiến
+Tag
+Date
+Chỉ ở tab Đặt trước: “Giao dự kiến dd/MM/yyyy”.
+15
+Chọn tất cả
+Checkbox
+Boolean
+x
+Chọn mọi dòng “Hợp lệ” của tab đang mở.
+16
+Xoá đã chọn
+Link
+Hiện khi có ít nhất 1 dòng được chọn. Hỏi MSG-MH-28.
+17
+Tạm tính
+Label
+Currency
+x
+Tổng thành tiền các dòng đang chọn; ghi chú “Chưa gồm phí giao hàng, hộp quà, ưu đãi”.
+18
+Tiền cọc dự kiến
+Label
+Currency
+Chỉ ở tab Đặt trước: tạm tính × tỷ lệ đặt cọc (BR-MH-27).
+19
+Nút đặt
+Button
+Submit
+x
+“Đặt hàng (k)” ở tab Hàng có sẵn; “Đặt trước (k)” ở tab Đặt trước. Khoá khi k = 0.
+20
+Giỏ trống
+Trạng thái trống
+Text
+MSG-MH-24 và nút “Xem sản phẩm”.
+STT
+Tên
+Dạng hiển thị
+Loại dữ liệu
+Bắt buộc ?
+Mô tả
+1
+Tiêu đề và nút đóng
+Label, Icon
+x
+Đóng bảng chia sẻ; không ghi lượt chia sẻ.
+2
+Xem trước sản phẩm
+Khối thông tin
+Ảnh, Text
+x
+Ảnh đại diện, tên, giá, tên HTX: nội dung sẽ hiển thị khi đăng link (BR-MH-33).
+3
+Link chia sẻ và ghi chú mã giới thiệu
+Label
+URL, Text
+x
+Hiển thị link. Đã đăng nhập: ghi “Link kèm mã giới thiệu của bạn”. Chưa đăng nhập: hiện MSG-MH-36, nhấn để đăng nhập.
+4
+Facebook
+Button
+x
+Ghi lượt chia sẻ, mở trình chia sẻ của Facebook với link.
+5
+Sao chép liên kết
+Button
+x
+Ghi lượt chia sẻ, sao chép link, hiển thị MSG-MH-34.
+6
+Khác
+Button
+x
+Ghi lượt chia sẻ, mở bảng chia sẻ của hệ điều hành.
+7
+Thông tin sản phẩm trên trang web
+Khối thông tin
+Ảnh, Text, Currency
+x
+Ảnh, tên, giá và đơn vị bán, tên HTX, mô tả ngắn. Trang có thẻ Open Graph để Facebook hiển thị xem trước.
+8
+Hình thức bán trên trang web
+Tag
+Enum
+x
+Trạng thái nhận đặt như SCR-MH-04, mục 8.
+9
+Mở trong ứng dụng
+Button
+Navigation
+x
+Mở app tại chi tiết sản phẩm nếu thiết bị đã cài app.
+10
+Tải ứng dụng
+Button
+Navigation
+x
+Mở App Store hoặc Google Play theo hệ điều hành.

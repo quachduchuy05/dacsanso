@@ -1,0 +1,313 @@
+# Đặc Tả - Hoàng Đạt.docx
+Nguồn: https://docs.google.com/document/d/1lJIW2cmbQKuFmbLurfaY_Kew5CJQ2Ost/edit?usp=drivesdk&ouid=118008469128637664818&rtpof=true&sd=true
+
+Xử lý đơn hàng trả hàng và hoàn tiền
+Đặc tả Use Case
+App Đặc sản Bắc Giang | Phiên bản 1.0 | Ngày 12 tháng 10 năm 2026
+Mục đích và phạm vi
+Tài liệu đặc tả năm Use Case: HTX xác nhận hoặc từ chối đơn; đóng gói và bàn giao vận chuyển; xác nhận nhận lại hàng chuyển hoàn; Admin duyệt trả hàng và quyết định hoàn tiền; hệ thống tự động ghi nhận kết quả hoàn tiền. Tài liệu là cơ sở thiết kế chức năng, phát triển và kiểm thử nghiệm thu nghiệp vụ vòng đời đơn hàng.
+HTX chỉ xử lý đơn thuộc HTX mình. Admin quyết định cuối cùng về trả hàng và hoàn tiền. Hệ thống tiếp nhận kết quả hoàn tiền tự động từ hệ thống thanh toán.
+Duyệt trả hàng, xác nhận nhận lại hàng, duyệt hoàn tiền và thực hiện hoàn tiền thành công là các kết quả riêng biệt. Xác nhận hàng đã hoàn về không đồng nghĩa với đủ điều kiện hoàn tiền hoặc tiền đã được hoàn.
+Danh mục Use Case
+Thuật ngữ và ranh giới nghiệp vụ
+Trạng thái của đơn hàng sẽ có các trạng thái sau: Chờ xác nhận từ HTX, Đã cọc Preorder, Chờ lấy hàng, Đã giao vận chuyển, Đã nhận hàng, Đang xử lý hoàn tiền,Từ chối hoàn tiền, Đã hoàn tiền.
+Tiền hàng đã thanh toán là khoản thực tế đã thu cho hàng hóa của đơn được duyệt hoàn, không bao gồm phí vận chuyển. Khoản hoàn bằng 100% số tiền này; không hoàn phần tiền chưa thu.
+Thanh toán online được hoàn về tài khoản thanh toán ban đầu. Thanh toán COD được hoàn bằng chuyển khoản đến tài khoản người mua đã đăng ký và xác nhận trên ứng dụng.
+Đơn Preorder thuộc phạm vi xử lý khi trạng thái cho phép. Tiền cọc là khoản đã thu; nếu mới thu cọc thì khi đủ điều kiện chỉ hoàn tiền cọc cho hàng hóa đã thu, không hoàn phần còn lại chưa thanh toán.
+Đặc tả Usecase
+Mã
+Tên Use Case
+Tác nhân chính
+Mã chức năng tham chiếu
+UC-DH-01
+Xác nhận hoặc từ chối đơn hàng
+Người dùng HTX
+FR-DH-03
+UC-DH-02
+Xác nhận đã giao vận chuyển
+Người dùng HTX
+FR-DH-04
+UC-DH-03
+Duyệt từ chối trả hàng
+Người dùng HTX
+FR-DH-05
+UC-DH-04
+Xác nhận đã nhận chuyển hoàn
+Admin
+FR-DH-06
+UC-DH-05
+Quyết định hoàn tiền
+Admin
+FR-DH-07
+UC-DH-06
+Ghi nhận hoàn tiền tự động
+Dịch vụ xử lý hoàn tiền của hệ thống
+FR-DH-08
+Tên UC: Xác nhận/Từ chối đơn hàng                                                                         
+Độ ưu tiên: Cao 
+Tên UC: Xác nhận/Từ chối đơn hàng                                                                         
+Độ ưu tiên: Cao 
+Tác nhân chính
+HTX
+Tác nhân phụ
+Hệ thống, khách hàng
+Mô tả
+Cho phép HTX xác nhận đơn để thực hiện giao hàng hoặc từ chối đơn kèm lý do; đưa khoản đã thanh toán vào quy trình xét hoàn tiền.
+Điều kiện trước
+HTX đã đăng nhập vào ứng dụng, truy cập vào trang portal của HTX.
+HTX đã được phê duyệt bán hàng. Quyền bán hàng vẫn trong trạng thái ACTIVE.
+Luồng sự kiện chính
+Người dùng HTX truy cập chức năng danh sách đơn hàng.
+Hệ thống hiển thị danh sách đơn hàng chờ xác nhận thuộc HTX.
+Người dùng HTX bấm Xác nhận đơn.
+Hệ thống kiểm tra đơn hàng có đang nằm trong thời gian chờ xác nhận đơn hàng hay không.
+Hệ thống tự gọi API đến đơn vị vận chuyển, tự động kiên kết mã vận đơn với đơn hàng.
+Hệ thống chuyển trạng thái đơn sang chờ lấy hàng, lưu vào lịch sử thao tác đơn hàng.
+Hệ thống thông báo kết quả xác nhận và cung cấp, thông báo kết quả cho người mua.
+Luồng thay thế
+A1. Người dùng HTX bấm từ chối đơn hàng
+Ở bước 3 người dùng bấm từ chối đơn hàng.
+Người dùng nhập lý do từ chối đơn và ấn gửi lý do.
+Hệ thống chuyển đơn hàng sang trạng thái đã hủy, lưu vào lịch sử thao tác đơn hàng.
+Hệ thống thông báo kết quả từ chối và cung cấp, thông báo kết quả cho người mua.
+Ngoại lệ
+E1: Thiếu lý do từ chối đơn hàng
+Hệ thống không lưu quyết định, yêu cầu nhập lý do.
+Người dùng HTX bổ sung lý do rồi tiếp tục gửi quyết định trong luồng thay thế A1.
+E2: Từ chối đơn Preorder đã cọc hoặc đã thanh toán
+Hệ thống sẽ kiểm tra đơn hàng đã cọc hoặc đã thanh toán hay chưa.
+Nếu có hệ thống sẽ tự động hoàn lại cho tài khoản thanh toán đơn 100% số tiền đã thanh toán không bao gồm voucher.
+E3: Đơn hàng quá thời gian xác nhận đơn
+Hệ thống tự chuyển trạng thái đơn sang đã hủy và lưu lịch sử thao tác đơn hàng.
+Hệ thống thông báo kết quả đã hủy và cung cấp, thông báo kết quả cho người mua.
+Điều kiện sau
+Đơn hàng được chuyển trạng thái xác nhận hoặc từ chối.
+Hệ thống sẽ lưu kết quả thao tác đơn hàng.
+Yêu cầu (Business rule)
+BR-DH-01-01: Chỉ HTX sở hữu đơn được xác nhận/từ chối đơn Chờ xác nhận. Admin chỉ xem các thao tác này.
+BR-DH-01-02: Xác nhận đơn chuyển trạng thái từ Chờ sang nhận sang chờ đóng gói.
+BR-DH-01-03: Từ chối đơn bắt buộc phải có lý do và chuyển trạng thái đơn sang Đã Hủy. Đối với đơn đã thanh toán và đặt cọc.
+BR-DH-01-04: Thời hạn xác nhận đơn được cấu hình tham số hệ thống.
+BR-DH-01-05: Mỗi đơn hàng chỉ có một mã vận đơn duy nhất.
+Yêu cầu phi chức năng
+NFR-DH-01: HTX chỉ được thực hiện thay đổi trạng thái với đơn thuộc quyền sở hữu.
+NFR-DH-02: Lưu Audit Log theo thời gian đã được cấu hình trên hệ thống.
+Tên UC: Xác nhận đã giao vận chuyển                                                                       
+Độ ưu tiên: Cao 
+Tên UC: Xác nhận đã giao vận chuyển                                                                       
+Độ ưu tiên: Cao 
+Tác nhân chính
+HTX
+Tác nhân phụ
+Hệ thống, khách hàng, đơn vị vận chuyển
+Mô tả
+Ghi nhận quá trình chuẩn bị hàng và bàn giao thực tế hàng đã đóng gói cho đơn vị vận chuyển.
+Điều kiện trước
+HTX đã có đăng nhập vào hệ thống truy cập vào portal HTX.
+HTX đã được phê duyệt bán hàng. Quyền bán hàng vẫn trong trạng thái ACTIVE.
+HTX đã có đơn hàng.
+Đơn hàng đã ở trạng thái đã xác nhận chờ đóng gói. Đơn hàng đã có phương thức giao hàng đã có mã vận đơn.
+HTX đã truy cập vào danh sách đơn hàng đã xác nhận chờ lấy hàng.
+Luồng sự kiện chính
+Người dùng bấm vào chi tiết đơn(Số lượng, loại hàng,..) để chuẩn bị đơn hàng.
+Người dùng đóng gói hàng rồi bấm xác nhận đã đóng gói chờ lấy hàng.
+Hệ thống chuyển trạng thái đơn hàng sang đã đóng gói chờ lấy hàng và lưu lịch sử thao tác đơn hàng.
+Hệ thống thông báo kết quả và cung cấp, thông báo kết quả cho người mua.
+Đơn vị giao hàng đến lấy hàng và quét mã vận đơn.
+Hệ thống cập nhật tình trạng đã lấy hàng từ API của đơn vị giao hàng.
+Luồng thay thế
+Ngoại lệ
+E1: Người mua hủy đơn hàng trước khi đơn vị vận chuyển nhận hàng
+Hệ thống liên kết với API vận đơn của đơn vị giao hàng, mã vận đơn sẽ không còn hiệu lực.
+Hệ thống sẽ chuyển trạng thái đơn thành đã hủy, lưu vào lịch sử thao tác đơn hàng.
+Hệ thống thông báo kết quả và cung cấp thông tin cho người mua.
+Điều kiện sau
+Đơn hàng chuyển trạng thái thành đang vận chuyển.
+Yêu cầu (Business rule)
+BR-DH-02-01: Chỉ đơn Đã xác nhận mới được chuyển sang Chờ lấy hàng.
+BR-DH-02-02: Chỉ chuyển Đang giao hàng sau bàn giao thực tế. Đóng gói xong chưa đủ điều kiện chuyển trạng thái. 
+BR-DH-02-03: HTX chỉ chuẩn bị và bàn giao đơn của mình. 
+BR-DH-02-04: Preorder không áp dụng hỏa tốc. Hàng phải đáp ứng yêu cầu đóng gói và vận chuyển của đơn vị giao hàng. 
+BR-DH-02-05: Người mua chỉ được phép hủy đơn khi trạng thái đơn vẫn là chờ lấy hàng.
+Yêu cầu phi chức năng
+NFR-DH-01: HTX chỉ được thực hiện thay đổi trạng thái với đơn thuộc quyền sở hữu.
+NFR-DH-02: Lưu Audit Log theo thời gian đã được cấu hình trên hệ thống.
+Tên UC: Duyệt/từ chối trả hàng                                                                      
+Độ ưu tiên: Cao 
+Tên UC: Duyệt/từ chối trả hàng                                                                      
+Độ ưu tiên: Cao 
+Tác nhân chính
+ADMIN
+Tác nhân phụ
+Khách hàng, HTX, Hệ thống
+Mô tả
+Quyết định duyệt yêu cầu trả hàng của khách hàng, cung cấp thông tin đơn hoàn cho đơn vị vận chuyển.
+Điều kiện trước
+Admin đã đăng nhập vào portal.
+Khách hàng đã lên yêu cầu trả hàng hoàn tiền.
+Mặt hàng được cấu hình có thể trả hàng theo chính sách
+Luồng sự kiện chính
+Admin truy cập vào danh sách đơn hàng yêu cầu trả hàng.
+Admin truy cập chi tiết đơn, xem xét có thể hoàn đơn theo chính sách hay không?
+Admin bấm duyệt trả hàng.
+Hệ thống hiện thông báo có nhận chuyển hoàn hàng không?
+Admin bấm nhận chuyển hoàn.
+Hệ thống chuyển trạng thái đơn hàng sang chờ chuyển hoàn.
+Hệ thống tự động lên đơn chuyển hoàn, cung cấp mã vận đơn cho người mua và HTX.
+Hệ thống thông báo kết quả và cung cấp, thông báo kết quả cho người mua và HTX.
+Luồng thay thế
+A1: Admin bấm từ chối yêu cầu trả hàng
+Hệ thống chuyển trạng thái đơn hàng sang chờ trả hàng.
+Hệ thống thông báo kết quả và cung cấp, thông báo kết quả cho người mua và HTX.
+A2: Hàng là thực phẩm có nguy cơ hư hỏng cao
+Admin xem xét hình ảnh, minh chứng người mua cung cấp.
+Admin bấm duyệt trả hàng.
+Hệ thống hiện thông báo có nhận chuyển hoàn hàng không?
+Admin bấm không nhận chuyển hoàn.
+Hệ thống chuyển trạng thái đơn hàng sang chờ duyệt hoàn tiền.
+Hệ thống thông báo kết quả và cung cấp, thông báo kết quả cho người mua và HTX.
+Ngoại lệ
+Điều kiện sau
+Đơn hàng sẽ chuyển trạng thái sang trạng thái chờ chuyển hoàn hoặc chờ hoàn tiền.
+Hệ thống cung cấp thông báo cho 3 bên Admin, HTX và người mua hàng.
+Yêu cầu (Business rule)
+BR-DH-03-01: Admin quyết định duyệt trả hàng hoàn tiền cuối cùng.
+BR-DH-03-02: Khách hàng gửi yêu cầu trả hàng hoàn tiền khi đơn hàng đã được giao.
+BR-DH-03-03: Căn cứ hoàn gồm hàng lỗi, hư hỏng; giao sai; giao trễ đủ điều kiện; hủy hợp lệ đã thu tiền; không giao được hàng và đủ điều kiện hoàn. Chỉ đổi ý không mặc định được hoàn.
+Yêu cầu phi chức năng
+NFR-DH-03-01: Giới hạn quyền quyết định cuối cùng cho Admin; lưu quyết định, lý do và lịch sử trạng thái để truy xuất. 
+NFR-DH-03-02: SLA xét duyệt chính thức, tính sẵn sàng, yêu cầu mã hóa cụ thể và thời hạn lưu dữ liệu.
+Tên UC: Xác nhận đã nhận chuyển hoàn                                                                     
+Độ ưu tiên: Cao 
+Tên UC: Xác nhận đã nhận chuyển hoàn                                                                     
+Độ ưu tiên: Cao 
+Tác nhân chính
+HTX
+Tác nhân phụ
+Khách hàng, HTX, Hệ thống
+Mô tả
+Xác nhận hàng chuyển hoàn đã về tay HTX bán hàng, giúp xác nhận có thể hoàn tiền mua hàng.
+Điều kiện trước
+HTX đã đăng nhập vào ứng dụng, truy cập vào trang portal của HTX.
+HTX đã được phê duyệt bán hàng. Quyền bán hàng vẫn trong trạng thái ACTIVE.
+Trạng thái đơn hàng đang ở Đang chuyển hoàn và thực tế đã đến HTX
+Luồng sự kiện chính
+HTX truy cập danh sách đơn hoàn
+HTX chọn đơn hoàn ứng với hàng nhận được theo mã vận đơn.
+HTX kiểm tra hàng đã nhận so với chi tiết đơn.
+HTX bấm xác nhận nhận hàng.
+Hệ thống chuyển trạng thái đơn hàng thành Chờ hoàn tiền, lưu thao tác vào lịch sử đơn hàng.
+Hệ thống thông báo kết quả và cung cấp thông tin cho khách hàng, HTX.
+Luồng thay thế
+E1: Đơn hàng hoàn không đúng với đơn hàng
+HTX bấm từ chối nhận chuyển hoàn kèm lý do(ảnh,video).
+Hệ thống chuyển trạng thái đơn hàng thành đang chờ quyết định hoàn tiền.
+Hệ thống thông báo kết quả và cung cấp thông tin cho khách hàng.
+Ngoại lệ
+E2: Quá thời gian nhận chuyển hoàn
+Quá thời gian nhận chuyển hoàn trên hệ thống đã cấu hình.
+Hệ thống tự động chuyển đơn chuyển hoàn thành Thất Bại không thể thao tác được nữa.
+Hệ thống lưu thao tác vào lịch sử thao tác đơn hàng.
+Hệ thống thông báo kết quả và cung cấp thông tin cho HTX, Khách hàng.
+Quyền khôi phục đơn chuyển hoàn thuộc về admin.
+Điều kiện sau
+Trạng thái chuyển trạng thái đơn hàng thành đã hoàn hàng hoặc chờ xác nhận hoàn.
+Quyết định từ chối hàng hoàn thuộc về HTX.s
+Yêu cầu (Business rule)
+BR-DH-04-01: Chỉ ghi Đã hoàn về sau khi HTX xác nhận nhận lại hàng. Cập nhật vận chuyển của đơn vị giao hàng chưa đủ để xác lập HTX đã nhận. 
+BR-DH-04-02: Yêu cầu trả hàng sau giao thành công phải được duyệt trước khi thực hiện. Chuyển hoàn do giao thất bại theo quy trình riêng. 
+BR-DH-04-03: HTX xác nhận và đề xuất với đơn của mình; Admin quyết định cuối cùng về trả hàng và hoàn tiền. 
+BR-DH-04-04: Nhận lại hàng không tự động duyệt hoàn tiền hoặc xác nhận giao dịch thành công. 
+BR-DH-04-05: Nếu Admin duyệt hoàn mà không yêu cầu gửi lại thực phẩm hỏng do không đảm bảo an toàn, không thực hiện Use Case này.
+Yêu cầu phi chức năng
+NFR-DH-04-01: Kiểm soát quyền theo HTX sở hữu đơn; lưu lịch sử xử lý nhận hàng để truy xuất. 
+NFR-DH-04-02: Chỉ tiêu thời gian phản hồi, thời hạn lưu minh chứng và tính sẵn sàng.
+Tên UC: Quyết định hoàn tiền                                                                    
+Độ ưu tiên: Cao 
+Tên UC: Quyết định hoàn tiền                                                                    
+Độ ưu tiên: Cao 
+Tác nhân chính
+Admin
+Tác nhân phụ
+Hệ thống, khách hàng, HTX
+Mô tả
+Quyết định hoàn tiền sau khi đơn hàng đã chuyển hoàn thành công.
+Điều kiện trước
+Admin đã đăng nhập vào portal.
+Khách hàng đã lên yêu cầu trả hàng hoàn tiền.
+Mặt hàng được cấu hình có thể trả hàng theo chính sách
+Luồng sự kiện chính
+Admin truy cập danh sách đơn hàng đã xác nhận chuyển hoàn đã ở trạng thái chờ hoàn tiền.
+Admin truy cập chi tiết đơn hàng, xem xét đơn hàng.
+Admin bấm duyệt hoàn tiền.
+Hệ thống chuyển trạng thái đơn hành thành đã quyết định hoàn tiền.
+Hệ thống kiểm tra nguồn thanh toán đơn hàng.
+Hệ thống tự động hoàn tiền 100% đơn hàng(không bao gồm vận chuyển và voucher) vào nguồn thanh toán đơn hàng.
+Hệ thống ghi nhận thao tác vào lịch sử thao tác đơn hàng.
+Hệ thống thông báo kết quả và cung cấp thông tin cho HTX và khách hàng,
+Luồng thay thế
+A1: Từ chối trả hàng vật lý do đơn hàng là hàng dễ hư hỏng hoặc hàng lỗi đã hỏng.
+Hệ thống hiển thị rõ lý do từ chối trả hàng.
+Admin bấm duyệt hoàn tiền
+Tiếp tục ở bước 4.
+A2: Đối với đơn hàng thanh toán bằng COD.
+Hệ thống xem xét khách hàng đã đăng ký tài khoản thanh toán ở hồ sơ người dùng chưa.
+Nếu có Hệ thống sẽ hoàn tiền vào tài khoản thanh toán đã đăng ký.
+Nếu chưa Hệ thống sẽ thông báo khách hàng cung cấp tài khoản hoàn tiền qua hồ sơ thông tin khách hàng
+Sau khi khách hàng đăng ký tài khoản thanh toán thì tiếp tục ở bước 6.
+Ngoại lệ
+E3: Không thể bắt đầu giao dịch hoặc có lỗi kỹ thuật
+Phát sinh khi hệ thống thanh toán báo lỗi thực hiện.
+Hệ thống giữ số tiền và quyết định được duyệt, ghi lỗi kỹ thuật.
+
+Điều kiện sau
+Lưu quyết định trả hàng, hoàn tiền và lý do.
+Quyết định từ chối được ghi nhận, thông báo và phân biệt với lỗi giao dịch. Quyết định duyệt không tự chuyển Đã hoàn tiền.
+Yêu cầu (Business rule)
+BR-DH-05-01: Số tiền hoàn bằng 100% tiền hàng thực tế đã thu của đơn được duyệt; không hoàn phí vận chuyển. Không quy định hoàn theo tỷ lệ một phần. 
+BR-DH-05-02: Online hoàn về tài khoản thanh toán ban đầu. COD chuyển khoản đến tài khoản người mua đã đăng ký và xác nhận trên web. 
+BR-DH-05-03: Không hoàn khoản COD chưa thu hoặc phần Preorder chưa thanh toán. Tiền cọc cho hàng hóa đã thu thuộc tiền hàng đã thanh toán. 
+BR-DH-05-04: Chỉ khoản đủ điều kiện mới chuyển Chờ hoàn tiền. Bắt đầu giao dịch chuyển Đang hoàn tiền; thành công phải có xác nhận từ hệ thống thanh toán. 
+BR-DH-05-05: Duyệt trả hàng, nhận lại hàng và thực hiện hoàn tiền là các kết quả riêng. Không bắt buộc nhận hàng trong mọi trường hợp, nếu chính sách cho phép hoàn mà không gửi lại thực phẩm không an toàn.
+Yêu cầu phi chức năng
+NFR-DH-04-01: Giới hạn quyền quyết định cuối cùng cho Admin; lưu quyết định, lý do và lịch sử trạng thái để truy xuất. [S1, mục 1.2; S4; S5]
+NFR-DH-04-02: SLA xét duyệt chính thức, tính sẵn sàng, yêu cầu mã hóa cụ thể và thời hạn lưu dữ liệu: Chưa được quy định.
+Tên UC: Ghi nhận hoàn tiền                                                                   
+Độ ưu tiên: Cao 
+Tên UC: Ghi nhận hoàn tiền                                                                   
+Độ ưu tiên: Cao 
+Tác nhân chính
+Khách hàng
+Tác nhân phụ
+Hệ thống, KTX
+Mô tả
+Khách hàng xác nhận tiền hoàn đã được hoàn tiền về tài khoản thanh toán.
+Điều kiện trước
+Khách hàng đã đăng nhập vào hệ thống
+Khách hàng có đơn hàng đang chờ quyết định hoàn tiền.
+Luồng sự kiện chính
+Khách hàng truy cập vào danh sách đơn hàng đã trả.
+Khách hàng bấm vào xác nhận đã nhận tiền.
+Hệ thống xác nhận người mua đã nhận được tiền hoàn. Lưu lịch sử thao tác vào lịch sử thao tác đơn hàng.
+Thông báo kết quả và cung cấp thông tin cho HTX, Admin.
+Luồng thay thế
+Ngoại lệ
+E1: Trường hợp quá hạn xác nhận nhận tiền
+Hệ thống tự động kiểm tra hệ thống thanh toán đã thanh toán tiền về tài khoản khách hàng.
+Nếu đã thanh toán hệ thống sẽ chuyển trạng thái đơn hoàn thành đã hoàn tiền.
+E2: Giao dịch hoàn thất bại do kỹ thuật
+Phát sinh tại bước 3 khi hệ thống thanh toán báo giao dịch thất bại.
+Hệ thống lưu lỗi và chuyển Hoàn tiền thất bại; giữ quyết định được duyệt, số tiền và lịch sử giao dịch.
+Hệ thống hiển thị lỗi để xử lý lại kỹ thuật. Use Case kết thúc, không đổi điều kiện được hoàn và không thông báo tiền đã hoàn.
+Điều kiện sau
+Đơn hoàn được thanh toán hoàn tiền
+Yêu cầu (Business rule)
+BR-DH-06-01: Ghi nhận kết quả hoàn tự động 100% cho cả online và chuyển khoản COD. Đề phòng trường hợp khách hàng Không có thao tác xác nhận Đã hoàn tiền. 
+BR-DH-06-02: Chỉ ghi Đã hoàn tiền khi hệ thống thanh toán xác nhận thực hiện thành công.
+BR-DH-06-04: Lỗi kỹ thuật có thể xử lý lại mà không coi người mua là không đủ điều kiện. Số lần thử lại, khoảng thời gian thử lại và giao thức tích hợp được quy định.
+BR-DH-06-05: Người mua xem khoản hoàn của mình; HTX chỉ xem đơn của HTX mình; Admin theo dõi kết quả. Quyền xem không cho phép nhập thủ công kết quả thành công. 
+
+Yêu cầu phi chức năng
+NFR-DH-05-01: Lưu kết quả thanh toán, thông tin lỗi kỹ thuật và liên kết giao dịch để truy xuất xử lý đơn.
+NFR-DH-05-02: Kiểm soát quyền xem kết quả theo vai trò và chủ sở hữu dữ liệu.
+NFR-DH-05-03: Độ trễ nhận kết quả, tính sẵn sàng của tích hợp, xác thực callback, xử lý sự kiện trùng lặp và chỉ tiêu thử lại: Chưa được quy định.

@@ -1,0 +1,265 @@
+# Module Quản lí khách hàng - Thúy Nguyễn
+Nguồn: https://docs.google.com/document/d/1GjlYeZRt9S-vpnomhI053wbrd1Q179T0UZg1HDoaqFs/edit?usp=drivesdk
+
+﻿TÀI LIỆU ĐẶC TẢ USE CASE & YÊU CẦU CHỨC NĂNG (FR & UC)
+PHÂN HỆ DH: CÁC TÁC VỤ KHÁCH HÀNG (CUSTOMER-FACING)
+ 
+Dự án:
+	Hệ thống Mobile App Đặc sản Bắc Giang (Giai đoạn 1 - MVP)
+	Phân hệ quản lý:
+	Module DH – Quản lý đơn hàng, giao nhận & chính sách sau bán hàng
+	Nhân sự BA phân công:
+	Thúy Nguyễn (Nguyễn Thúy)
+	Nguồn tài liệu cập nhật:
+	Bảng chức năng theo module 8/10 - Bảng chức năng toàn hệ thống.pdf
+	Phạm vi đặc tả:
+	5 chức năng Khách hàng: Đổi thông tin giao hàng, Hủy đơn, Trả hàng hoàn tiền, Đổi hàng, Mua lại đơn cũ
+	 
+1. Tổng quan & Nhiệm vụ Phân công
+Toàn bộ 5 chức năng đều có phân quyền người dùng là Khách hàng (người dùng chỉ có quyền thao tác trên đúng dữ liệu đơn hàng thuộc tài khoản của chính mình; khách vãng lai, HTX và Cơ quan QLNN hoàn toàn không có quyền thao tác trực tiếp trên các chức năng này). Danh mục nhiệm vụ gồm 5 task cụ thể:
+·       1. Đổi thông tin giao hàng (FR-DH-02 | Tình trạng: Done): Cho phép người mua điều chỉnh thông tin người nhận (Họ tên, SĐT) hoặc địa chỉ giao hàng (nội thành Hà Nội, tòa - căn chung cư) khi đơn chưa bàn giao vận chuyển.
+·       2. Hủy đơn (FR-DH-03 | Tình trạng: Done): Xử lý hai cơ chế hủy đơn: Hủy trực tiếp (khi đơn còn ở trạng thái Chờ xác nhận) và Gửi yêu cầu hủy để HTX duyệt (khi đơn ở Đã xác nhận / Đang chuẩn bị). Chặn hủy khi đã Đang giao.
+·       3. Trả hàng hoàn tiền (FR-DH-04 | Tình trạng: Pending): Cho phép khách hàng tạo yêu cầu khiếu nại, trả lại hàng bị lỗi/hỏng/dập nát kèm hình ảnh chứng minh và yêu cầu hoàn tiền trong thời hạn quy định (24h hàng tươi, 10 ngày hàng khô).
+·       4. Đổi hàng (FR-DH-05 | Tình trạng: Pending): Chức năng mới được tách riêng trong phiên bản 8/10, phục vụ nhu cầu đổi sản phẩm khác hoặc bù hàng khi xảy ra lỗi/giao thiếu hàng (hiện tại tài liệu gốc chưa có Use Case riêng, cần làm rõ phạm vi).
+·       5. Mua lại đơn cũ  [Re-order] (FR-DH-06 | Tình trạng: Pending): Cho phép khách hàng tái đặt hàng nhanh chóng từ lịch sử các đơn hàng đã hoàn tất; hệ thống tự động kiểm tra tồn kho, tính sẵn sàng và cập nhật giá mới của sản phẩm.
+2. Xác định Use Case (UC)
+Nhằm chuẩn hóa nghiệp vụ và khớp nối với toàn bộ tài liệu kiến trúc hệ thống (BRD Luồng mua hàng, BRD Chính sách đơn hàng, Ma trận phân quyền), 5 nhiệm vụ trên được phân rã thành 5 Use Case chi tiết tương ứng với các mục tiêu hành động của Khách hàng:
+Mã Task 8/10
+	Tên Chức năng (8/10)
+	Mã UC Chuẩn hóa
+	Tên Use Case
+	FR-DH-02
+	Đổi thông tin giao hàng
+	UC-DH-10
+	Thay đổi thông tin giao hàng
+	FR-DH-03
+	Hủy đơn
+	UC-DH-08
+	Hủy đơn hàng / Gửi yêu cầu hủy
+	FR-DH-04
+	Trả hàng hoàn tiền
+	UC-DH-12
+	Gửi yêu cầu trả hàng, hoàn tiền
+	FR-DH-05
+	Đổi hàng
+	UC-DH-16
+	Gửi yêu cầu đổi hàng / Bù hàng
+	FR-DH-06
+	Mua lại đơn cũ
+	UC-DH-17
+	Mua lại đơn hàng cũ (Re-order)
+	 
+2.1. Đặc tả Chi tiết từng Use Case cho 5 Nhiệm vụ
+• UC-DH-10 (Tương ứng FR-DH-02): Thay đổi thông tin giao hàng
+Actor thực hiện:
+	Khách hàng (quyền: Của mình)
+	Mục tiêu nghiệp vụ:
+	Cho phép Khách hàng thay đổi người nhận, số điện thoại hoặc địa chỉ nhận hàng của đơn hàng trước thời điểm HTX bàn giao hàng cho ĐVVC.
+	Điều kiện tiên quyết (Pre):
+	Khách hàng đã đăng nhập, đơn hàng thuộc quyền sở hữu của khách và đang ở trạng thái hợp lệ: 'Chờ xác nhận', 'Đã xác nhận' hoặc 'Đang chuẩn bị'.
+	Hậu điều kiện (Post):
+	Hệ thống lưu vết địa chỉ cũ, cập nhật thông tin người nhận/địa chỉ mới vào chi tiết đơn hàng, gửi thông báo cho HTX để đóng gói theo địa chỉ mới.
+	Luồng sự kiện chính (Main Flow):
+	 
+1. Khách hàng truy cập màn hình Chi tiết đơn hàng và nhấn chọn 'Đổi thông tin giao hàng'.
+2. Hệ thống kiểm tra trạng thái đơn: nếu chưa chuyển sang 'Đang giao', hiển thị form cho phép nhập thông tin mới (Họ tên, SĐT, Tỉnh/Thành, Quận/Huyện, Tòa nhà/Căn hộ, Ghi chú).
+3. Khách hàng chọn địa chỉ từ Sổ địa chỉ đã lưu hoặc nhập địa chỉ mới, sau đó nhấn 'Xác nhận'.
+4. Hệ thống validate: kiểm tra SĐT đúng định dạng, địa chỉ mới phải thuộc địa bàn phục vụ (nội thành Hà Nội), tòa - căn bắt buộc nếu là chung cư.
+5. Hệ thống lưu snapshot địa chỉ hiện tại (DH-F46), ghi nhận địa chỉ mới (DH-F47), thời điểm yêu cầu (DH-F48) và cập nhật đơn hàng thành công.
+	Luồng ngoại lệ (Exceptions):
+	 
+·       Nếu đơn hàng đã chuyển sang trạng thái 'Đang giao' (đã bàn giao ĐVVC): Hệ thống chặn thao tác, thông báo đơn đang vận chuyển và không thể đổi địa chỉ trực tiếp.
+·       Nếu địa chỉ mới ngoài phạm vi Hà Nội: Hệ thống báo lỗi và yêu cầu nhập địa chỉ trong khu vực phục vụ Giai đoạn 1.
+	Quy tắc nghiệp vụ (Business Rules):
+	 
+·       BR-DH-02 & BR-MH-11: Giới hạn phạm vi địa lý giao nhận chỉ trong nội thành Hà Nội.
+·       Ma trận phân quyền: Chỉ được đổi trước khi bàn giao vận chuyển; không áp dụng khi đơn đã 'Đang giao'.
+·       Lưu trữ vết: Bắt buộc lưu lịch sử chỉnh sửa để phục vụ đối soát và xử lý khiếu nại giao nhầm.
+	 
+• UC-DH-08 (Tương ứng FR-DH-03): Hủy đơn hàng / Gửi yêu cầu hủy đơn
+Actor thực hiện:
+	Khách hàng (quyền: Của mình)
+	Mục tiêu nghiệp vụ:
+	Cho phép Khách hàng hủy đơn hàng hoặc gửi yêu cầu hủy đơn khi không còn nhu cầu mua hàng, tuỳ thuộc vào trạng thái hiện tại của đơn hàng.
+	Điều kiện tiên quyết (Pre):
+	Khách hàng đã đăng nhập, đơn hàng thuộc sở hữu của khách và chưa ở trạng thái kết thúc ('Đã giao', 'Đã hủy', 'Đã hoàn hàng').
+	Hậu điều kiện (Post):
+	Đơn hàng được chuyển sang trạng thái 'Đã hủy' (hủy trực tiếp) hoặc chuyển sang trạng thái chờ HTX xử lý hủy; hệ thống hoàn tồn kho/suất preorder và xử lý hoàn tiền nếu có.
+	Luồng sự kiện chính (Main Flow):
+	 
+1. Khách hàng vào Chi tiết đơn hàng và nhấn 'Hủy đơn hàng'.
+2. Hệ thống kiểm tra trạng thái hiện tại của đơn hàng:
+   • Nhánh A - Đơn đang ở 'Chờ xác nhận': Cho phép hủy trực tiếp. Hệ thống yêu cầu chọn lý do hủy (DH-F37), cập nhật đơn sang 'Đã hủy' (DH-F36), nhả tồn kho ngay lập tức. Nếu là đơn trả online, tạo yêu cầu hoàn tiền 100%.
+   • Nhánh B - Đơn đang ở 'Đã xác nhận' hoặc 'Đang chuẩn bị': Hệ thống chuyển sang luồng 'Gửi yêu cầu hủy'. Khách hàng nhập lý do, hệ thống tạo bản ghi yêu cầu hủy (DH-F38 đến DH-F42) gửi thông báo tới HTX xem xét.
+3. Hệ thống thông báo kết quả thao tác cho khách hàng.
+	Luồng ngoại lệ (Exceptions):
+	 
+·       Đơn hàng đã ở trạng thái 'Đang giao': Hệ thống khóa nút hủy đơn, hướng dẫn khách nhận hàng rồi tạo yêu cầu đổi trả hoặc từ chối nhận lúc shipper giao.
+·       Đơn hàng đã từng gửi yêu cầu hủy và bị HTX từ chối: Hệ thống chặn không cho gửi lại yêu cầu hủy lần 2 (Quy tắc mỗi đơn chỉ được yêu cầu hủy 1 lần).
+	Quy tắc nghiệp vụ (Business Rules):
+	 
+·       BR-DH-09 đến BR-DH-18: Hủy trực tiếp tại 'Chờ xác nhận'; gửi yêu cầu tại 'Đã xác nhận' / 'Đang chuẩn bị'; cấm hủy tại 'Đang giao'.
+·       Đơn Preorder: Hủy trước hạn D - X được hoàn cọc 100%; hủy sau hạn D - X bị mất 100% tiền cọc 30% (BR-MH-33, BR-MH-34).
+·       Hoàn tiền: Mọi quyết định hoàn tiền đều do Admin duyệt và hệ thống thực thi, HTX không trực tiếp hoàn tiền.
+	 
+• UC-DH-12 (Tương ứng FR-DH-04): Gửi yêu cầu trả hàng, hoàn tiền
+Actor thực hiện:
+	Khách hàng (quyền: Của mình)
+	Mục tiêu nghiệp vụ:
+	Cho phép Khách hàng khiếu nại sản phẩm bị hỏng, dập nát, ôi thiu, giao sai hoặc thiếu số lượng sau khi nhận hàng để được trả hàng và nhận lại tiền hoàn.
+	Điều kiện tiên quyết (Pre):
+	Đơn hàng ở trạng thái 'Đã giao' và thời gian kể từ lúc giao thành công còn nằm trong thời hạn khiếu nại cho phép.
+	Hậu điều kiện (Post):
+	Yêu cầu trả hàng hoàn tiền được ghi nhận vào hệ thống với trạng thái 'Chờ xử lý', thông báo được gửi tới Admin và HTX.
+	Luồng sự kiện chính (Main Flow):
+	 
+1. Khách hàng vào Chi tiết đơn hàng đã giao và chọn 'Yêu cầu Trả hàng / Hoàn tiền'.
+2. Hệ thống kiểm tra thời hạn: đối chiếu loại sản phẩm và thời gian 'Đã giao'.
+3. Khách hàng chọn sản phẩm cần hoàn trả, nhập số lượng, chọn lý do hoàn trả (hỏng hóc, dập nát, sai quy cách, thiếu hàng...), nhập mô tả chi tiết.
+4. Khách hàng bắt buộc tải lên bằng chứng: tối thiểu 1 hình ảnh / video thể hiện rõ tình trạng lỗi và tem mác kiện hàng.
+5. Khách hàng chọn phương thức nhận tiền hoàn (ví điện tử, tài khoản ngân hàng) và nhấn 'Gửi yêu cầu'.
+6. Hệ thống tạo mã yêu cầu đổi trả, lưu trạng thái 'Chờ xử lý' (DH-F51 đến DH-F56) và chuyển sang màn hình theo dõi tiến trình.
+	Luồng ngoại lệ (Exceptions):
+	 
+·       Quá thời hạn khiếu nại (quá 24 giờ với hàng tươi sống, quá 10 ngày với hàng khô): Hệ thống ẩn/khóa nút yêu cầu và thông báo đã hết hạn đổi trả.
+·       Khách hàng không tải lên hình ảnh/video bằng chứng: Hệ thống chặn gửi và yêu cầu bổ sung bằng chứng xác thực.
+	Quy tắc nghiệp vụ (Business Rules):
+	 
+·       BR-DH-27 & BR-DH-28: Thời hạn trả hàng là 24 giờ cho thực phẩm tươi sống/đông lạnh và 10 ngày cho sản phẩm khô/chế biến.
+·       BR-DH-31: Bắt buộc cung cấp bằng chứng hình ảnh/video rõ nét.
+·       Ma trận phân quyền: Admin là người có thẩm quyền tối cao phê duyệt yêu cầu hoàn tiền (FR-DH-06 của Hoàng Đạt), HTX chịu trách nhiệm nhận lại hàng hoàn (FR-DH-05 của Hoàng Đạt).
+	 
+• UC-DH-16 (Tương ứng FR-DH-05): Gửi yêu cầu đổi hàng / Bù hàng
+Actor thực hiện:
+	Khách hàng (quyền: Của mình)
+	Mục tiêu nghiệp vụ:
+	Cho phép Khách hàng yêu cầu đổi sang sản phẩm mới hoặc yêu cầu gửi bù hàng đối với các sản phẩm bị giao sai quy cách hoặc giao thiếu số lượng mà khách vẫn muốn nhận hàng thay vì hoàn tiền.
+	Điều kiện tiên quyết (Pre):
+	Đơn hàng ở trạng thái 'Đã giao' và còn trong thời hạn bảo hành/khiếu nại quy định.
+	Hậu điều kiện (Post):
+	Yêu cầu đổi hàng được tạo và gửi tới HTX/Admin để thẩm định phương án xử lý (giao bù chuyến sau hoặc đổi mới).
+	Luồng sự kiện chính (Main Flow):
+	 
+1. Khách hàng vào đơn hàng đã hoàn tất và chọn chức năng 'Yêu cầu Đổi hàng'.
+2. Hệ thống kiểm tra thời hạn khiếu nại hợp lệ (tương tự luồng hoàn trả).
+3. Khách hàng chọn sản phẩm cần đổi, nhập lý do (giao sai mẫu, sai trọng lượng, giao thiếu) và tải lên hình ảnh minh chứng kiện hàng thực tế.
+4. Khách hàng xác nhận địa chỉ nhận hàng đổi/bù (mặc định lấy địa chỉ cũ của đơn hàng).
+5. Hệ thống lưu nhận yêu cầu đổi hàng và điều phối thông báo đến HTX của sản phẩm và Admin.
+	Luồng ngoại lệ (Exceptions):
+	 
+·       Sản phẩm muốn đổi đã hết tồn kho tại HTX: Hệ thống hiển thị cảnh báo và gợi ý khách hàng chuyển sang luồng 'Trả hàng hoàn tiền'.
+·       Quá thời hạn khiếu nại quy định: Hệ thống từ chối tiếp nhận yêu cầu.
+	Quy tắc nghiệp vụ (Business Rules):
+	 
+·       CẦN LÀM RÕ (Pending): Cần chốt với BA Lead/PM xem Giai đoạn 1 có hỗ trợ đổi hàng vật lý 2 chiều Bắc Giang - Hà Nội hay không, hay chỉ hỗ trợ chính sách gửi bù (đối với hàng thiếu) hoặc bắt buộc quy về Trả hàng hoàn tiền (đối với hàng hỏng).
+·       Phí vận chuyển đổi hàng: Quy định trách nhiệm chi trả phí ship đổi hàng nếu lỗi thuộc về HTX.
+	 
+• UC-DH-17 (Tương ứng FR-DH-06): Mua lại đơn hàng cũ (Re-order / Buy Again)
+Actor thực hiện:
+	Khách hàng (quyền: Của mình)
+	Mục tiêu nghiệp vụ:
+	Cho phép Khách hàng nhanh chóng thêm lại toàn bộ các sản phẩm từ một đơn hàng đã hoàn tất trong quá khứ vào giỏ hàng hiện tại để thực hiện mua sắm mà không cần tìm kiếm lại từng món.
+	Điều kiện tiên quyết (Pre):
+	Khách hàng đã đăng nhập, đơn hàng được chọn có trạng thái 'Đã giao' hoặc 'Đã hủy'.
+	Hậu điều kiện (Post):
+	Các sản phẩm hợp lệ trong đơn cũ được thêm vào Giỏ hàng hiện tại của khách hàng với mức giá và số lượng cập nhật.
+	Luồng sự kiện chính (Main Flow):
+	 
+1. Khách hàng truy cập Lịch sử đơn hàng hoặc Chi tiết đơn hàng cũ và bấm nút 'Mua lại'.
+2. Hệ thống quét toàn bộ danh sách sản phẩm có trong đơn hàng cũ và kiểm tra trạng thái thời gian thực:
+   • Trạng thái bán: Sản phẩm còn đang hoạt động (không bị ẩn/ngừng bán).
+   • Tồn kho: Số lượng tồn kho hiện tại có đủ đáp ứng số lượng cũ hay không.
+   • Giá bán: Lấy đơn giá hiện hành (không áp giá cũ của đơn trước).
+   • Sản phẩm Preorder: Kiểm tra xem HTX có đang mở đợt đặt trước mới cho sản phẩm này không.
+3. Xử lý đưa vào Giỏ hàng:
+   • Nếu tất cả sản phẩm đều hợp lệ và đủ tồn: Thêm toàn bộ vào giỏ hàng và chuyển hướng khách sang màn hình Giỏ hàng.
+   • Nếu một số sản phẩm hết hàng hoặc ngừng bán: Thêm các sản phẩm còn hợp lệ, đồng thời hiển thị thông báo danh sách sản phẩm không thể mua lại.
+4. Khách hàng tiếp tục quy trình mua hàng bình thường tại Giỏ hàng (Module MH).
+	Luồng ngoại lệ (Exceptions):
+	 
+·       Toàn bộ sản phẩm trong đơn cũ đều đã ngừng bán hoặc hết hàng: Hệ thống thông báo 'Các sản phẩm trong đơn hiện không còn sẵn có' và không thêm vào giỏ.
+·       Tồn kho hiện tại nhỏ hơn số lượng đơn cũ: Hệ thống điều chỉnh số lượng bằng mức tồn kho tối đa còn lại và thông báo cho khách.
+	Quy tắc nghiệp vụ (Business Rules):
+	 
+·       Ranh giới Module: Chức năng Mua lại nằm tại giao diện Đơn hàng (DH), nhưng khi hoàn tất xử lý thêm vào giỏ sẽ bàn giao dữ liệu sang Module Mua hàng (MH - Giỏ hàng FR-MHTT-01).
+·       Quy tắc phân nhóm giỏ hàng: Sản phẩm mua thường vào tab Thường, sản phẩm đặt trước vào tab Preorder theo đúng chuẩn BR-MH-01.
+·       Tuyệt đối không giữ giá cũ: Bắt buộc lấy giá và khuyến mãi tại thời điểm bấm mua lại.
+	 
+3. Ma trận Mapping Functional Requirement (FR) & Use Case (UC)
+Bảng ma trận dưới đây đặc tả chi tiết các Yêu cầu chức năng (Functional Requirements - FR) mà hệ thống bắt buộc phải đáp ứng đối với từng Use Case do BA Thúy Nguyễn phụ trách, kèm theo ranh giới nghiệp vụ và nguồn kiểm chứng:
+Module
+	UC ID
+	Use Case
+	Actor
+	FR ID (8/10)
+	Functional Requirement (Hệ thống phải làm gì)
+	Ghi chú & Nguồn tài liệu
+	DH
+	UC-DH-10
+	Thay đổi thông tin giao hàng
+	Khách hàng (Của mình)
+	FR-DH-02
+(Gốc: FR-DH-10)
+	1. Hệ thống cho phép Khách hàng gửi yêu cầu thay đổi thông tin người nhận hoặc địa chỉ nhận hàng đối với đơn hàng chưa bàn giao cho ĐVVC.
+2. Hệ thống kiểm tra điều kiện trạng thái đơn: chỉ cho phép khi đơn ở 'Chờ xác nhận', 'Đã xác nhận' hoặc 'Đang chuẩn bị'.
+3. Hệ thống kiểm tra địa chỉ mới hợp lệ thuộc nội thành Hà Nội (chung cư bắt buộc tòa - căn).
+4. Hệ thống lưu snapshot địa chỉ cũ (DH-F46), ghi nhận địa chỉ mới (DH-F47), thời điểm yêu cầu (DH-F48) và cập nhật đơn hàng.
+	• Tình trạng 8/10: Done
+• Ưu tiên: Should Have
+• Nguồn: Bảng chức năng 8/10; BRD Đơn hàng (FR-DH-10, BR-DH-02, BR-MH-11)
+	DH
+	UC-DH-08
+	Hủy đơn hàng / Gửi yêu cầu hủy
+	Khách hàng (Của mình)
+	FR-DH-03
+(Gốc: FR-DH-08/09)
+	1. Hệ thống kiểm tra trạng thái đơn khi khách yêu cầu hủy:
+   - Nếu đơn ở 'Chờ xác nhận': Cho phép hủy trực tiếp, yêu cầu nhập lý do hủy (DH-F37), chuyển trạng thái sang 'Đã hủy' (DH-F36), tự động giải phóng tồn kho/suất preorder và kích hoạt hoàn tiền online 100%.
+   - Nếu đơn ở 'Đã xác nhận' hoặc 'Đang chuẩn bị': Chuyển sang tạo 'Yêu cầu hủy đơn' (DH-F38 đến DH-F42) gửi HTX duyệt.
+2. Hệ thống chặn thao tác hủy khi đơn đã 'Đang giao'.
+3. Hệ thống chặn không cho gửi yêu cầu hủy lần 2 nếu đã từng bị từ chối.
+	• Tình trạng 8/10: Done
+• Ưu tiên: Must Have
+• Preorder: Trước D-X hoàn cọc 100%, sau D-X mất cọc.
+• Nguồn: Bảng chức năng 8/10; BRD Đơn hàng (BR-DH-09 đến 18)
+	DH
+	UC-DH-12
+	Gửi yêu cầu trả hàng, hoàn tiền
+	Khách hàng (Của mình)
+	FR-DH-04
+(Gốc: FR-DH-12)
+	1. Hệ thống cho phép Khách hàng tạo yêu cầu Trả hàng/Hoàn tiền cho đơn hàng ở trạng thái 'Đã giao' còn trong hạn khiếu nại.
+2. Hệ thống kiểm tra thời hạn khiếu nại: tối đa 24 giờ cho hàng tươi sống/đông lạnh và tối đa 10 ngày cho hàng khô/chế biến.
+3. Hệ thống bắt buộc khách hàng nhập lý do khiếu nại, số lượng sản phẩm lỗi và tải lên tối thiểu 01 ảnh/video bằng chứng rõ nét.
+4. Hệ thống tạo mã yêu cầu đổi trả (DH-F51 đến DH-F56) ở trạng thái 'Chờ xử lý', thông báo cho Admin và HTX.
+	• Tình trạng 8/10: Pending
+• Ưu tiên: Must Have
+• Ranh giới: Admin duyệt hoàn tiền (FR-DH-06), HTX nhận hàng hoàn (FR-DH-05).
+• Nguồn: Bảng chức năng 8/10; BRD Đơn hàng (FR-DH-12, BR-DH-27..36)
+	DH
+	UC-DH-16
+	Gửi yêu cầu đổi hàng / Bù hàng
+	Khách hàng (Của mình)
+	FR-DH-05
+(Chức năng mới)
+	1. Hệ thống cung cấp giao diện cho phép Khách hàng yêu cầu đổi sang sản phẩm mới hoặc yêu cầu gửi bù hàng đối với đơn hàng 'Đã giao' bị giao thiếu/giao sai.
+2. Hệ thống kiểm tra tính sẵn sàng tồn kho của sản phẩm muốn đổi tại HTX.
+3. Hệ thống lưu nhận yêu cầu kèm ảnh chụp kiện hàng thực tế và tạo ticket điều phối cho HTX/Admin xử lý.
+	• Tình trạng 8/10: Pending
+• Đánh dấu: Cần làm rõ
+• Khuyến nghị: Cần thống nhất quy trình đổi hàng nông sản tươi liên tỉnh hoặc gộp vào luồng Trả hàng/Hoàn tiền.
+• Nguồn: Bảng chức năng 8/10 (dòng Nguyễn Thúy)
+	DH
+	UC-DH-17
+	Mua lại đơn hàng cũ (Re-order)
+	Khách hàng (Của mình)
+	FR-DH-06
+(Chức năng mới)
+	1. Hệ thống cho phép Khách hàng chọn 'Mua lại' từ chi tiết đơn hàng cũ.
+2. Hệ thống tự động kiểm tra trạng thái hoạt động (ẩn/ngừng bán), tồn kho hiện tại và lấy đơn giá mới nhất của từng sản phẩm trong đơn cũ.
+3. Hệ thống tự động đẩy các sản phẩm hợp lệ vào Giỏ hàng hiện tại (phân loại đúng tab Thường / Preorder theo quy tắc giỏ hàng).
+4. Hệ thống cảnh báo chi tiết nếu có sản phẩm trong đơn cũ đã hết hàng hoặc ngừng kinh doanh, sau đó chuyển khách đến màn hình Giỏ hàng.
+	• Tình trạng 8/10: Pending
+• Ưu tiên: Nice to Have
+• Giao diện: Nút bấm tại DH, bàn giao dữ liệu sang Module MH (Giỏ hàng FR-MHTT-01).
+• Nguồn: Bảng chức năng 8/10 (dòng Nguyễn Thúy)

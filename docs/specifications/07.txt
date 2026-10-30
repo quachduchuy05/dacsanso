@@ -1,0 +1,293 @@
+# module DH- Thúy Nguyễn 
+Nguồn: https://docs.google.com/document/d/1S8Joip5mCdqx7uKpxa5FZGegWDCZ__b6xPUbR-dSh00/edit?usp=drivesdk
+
+﻿TÀI LIỆU ĐẶC TẢ USE CASE VÀ YÊU CẦU CHỨC NĂNG (FR & UC)
+PHÂN HỆ DH: ĐƠN HÀNG, GIAO NHẬN & CHÍNH SÁCH ĐƠN HÀNG
+Trọng tâm 5 nhóm chức năng vận hành cốt lõi
+Dự án:
+	Hệ thống Mobile App Đặc sản Bắc Giang (Giai đoạn 1 - MVP Vinhomes Smart City)
+	Phân hệ phân tích:
+	Module DH – Đơn hàng, giao nhận & chính sách đơn hàng
+	Đối tượng sử dụng:
+	Business Analyst (BA), Project Manager (PM), Dev & Tester
+	Căn cứ tài liệu:
+	BRD_Chính sách đơn hàng.docx, BRD Luồng mua hàng & Preorder.docx, Ma trận phân quyền.xlsx, Bảng chức năng toàn hệ thống.docx
+	 
+1. Tổng quan & Phạm vi Nghiệp vụ Module DH
+Tài liệu đặc tả này tập trung phân tích chuyên sâu 5 nhóm chức năng vận hành cốt lõi theo yêu cầu:
+·       1. Danh sách đơn hàng (lọc theo trạng thái): Cung cấp giao diện tra cứu, phân loại đơn hàng theo trạng thái vòng đời đơn, đảm bảo tính bảo mật và phân quyền dữ liệu theo vai trò (Khách hàng xem đơn của mình, HTX xem đơn của gian hàng mình, Admin xem toàn bộ hệ thống).
+·       2. Xem chi tiết đơn, theo dõi giao hàng: Cung cấp thông tin toàn diện về đơn hàng (người nhận, sản phẩm, thanh toán, phí vận chuyển) và trục thời gian (timeline) biến chuyển trạng thái đơn/vận chuyển minh bạch.
+·       3. Xác nhận đơn: Điểm chốt chuyển giao trách nhiệm từ lúc đặt hàng sang HTX bắt đầu chuẩn bị; kích hoạt việc giữ kho/giữ suất và kiểm soát thời hạn cam kết SLA.
+·       4. Cập nhật trạng thái giao (đang giao, đã giao, giao thất bại): Quản lý trạng thái vận hành của đơn hàng trên tuyến vận chuyển liên tỉnh Bắc Giang → Hà Nội; xử lý các nhánh ngoại lệ khi giao không thành công và kích hoạt cơ chế hoàn hàng.
+·       5. Đổi thông tin giao hàng: Cho phép người mua điều chỉnh thông tin người nhận hoặc địa chỉ nhận hàng trong phạm vi địa giới cho phép (Hà Nội) trước khi đơn hàng được bàn giao cho đơn vị vận chuyển.
+2. Xác định Use Case (UC) cho 5 Nhóm Chức năng
+Để bao phủ đầy đủ và chính xác 5 nhóm chức năng trên (đặc biệt là việc phản ánh đúng các trạng thái vận chuyển 'Đang giao', 'Đã giao', 'Giao thất bại' theo tài liệu nghiệp vụ), Module DH thiết lập 6 Use Case liên quan trực tiếp:
+
+
+Mã UC
+	Tên Use Case
+	Actor Thực hiện
+	Ánh xạ Chức năng
+	UC-DH-01
+	Xem danh sách đơn hàng
+	Khách hàng, HTX, Admin
+	Chức năng 1 (Danh sách & Lọc)
+	UC-DH-02
+	Xem chi tiết & theo dõi đơn
+	Khách hàng, HTX, Admin
+	Chức năng 2 (Chi tiết & Theo dõi)
+	UC-DH-03
+	Xác nhận đơn hàng
+	HTX
+	Chức năng 3 (Xác nhận đơn)
+	UC-DH-05
+	Chuẩn bị & bàn giao hàng
+	HTX
+	Chức năng 4 (Khởi tạo Đang giao)
+	UC-DH-06
+	Cập nhật trạng thái giao hàng
+	ĐVVC / HTX / Admin
+	Chức năng 4 (Cập nhật tiến trình)
+	UC-DH-07
+	Xác nhận đã nhận hàng
+	Khách hàng, Admin
+	Chức năng 4 (Hoàn tất Đã giao)
+	UC-DH-10
+	Thay đổi thông tin giao hàng
+	Khách hàng
+	Chức năng 5 (Đổi thông tin giao)
+	2.1. Đặc tả Chi tiết từng Use Case
+• UC-DH-01 — Xem danh sách đơn hàng
+Actor thực hiện:
+	Khách hàng, HTX, Admin
+	Mục tiêu nghiệp vụ:
+	Người dùng tra cứu, tìm kiếm và phân loại danh sách các đơn hàng theo trạng thái xử lý tương ứng với quyền hạn của tài khoản.
+	Điều kiện tiên quyết:
+	Người dùng đã đăng nhập hệ thống với tài khoản hợp lệ.
+	Điều kiện kết thúc:
+	Hệ thống hiển thị danh sách đơn hàng phù hợp với bộ lọc và phân quyền dữ liệu.
+	Luồng sự kiện chính:
+	1. Người dùng truy cập màn hình Danh sách đơn hàng.
+2. Hệ thống xác thực vai trò và tải danh sách đơn (Khách hàng: đơn của bản thân; HTX: đơn thuộc gian hàng mình; Admin: toàn bộ đơn).
+3. Người dùng chọn tab/bộ lọc trạng thái (Chờ xác nhận, Đã xác nhận, Đang chuẩn bị, Đang giao, Đã giao, Đã hủy, v.v.).
+4. Hệ thống lọc và hiển thị danh sách phân trang (mã đơn, ngày đặt, HTX, tổng tiền, trạng thái tóm tắt).
+	Luồng ngoại lệ / Ràng buộc:
+	Nếu không có đơn hàng nào khớp với bộ lọc, hệ thống hiển thị thông báo danh sách trống kèm gợi ý xóa bộ lọc.
+	 
+• UC-DH-02 — Xem chi tiết & theo dõi đơn
+Actor thực hiện:
+	Khách hàng, HTX, Admin
+	Mục tiêu nghiệp vụ:
+	Cung cấp đầy đủ thông tin chi tiết về sản phẩm, chi phí, địa chỉ người nhận, mã vận đơn và tiến trình biến chuyển trạng thái (timeline) của một đơn hàng cụ thể.
+	Điều kiện tiên quyết:
+	Đơn hàng tồn tại trên hệ thống và người dùng có quyền xem đơn hàng này.
+	Điều kiện kết thúc:
+	Hệ thống hiển thị toàn bộ thuộc tính dữ liệu của đơn hàng và tiến trình giao nhận.
+	Luồng sự kiện chính:
+	1. Từ danh sách đơn hoặc thông báo, người dùng chọn một đơn hàng cụ thể.
+2. Hệ thống kiểm tra quyền truy cập của tài khoản đối với đơn hàng.
+3. Hệ thống tải và hiển thị chi tiết: Mã đơn, sản phẩm, số lượng, đơn giá, phí vận chuyển (gồm phụ phí hỏa tốc nếu có), thông tin người nhận (địa chỉ tòa/căn hộ tại Hà Nội), phương thức thanh toán, số tiền đã trả và số tiền còn lại.
+4. Hệ thống hiển thị dòng thời gian (Timeline) thể hiện các mốc lịch sử thay đổi trạng thái kèm thời gian ghi nhận.
+5. Nếu đơn đang trong luồng vận chuyển, hệ thống hiển thị mã vận đơn, đơn vị vận chuyển và thời gian dự kiến giao (ETA).
+	Luồng ngoại lệ / Ràng buộc:
+	Nếu tài khoản không có quyền truy cập đơn hàng (ví dụ HTX xem đơn của HTX khác), hệ thống chặn và hiển thị thông báo từ chối truy cập.
+	 
+• UC-DH-03 — Xác nhận đơn hàng
+Actor thực hiện:
+	Hợp tác xã (HTX)
+	Mục tiêu nghiệp vụ:
+	HTX tiếp nhận đơn hàng mới và cam kết chuẩn bị hàng theo đúng chủng loại và số lượng.
+	Điều kiện tiên quyết:
+	Đơn hàng đang ở trạng thái 'Chờ xác nhận' và còn trong thời hạn cam kết SLA phản hồi.
+	Điều kiện kết thúc:
+	Đơn hàng chuyển sang trạng thái 'Đã xác nhận' (đơn thường) hoặc 'Chờ thu hoạch' (đơn Preorder).
+	Luồng sự kiện chính:
+	1. HTX mở chi tiết đơn hàng ở trạng thái 'Chờ xác nhận'.
+2. HTX kiểm tra năng lực cung ứng và chọn hành động 'Xác nhận đơn'.
+3. Hệ thống kiểm tra thời hạn SLA: nếu hợp lệ, hệ thống cập nhật trạng thái đơn sang 'Đã xác nhận' (đối với Mua thường) hoặc 'Chờ thu hoạch' (đối với Preorder).
+4. Hệ thống ghi nhận lịch sử thao tác và gửi thông báo cho Khách hàng.
+	Luồng ngoại lệ / Ràng buộc:
+	Quá hạn SLA mà HTX không xác nhận: Hệ thống tự động kích hoạt hủy đơn, ghi nhận lý do 'HTX không xác nhận quá hạn', nhả tồn kho và kích hoạt hoàn tiền (nếu đã thanh toán online).
+	 
+• UC-DH-05 — Chuẩn bị & bàn giao hàng
+Actor thực hiện:
+	Hợp tác xã (HTX)
+	Mục tiêu nghiệp vụ:
+	HTX ghi nhận quy trình đóng gói hoàn tất và chuyển giao kiện hàng cho đơn vị vận chuyển liên tỉnh.
+	Điều kiện tiên quyết:
+	Đơn hàng đang ở trạng thái 'Đã xác nhận' (hoặc đơn Preorder đã thanh toán đủ 100% sau thu hoạch).
+	Điều kiện kết thúc:
+	Đơn hàng chính thức chuyển sang trạng thái 'Đang giao'.
+	Luồng sự kiện chính:
+	1. HTX bắt đầu đóng gói và cập nhật đơn sang 'Đang chuẩn bị'.
+2. Sau khi đóng gói hoàn tất, HTX bàn giao hàng cho ĐVVC, nhập thông tin vận chuyển/mã vận đơn (DH-F25) và chọn 'Bàn giao vận chuyển'.
+3. Hệ thống ghi nhận thời điểm bàn giao và chuyển trạng thái đơn hàng sang 'Đang giao'.
+4. Hệ thống kích hoạt thông báo gửi tới Khách hàng về việc kiện hàng đã bắt đầu vận chuyển.
+	Luồng ngoại lệ / Ràng buộc:
+	Nếu HTX gặp sự cố không thể chuẩn bị đủ hàng, HTX liên hệ Admin/CSKH để xử lý hủy đơn hoặc điều phối hỗ trợ.
+	 
+• UC-DH-06 — Cập nhật trạng thái giao hàng
+Actor thực hiện:
+	ĐVVC / Hệ thống (Thực tế GĐ1: HTX, Admin)
+	Mục tiêu nghiệp vụ:
+	Ghi nhận tiến trình giao nhận thực tế từ tuyến Bắc Giang về địa chỉ cư dân tại Hà Nội, bao gồm các mốc Đang giao, Giao thành công và Giao thất bại.
+	Điều kiện tiên quyết:
+	Đơn hàng đang ở trạng thái 'Đang giao'.
+	Điều kiện kết thúc:
+	Trạng thái đơn hàng được cập nhật tương ứng trên hệ thống.
+	Luồng sự kiện chính:
+	1. Người có thẩm quyền (HTX/Admin dựa trên phản hồi của shipper) chọn cập nhật trạng thái giao cho đơn hàng.
+2. Nếu giao thành công: Cập nhật kết quả giao thành công, hệ thống chuyển đơn sang 'Đã giao' (hoặc chờ khách xác nhận).
+3. Nếu giao thất bại: Hệ thống yêu cầu nhập lý do giao thất bại (DH-F31) và tự động tăng bộ đếm số lần giao thất bại (DH-F32).
+4. Căn cứ vào số lần thất bại: Nếu còn lượt giao lại (≤ 3 lần đối với hàng khô), hệ thống giữ đơn ở luồng giao lại; nếu không thể giao lại hoặc quá số lần quy định, hệ thống chuyển đơn sang 'Chờ hoàn hàng'.
+	Luồng ngoại lệ / Ràng buộc:
+	Nếu thao tác cập nhật vi phạm quy tắc State Machine (ví dụ cố tình kéo đơn ngược từ Đã giao về Chờ xác nhận), hệ thống chặn và báo lỗi.
+	 
+• UC-DH-07 — Xác nhận đã nhận hàng
+Actor thực hiện:
+	Khách hàng, Admin
+	Mục tiêu nghiệp vụ:
+	Khách hàng (hoặc Admin hỗ trợ) xác nhận đã nhận đủ hàng, kích hoạt mốc tính thời hạn bảo hành/khiếu nại sản phẩm.
+	Điều kiện tiên quyết:
+	Đơn hàng đang ở trạng thái 'Đang giao'.
+	Điều kiện kết thúc:
+	Đơn hàng chuyển sang trạng thái 'Đã giao' và ghi nhận mốc thời gian hoàn tất.
+	Luồng sự kiện chính:
+	1. Khách hàng nhận được hàng từ shipper và kiểm tra gói hàng.
+2. Khách hàng truy cập chi tiết đơn hàng và bấm 'Đã nhận hàng'.
+3. Hệ thống ghi nhận thời gian nhận hàng, người thực hiện và cập nhật trạng thái đơn sang 'Đã giao'.
+4. Hệ thống kích hoạt đếm ngược thời hạn khiếu nại/đổi trả (24 giờ cho nông sản tươi, 10 ngày cho hàng khô) và gửi lời mời đánh giá sản phẩm.
+	Luồng ngoại lệ / Ràng buộc:
+	Nếu khách hàng không bấm xác nhận nhưng ĐVVC đã báo giao thành công, hệ thống sẽ tự động kích hoạt chuyển 'Đã giao' sau thời gian quy định.
+	 
+• UC-DH-10 — Thay đổi thông tin giao hàng
+Actor thực hiện:
+	Khách hàng
+	Mục tiêu nghiệp vụ:
+	Khách hàng điều chỉnh tên người nhận, số điện thoại hoặc địa chỉ nhận hàng trước khi đơn hàng được bàn giao cho đơn vị vận chuyển.
+	Điều kiện tiên quyết:
+	Đơn hàng chưa bàn giao cho ĐVVC (thuộc trạng thái Chờ xác nhận, Đã xác nhận hoặc Đang chuẩn bị).
+	Điều kiện kết thúc:
+	Hệ thống ghi nhận yêu cầu thay đổi và cập nhật địa chỉ giao hàng mới.
+	Luồng sự kiện chính:
+	1. Khách hàng mở chi tiết đơn hàng và chọn 'Đổi thông tin giao hàng'.
+2. Hệ thống kiểm tra điều kiện: Đơn hàng chưa chuyển sang 'Đang giao'.
+3. Khách hàng nhập thông tin mới (Tên, SĐT, Địa chỉ tại Hà Nội - chung cư bắt buộc Tòa/Căn hộ).
+4. Hệ thống kiểm tra hợp lệ của địa chỉ mới (phải nằm trong Hà Nội).
+5. Hệ thống lưu snapshot địa chỉ cũ (DH-F46), địa chỉ mới (DH-F47), thời điểm yêu cầu (DH-F48) và cập nhật thông tin đơn hàng.
+	Luồng ngoại lệ / Ràng buộc:
+	Nếu đơn hàng đã được HTX bàn giao cho ĐVVC (đã sang 'Đang giao'), hệ thống vô hiệu hóa nút đổi thông tin và thông báo khách hàng liên hệ trực tiếp tổng đài hỗ trợ.
+	 
+3. Ma trận Mapping Functional Requirement (FR) & Use Case (UC)
+Bảng ma trận dưới đây đặc tả chi tiết các yêu cầu chức năng (Hệ thống phải làm gì) tương ứng với từng Use Case, kèm thông tin phân quyền vai trò, quy tắc nghiệp vụ (BR) và nguồn tài liệu căn cứ để BA dễ dàng tra cứu, nghiệm thu.
+Module
+	UC ID
+	Use Case
+	Actor
+	FR ID
+	Functional Requirement
+(Hệ thống phải làm gì)
+	Ghi chú & Nguồn tài liệu
+	DH
+	UC-DH-01
+	Xem danh sách đơn hàng
+	Khách hàng
+HTX
+Admin
+	FR-DH-01
+	1. Hệ thống hiển thị danh sách đơn hàng theo đúng phân quyền vai trò: Khách hàng chỉ xem đơn của mình; HTX xem các đơn thuộc HTX mình; Admin xem toàn bộ đơn hệ thống.
+2. Cung cấp bộ lọc phân loại theo các trạng thái vòng đời đơn: Chờ xác nhận, Đã xác nhận, Đang chuẩn bị, Đang giao, Đã giao, Đã hủy, Chờ hoàn hàng, Đang hoàn hàng, Đã hoàn hàng.
+3. Hỗ trợ cơ chế phân trang tối ưu hiệu năng.
+	• Mức ưu tiên: Must Have
+• NFR: Tải ≤ 2 giây với 500 đơn/trang (NFR-DH-02)
+• Phân quyền: CQ QLNN không có quyền xem danh sách đơn này (chỉ xem báo cáo tổng hợp tại AD)
+• Nguồn: BRD_Chính sách đơn hàng (mục 3, 4, 5); Ma trận phân quyền (dòng FR-DH-01); Bảng chức năng toàn hệ thống (FR-023, FR-027, FR-055, FR-056)
+	DH
+	UC-DH-02
+	Xem chi tiết & theo dõi đơn
+	Khách hàng
+HTX
+Admin
+	FR-DH-02
+	1. Hệ thống kiểm tra quyền truy cập và hiển thị đầy đủ thông tin: Mã đơn (DH-F01), người nhận (DH-F15 đến DH-F22), sản phẩm, số lượng, đơn giá, thành tiền (DH-F09 đến DH-F14), tổng tiền hàng, phí vận chuyển, phụ phí hỏa tốc, thanh toán, số tiền đã trả và còn lại.
+2. Hiển thị trạng thái hiện tại và lịch sử timeline thay đổi trạng thái theo mốc thời gian.
+3. Hiển thị thông tin theo dõi giao nhận (mã vận đơn DH-F25, ĐVVC, ETA).
+	• Mức ưu tiên: Must Have
+• NFR: Phản hồi ≤ 3 giây (NFR-DH-01); bảo vệ thông tin cá nhân (NFR-DH-06)
+• Nghiệp vụ: Cư dân chung cư hiển thị rõ Tòa – Căn hộ; đơn hỏa tốc hiển thị thời gian cam kết 4–5 giờ
+• Nguồn: BRD_Chính sách đơn hàng (mục 3, 5, 7); Ma trận phân quyền (FR-DH-02)
+	DH
+	UC-DH-03
+	Xác nhận đơn hàng
+	HTX
+	FR-DH-03
+	1. Cho phép HTX xem và thực hiện xác nhận đơn hàng đang ở trạng thái 'Chờ xác nhận'.
+2. Hệ thống kiểm tra thời hạn SLA: Nếu còn hạn, cập nhật đơn sang 'Đã xác nhận' (đơn thường) hoặc 'Chờ thu hoạch' (Preorder), lưu timestamp và user HTX thực hiện.
+3. Ngăn chặn thao tác nếu đơn đã đổi trạng thái hoặc quá hạn SLA.
+4. Tự động kích hoạt hủy đơn nếu HTX quá hạn SLA phản hồi.
+	• Mức ưu tiên: Must Have
+• Phân quyền: Chỉ HTX của đơn mới được xác nhận; Admin chỉ xem (Ma trận phân quyền)
+• Rule: Chống xử lý trùng (NFR-DH-15). Quá hạn SLA tự hủy đơn và hoàn tiền nếu trả online
+• Nguồn: BRD_Chính sách đơn hàng (mục 3, 5); Ma trận phân quyền (FR-DH-03); BRD Mua hàng & Preorder (DX-01)
+	DH
+	UC-DH-05
+	Chuẩn bị & bàn giao hàng
+	HTX
+	FR-DH-05
+	1. Cho phép HTX chuyển đơn từ 'Đã xác nhận' sang 'Đang chuẩn bị' khi bắt đầu đóng gói.
+2. Khi đóng gói xong, cho phép HTX ghi nhận bàn giao cho ĐVVC (hình thức giao, mã vận đơn DH-F25).
+3. Hệ thống ghi nhận thời điểm bàn giao và tự động chuyển trạng thái đơn hàng sang 'Đang giao'.
+	• Mức ưu tiên: Must Have
+• Vai trò: Điểm kích hoạt khởi tạo trạng thái Đang giao trong hệ thống
+• Nguồn: BRD_Chính sách đơn hàng (mục 2, 3, 5, 7); Ma trận phân quyền (FR-DH-05)
+	DH
+	UC-DH-06
+	Cập nhật trạng thái giao hàng
+	ĐVVC
+Hệ thống
+(GĐ1: HTX, Admin)
+	FR-DH-06
+	1. Hệ thống tiếp nhận và cập nhật tiến trình vận chuyển liên tỉnh.
+2. Hỗ trợ cập nhật tối thiểu: Đang giao, Giao thành công (chuyển sang 'Đã giao'), Giao thất bại.
+3. Khi Giao thất bại: bắt buộc lưu lý do (DH-F31), tăng bộ đếm số lần thất bại (DH-F32), và kích hoạt luồng: chuyển lại 'Đang giao' (nếu giao lại) hoặc chuyển sang 'Chờ hoàn hàng' (nếu hết lượt giao lại).
+4. Kiểm soát State Machine: chặn cập nhật quay ngược trạng thái không hợp lệ.
+	• Mức ưu tiên: Must Have
+• Thực tế GĐ1: Chưa có API tự động, HTX cập nhật đơn của mình, Admin có quyền cập nhật toàn bộ (Ma trận phân quyền). Đề xuất ảnh chụp phiếu gửi (DX-07)
+• NFR: Cập nhật nội bộ ≤ 5s, hiển thị ≤ 60s (NFR-DH-03)
+• Nguồn: BRD_Chính sách đơn hàng (mục 2, 3, 5, 7); Ma trận phân quyền (FR-DH-06)
+	DH
+	UC-DH-07
+	Xác nhận đã nhận hàng
+	Khách hàng
+Admin
+	FR-DH-07
+	1. Cho phép Khách hàng xác nhận đã nhận được hàng khi đơn ở trạng thái 'Đang giao'.
+2. Hệ thống ghi nhận thời gian nhận, người thực hiện và cập nhật trạng thái đơn sang 'Đã giao'.
+3. Chặn không cho tạo thêm lần xác nhận mới nếu đơn đã hoàn tất.
+4. Kích hoạt mốc đếm ngược thời hạn khiếu nại (24h hàng tươi, 10 ngày hàng khô).
+	• Mức ưu tiên: Must Have
+• Nghiệp vụ: Là kênh xác nhận độc lập bên cạnh shipper/HTX. Admin có quyền xác nhận hỗ trợ (Ma trận phân quyền)
+• Nguồn: BRD_Chính sách đơn hàng (mục 3, 5); Ma trận phân quyền (FR-DH-07)
+	DH
+	UC-DH-10
+	Thay đổi thông tin giao hàng
+	Khách hàng
+	FR-DH-10
+	1. Cho phép Khách hàng gửi yêu cầu thay đổi thông tin người nhận/địa chỉ đối với đơn hàng chưa bàn giao cho ĐVVC.
+2. Kiểm tra điều kiện: đơn ở trạng thái hợp lệ (trước khi bàn giao), địa chỉ mới phải thuộc Hà Nội (chung cư bắt buộc tòa – căn).
+3. Lưu snapshot địa chỉ cũ (DH-F46), địa chỉ mới (DH-F47), thời điểm yêu cầu (DH-F48), trạng thái yêu cầu (DH-F49) và cập nhật chi tiết đơn.
+	• Mức ưu tiên: Should Have
+• Ràng buộc: Chỉ được đổi trước khi bàn giao vận chuyển. Khi đã sang 'Đang giao', hệ thống khóa chức năng đổi thông tin
+• Nguồn: BRD_Chính sách đơn hàng (mục 3, 5, 7); Ma trận phân quyền (FR-DH-10); Bảng chức năng toàn hệ thống (FR-026)
+	 
+4. Thống kê & Phân tích Đánh giá
+Tổng kết số lượng Use Case và Yêu cầu chức năng cho 5 chức năng thuộc Module DH:
+SỐ LƯỢNG USE CASE
+6 Use Case
+Bao phủ 5 chức năng cốt lõi (gồm 3 UC chuyên biệt xử lý tiến trình giao hàng)
+	SỐ LƯỢNG FUNCTIONAL REQ
+6 FR Chính thức
+Được phân quyền chi tiết cho 5 nhóm Actor trên Ma trận phân quyền
+	HẠNG MỤC CẦN LÀM RÕ
+5 Điểm nghi vấn
+Cần họp thống nhất với BA Lead, PM và Business User trước khi chốt BRD

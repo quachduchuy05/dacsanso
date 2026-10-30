@@ -1,0 +1,317 @@
+# DAC-TA_FR-HT-03_Nhat-ky-thao-tac.docx
+Nguồn: https://docs.google.com/document/d/1BpzA-12A9FzbP9XE343Taz9kpghC9ecl/edit?usp=drivesdk&ouid=118008469128637664818&rtpof=true&sd=true
+
+ĐẶC TẢ YÊU CẦU PHẦN MỀM
+FR HT 03  NHẬT KÝ THAO TÁC
+Thông tin tài liệu
+1. Mục đích và phạm vi
+1.1 Mục đích
+Ghi nhận bất biến các hành vi quan trọng trên hệ thống để truy vết ai đã làm gì, với đối tượng nào, vào thời điểm nào và kết quả ra sao; hỗ trợ kiểm toán, điều tra sự cố và giám sát tuân thủ.
+1.2 Trong phạm vi
+Thu nhận sự kiện kiểm toán từ giao diện, API, tiến trình nền và tích hợp.
+Tra cứu, lọc, xem chi tiết và xuất nhật ký theo quyền.
+Bảo vệ tính toàn vẹn, che dữ liệu bí mật và quản lý thời hạn lưu.
+Cảnh báo khi đường ống ghi nhật ký gặp sự cố.
+1.3 Ngoài phạm vi
+Log gỡ lỗi kỹ thuật, metric giám sát và stack trace chi tiết.
+Ghi nội dung mật khẩu, OTP, token hoặc thông tin bí mật.
+Cho phép người dùng sửa/xóa từng bản ghi nhật ký.
+Hệ thống SIEM bên ngoài, trừ tích hợp được phê duyệt.
+2. Thuật ngữ
+3. Tác nhân và phân quyền
+HTX, khách hàng, khách vãng lai và QLNN không được truy cập nhật ký này theo mặc định.
+4. Giả định và phụ thuộc
+Các phân hệ phát sinh sự kiện cung cấp actor, action, object, outcome và correlation_id.
+Dịch vụ có danh tính máy và cơ chế xác thực nội bộ.
+Hệ thống dùng UTC để lưu; hiển thị theo Asia/Ho_Chi_Minh.
+Xuất nhật ký phụ thuộc FR-BCTK-03.
+Hạ tầng có cơ chế hàng đợi/bộ đệm bền vững hoặc transactional outbox.
+5. Ca sử dụng
+UC-HT-03-01 – Ghi sự kiện kiểm toán
+Tác nhân: Phân hệ nghiệp vụ hoặc tiến trình hệ thống.
+Kích hoạt: Một hành vi thuộc danh mục sự kiện xảy ra.
+Tiền điều kiện: Nguồn gửi được xác thực; payload đúng phiên bản schema.
+Hậu điều kiện: Sự kiện được lưu một lần, bất biến và có thể truy vết.
+Luồng chính
+1. Nguồn tạo event_id và correlation_id.
+2. Nguồn gửi sự kiện với actor, action, object, outcome và mốc thời gian.
+3. Hệ thống kiểm tra schema, nguồn và dữ liệu bị cấm.
+4. Hệ thống che trường nhạy cảm theo chính sách.
+5. Hệ thống lưu bản ghi append-only và xác nhận tiếp nhận.
+Ngoại lệ
+E1. Trùng event_id: không tạo bản ghi thứ hai; trả kết quả idempotent.
+E2. Payload sai schema: chuyển vùng lỗi/DLQ, cảnh báo và lưu metadata chẩn đoán an toàn.
+E3. Kho lưu tạm thời không khả dụng: retry theo chính sách, cảnh báo khi vượt ngưỡng.
+E4. Với hành vi trọng yếu, có chặn giao dịch nếu không ghi được audit hay không: [CẦN CHỐT].
+UC-HT-03-02 – Tra cứu nhật ký
+Tác nhân: Admin kiểm toán/an toàn.
+Kích hoạt: Mở màn hình Nhật ký thao tác.
+Tiền điều kiện: Đã đăng nhập và có quyền.
+Luồng chính
+1. Hệ thống áp dụng phạm vi mặc định và khoảng thời gian mặc định.
+2. Người dùng lọc theo thời gian, actor, vai trò, module, action, object, outcome hoặc correlation_id.
+3. Hệ thống kiểm tra quyền và điều kiện lọc.
+4. Hệ thống trả danh sách phân trang, sắp xếp mới nhất trước.
+5. Người dùng chọn một sự kiện để xem chi tiết trước/sau đã được che.
+Ngoại lệ
+E1. Khoảng thời gian vượt giới hạn truy vấn: yêu cầu thu hẹp điều kiện.
+E2. Không có quyền: từ chối và tự ghi một sự kiện DENIED.
+UC-HT-03-03 – Xuất nhật ký
+1. Người dùng chọn xuất với bộ lọc hiện tại.
+2. Hệ thống chuyển bộ lọc và phạm vi quyền sang FR-BCTK-03.
+3. Hành vi yêu cầu xuất và tải tệp được ghi thành sự kiện riêng.
+6. Danh mục sự kiện tối thiểu
+Danh mục phải được rà soát cùng toàn bộ phân hệ trước khi baseline; các sự kiện đọc dữ liệu nhạy cảm cần bổ sung theo ma trận quyền: [CẦN CHỐT].
+7. Yêu cầu chức năng
+8. Từ điển dữ liệu
+Giới hạn kích thước before_data/after_data và danh sách trường được phép lưu: [CẦN CHỐT].
+9. Dữ liệu tuyệt đối không ghi
+Mật khẩu hiện tại/mới, mã OTP, mã khôi phục.
+Access token, refresh token, session cookie, API key, authorization header.
+Khóa bí mật, private key, chuỗi kết nối.
+Toàn bộ số thẻ/tài khoản ngân hàng hoặc dữ liệu thanh toán nhạy cảm.
+Nội dung tệp tải lên chưa qua phân loại.
+Với thao tác đổi mật khẩu, chỉ ghi actor, action, outcome, thời gian và metadata an toàn; không ghi giá trị trước/sau.
+10. Quy tắc nghiệp vụ
+BR-HT03-01: occurred_at và recorded_at lưu UTC; giao diện chuyển sang Asia/Ho_Chi_Minh.
+BR-HT03-02: event_id trùng không được tạo thêm bản ghi.
+BR-HT03-03: FAILURE và DENIED vẫn phải được ghi nếu thuộc danh mục sự kiện.
+BR-HT03-04: Tài khoản đã bị xóa/ẩn danh vẫn giữ actor_id giả danh hóa đủ để truy vết theo chính sách.
+BR-HT03-05: Tìm kiếm mặc định 24 giờ gần nhất; giới hạn kỳ truy vấn [CẦN CHỐT].
+BR-HT03-06: Thời hạn lưu đề xuất 24 tháng; legal hold được ưu tiên hơn lịch hủy [CẦN CHỐT].
+BR-HT03-07: Không cho phép giao diện hay API nghiệp vụ cập nhật/xóa bản ghi.
+BR-HT03-08: Các lần truy cập nhật ký không được tạo vòng lặp vô hạn; sự kiện giám sát được ghi qua kênh kiểm soát.
+11. Yêu cầu phi chức năng
+12. Thông báo
+13. Tiêu chí nghiệm thu
+14. Truy vết
+15. Vấn đề cần chốt
+1. Danh mục sự kiện chính thức và hành vi đọc dữ liệu nhạy cảm phải ghi.
+2. Ma trận quyền xem/xuất nhật ký và phạm vi của từng nhóm Admin.
+3. Thời hạn lưu, legal hold, ẩn danh hóa và quy trình hủy dữ liệu.
+4. Chính sách fail-open/fail-closed khi không ghi được sự kiện trọng yếu.
+5. SLA tiếp nhận/truy vấn/cảnh báo, giới hạn kỳ tìm kiếm và kích thước payload.
+6. Cơ chế kiểm chứng tính toàn vẹn và hệ thống SIEM nhận dữ liệu (nếu có).
+Thuộc tính
+Giá trị
+Mã tài liệu
+SRS-FR-HT-03
+Phiên bản
+0.1 – Bản chuẩn hóa chờ phê duyệt
+Ngày cập nhật
+14/10/2026
+Phân hệ
+Hệ thống – Kiểm toán và an toàn
+Yêu cầu nguồn
+FR-HT-03
+Đối tượng sử dụng
+Admin được phân quyền kiểm toán/an toàn
+Thuật ngữ
+Định nghĩa
+Audit event
+Bản ghi một hành vi nghiệp vụ/an toàn cần truy vết
+Actor
+Người dùng, hệ thống hoặc dịch vụ thực hiện hành vi
+Object
+Đối tượng bị tác động như đơn hàng, HTX, tài khoản
+Correlation ID
+Mã liên kết các sự kiện thuộc cùng một yêu cầu/luồng
+Outcome
+Kết quả SUCCESS, FAILURE hoặc DENIED
+Append-only
+Chỉ được thêm bản ghi, không cập nhật/xóa trực tiếp
+Dữ liệu nhạy cảm
+Thông tin cá nhân, tài chính hoặc bí mật cần che/loại bỏ
+Tác nhân
+Quyền
+Admin kiểm toán/an toàn
+Tìm kiếm, xem chi tiết và xuất nhật ký trong phạm vi được cấp
+Admin thông thường
+Không có quyền mặc định; chỉ được xem khi cấu hình
+Dịch vụ/tiến trình hệ thống
+Gửi sự kiện theo định danh dịch vụ
+Hệ thống nhật ký
+Xác thực nguồn, lưu bất biến, tra cứu và giám sát đường ống
+Nhóm
+Action/event tối thiểu
+Xác thực
+LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT, PASSWORD_CHANGE, PASSWORD_RESET_REQUEST, MFA_CHANGE
+Tài khoản và quyền
+USER_CREATE, USER_UPDATE, USER_LOCK, USER_UNLOCK, ROLE_ASSIGN, ROLE_REVOKE, PERMISSION_CHANGE
+HTX
+HTX_CREATE, HTX_UPDATE, HTX_APPROVE, HTX_REJECT, HTX_SUSPEND, HTX_RESTORE
+Sản phẩm
+PRODUCT_CREATE, PRODUCT_UPDATE, PRODUCT_APPROVE, PRODUCT_REJECT, PRODUCT_HIDE, PRODUCT_DELETE
+Đơn hàng
+ORDER_STATUS_CHANGE, ORDER_REJECT, ORDER_CANCEL_REQUEST, ORDER_CANCEL_DECISION, ORDER_REFUND
+Tài chính
+PAYMENT_STATUS_CHANGE, REFUND_STATUS_CHANGE, RECONCILIATION_VIEW, PAYOUT_STATUS_CHANGE
+Báo cáo
+DASHBOARD_VIEW, REPORT_VIEW, REPORT_EXPORT_REQUEST, REPORT_EXPORT_RESULT, REPORT_DOWNLOAD
+Cấu hình/an toàn
+CONFIG_CHANGE, AUDIT_LOG_VIEW, AUDIT_LOG_EXPORT, INTEGRATION_CREDENTIAL_CHANGE
+Mã
+Yêu cầu
+FR-HT-03.01
+Hệ thống phải ghi các hành vi thuộc danh mục sự kiện từ người dùng và tiến trình hệ thống.
+FR-HT-03.02
+Mỗi sự kiện phải có event_id duy nhất và hỗ trợ tiếp nhận idempotent.
+FR-HT-03.03
+Hệ thống phải lưu actor, action, object, outcome, thời gian và correlation_id.
+FR-HT-03.04
+Bản ghi phải append-only; không có chức năng sửa/xóa từng bản ghi.
+FR-HT-03.05
+Hệ thống phải lọc bỏ hoặc che bí mật và dữ liệu nhạy cảm trước khi lưu.
+FR-HT-03.06
+Hệ thống phải hỗ trợ tìm kiếm đa điều kiện, phân trang và xem chi tiết.
+FR-HT-03.07
+Hệ thống phải phân quyền truy cập theo vai trò và phạm vi dữ liệu.
+FR-HT-03.08
+Hệ thống phải hỗ trợ xuất nhật ký qua FR-BCTK-03.
+FR-HT-03.09
+Hệ thống phải retry việc ghi thất bại và cảnh báo khi hàng đợi, DLQ hoặc độ trễ vượt ngưỡng.
+FR-HT-03.10
+Hệ thống phải áp dụng thời hạn lưu và hủy dữ liệu theo chính sách đã phê duyệt.
+FR-HT-03.11
+Hệ thống phải ghi lại cả hành vi truy cập/xuất nhật ký và các lần bị từ chối.
+FR-HT-03.12
+Hệ thống phải cho phép truy vết tính toàn vẹn của bản ghi bằng cơ chế hash/chữ ký hoặc kiểm soát tương đương [CẦN CHỐT GIẢI PHÁP].
+Trường
+Bắt buộc
+Mô tả
+event_id
+Có
+UUID duy nhất, khóa idempotency
+schema_version
+Có
+Phiên bản cấu trúc sự kiện
+correlation_id
+Có
+Mã truy vết luồng; tạo mới nếu nguồn chưa có
+actor_type
+Có
+USER/SERVICE/SYSTEM/ANONYMOUS
+actor_id
+Theo loại
+Mã người dùng/dịch vụ; không dùng tên làm khóa
+actor_role
+Không
+Vai trò tại thời điểm hành vi
+tenant_scope/htx_id
+Không
+Phạm vi tổ chức liên quan
+action
+Có
+Mã hành vi chuẩn hóa
+module
+Có
+Phân hệ nguồn
+object_type
+Không
+Loại đối tượng
+object_id
+Không
+Mã đối tượng
+outcome
+Có
+SUCCESS/FAILURE/DENIED
+reason_code
+Không
+Mã lý do, không chứa stack trace/bí mật
+changed_fields
+Không
+Danh sách trường thay đổi
+before_data, after_data
+Không
+Ảnh trước/sau đã lọc và che
+source_ip
+Không
+IP theo chính sách bảo vệ dữ liệu
+user_agent/device_id
+Không
+Metadata thiết bị đã giới hạn độ dài
+occurred_at
+Có
+Thời điểm hành vi xảy ra, UTC
+recorded_at
+Có
+Thời điểm hệ thống nhật ký ghi nhận, UTC
+source_service
+Có
+Dịch vụ phát sinh sự kiện
+Mã
+Yêu cầu
+NFR-HT03-01
+99% sự kiện sẵn sàng tra cứu trong ≤ 60 giây sau occurred_at [CẦN CHỐT SLA].
+NFR-HT03-02
+Không mất sự kiện đã được xác nhận tiếp nhận; dùng outbox/hàng đợi bền vững và DLQ.
+NFR-HT03-03
+95% truy vấn 30 ngày với bộ lọc có chỉ mục hoàn tất trong ≤ 3 giây [CẦN CHỐT].
+NFR-HT03-04
+100% API tra cứu/xuất phải kiểm tra xác thực, vai trò và phạm vi phía máy chủ.
+NFR-HT03-05
+Dữ liệu được mã hóa khi truyền và khi lưu theo tiêu chuẩn hạ tầng được phê duyệt.
+NFR-HT03-06
+Cảnh báo phải phát trong ≤ 5 phút khi DLQ có bản ghi hoặc độ trễ vượt ngưỡng [CẦN CHỐT].
+Mã
+Nội dung
+HT03-V01
+Điều kiện tìm kiếm không hợp lệ hoặc vượt giới hạn cho phép.
+HT03-A01
+Bạn không có quyền truy cập nhật ký thao tác.
+HT03-E01
+Chưa thể tải nhật ký. Vui lòng thử lại.
+HT03-E02
+Không thể tiếp nhận sự kiện kiểm toán; hệ thống vận hành đã được cảnh báo.
+Mã
+Given
+When
+Then
+AC-HT03-01
+Người dùng đăng nhập thành công
+Kiểm tra nhật ký
+Có LOGIN_SUCCESS với actor, thời gian và outcome; không có bí mật
+AC-HT03-02
+Hai sự kiện có cùng event_id
+Tiếp nhận
+Chỉ có một bản ghi
+AC-HT03-03
+Admin đổi quyền người dùng
+Hoàn tất
+Có ROLE_ASSIGN/REVOKE hoặc PERMISSION_CHANGE và các trường thay đổi
+AC-HT03-04
+Payload chứa token/mật khẩu
+Ghi sự kiện
+Giá trị bị loại bỏ/che và có cảnh báo kiểm soát nếu cần
+AC-HT03-05
+Admin không có quyền kiểm toán
+Gọi API nhật ký
+Bị từ chối và có sự kiện DENIED
+AC-HT03-06
+Người dùng tìm theo correlation_id
+Tra cứu
+Nhận các sự kiện cùng luồng theo thứ tự thời gian
+AC-HT03-07
+occurred_at ở UTC
+Hiển thị
+Thời gian được đổi chính xác sang Asia/Ho_Chi_Minh
+AC-HT03-08
+Kho nhật ký tạm thời lỗi
+Nguồn gửi sự kiện
+Sự kiện được retry bền vững hoặc vào DLQ và phát cảnh báo
+AC-HT03-09
+Một bản ghi đã lưu
+Gọi API sửa/xóa nghiệp vụ
+Hệ thống từ chối
+AC-HT03-10
+Admin có quyền chọn xuất
+Gửi yêu cầu
+FR-BCTK-03 nhận đúng bộ lọc; yêu cầu xuất và tải đều được ghi nhật ký
+Yêu cầu nguồn
+Ca sử dụng
+Yêu cầu chi tiết
+Tiêu chí nghiệm thu
+FR-HT-03
+UC-HT-03-01 → 03
+FR-HT-03.01 → 12
+AC-HT03-01 → 10

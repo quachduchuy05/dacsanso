@@ -1,0 +1,452 @@
+# Đặc tả tài khoản.docx
+Nguồn: https://docs.google.com/document/d/1JS92EFLAec7homvFvsPc3rQu8zA7eynT/edit?usp=drivesdk&ouid=118008469128637664818&rtpof=true&sd=true
+
+TÀI LỆU ĐẶC TẢ CHI TIẾT SYSTEM REQUIREMENT SPECIFICATION (SRS)
+MODULE TÀI KHOẢN & NGƯỜI DÙNG - NỀN TẢNG MOBILE APP 'ĐẶC SẢN SỐ BẮC GIANG'
+I. PHẠM VI MODULE & NGUYÊN TẮC ĐẶC TẢ TỐI ƯU MOBILE APP
+Module Tài khoản & Người dùng đóng vai trò hạt nhân quản lý định danh, xác thực, phân quyền và lưu trữ thông tin nền tảng cho toàn bộ hệ thống Đặc sản số Bắc Giang trên Mobile App. Nền tảng được tối ưu triệt để cho các thao tác cảm ứng, xác thực sinh trắc học, định vị GPS native và hệ thống thông báo đẩy (Push Notifications).
+1. Sự liên kết nghiệp vụ với các Module theo BRD
+Chính sách đơn hàng: Cung cấp thông tin tài khoản Người mua (Khách hàng) và Sổ địa chỉ nhận hàng dữ liệu cho Đơn hàng. Cung cấp thông tin HTX (Người bán) để xác nhận, chuẩn bị đơn.
+Hợp tác xã (HTX): Liên kết Tài khoản HTX với Hồ sơ HTX, Mã số thuế (MST duy nhất), quản lý danh mục sản phẩm, cấu hình Preorder và giao hàng hỏa tốc nội tỉnh Bắc Giang.
+Cơ quan quản lý nhà nước (Giám sát): Tài khoản Giám sát có quyền truy cập đặc thù (Chỉ xem báo cáo, không chỉnh sửa dữ liệu hệ thống).
+Luồng mua hàng & Preorder: Lưu giỏ hàng theo tài khoản, cho phép xem/tìm kiếm sản phẩm công khai khi chưa đăng nhập và bắt buộc xác thực khi đưa vào giỏ/thanh toán.
+II. XÁC ĐỊNH VAI TRÒ NGƯỜI DÙNG & TRẢI NGHIỆM MOBILE APP
+Hệ thống xác định 5 Role chính với phạm vi dữ liệu và trải nghiệm Mobile App chuyên biệt:
+III. ĐẶC TẢ CHI TIẾT CÁC CHỨC NĂNG (FUNCTIONAL SPECIFICATIONS)
+1. ĐĂNG KÝ TÀI KHOẢN (UC-ACC-01)
+2. ĐĂNG NHẬP & XÁC THỰC SINH TRÁC HỌC (UC-ACC-02)
+3. ĐĂNG XUẤT & XÓA SESSION MOBILE (UC-ACC-03)
+4. THÔNG TIN CÁ NHÂN & PROFILE HTX (UC-ACC-04)
+5. SỔ ĐỊA CHỈ NHẬN HÀNG TÍCH HỢP GPS (UC-ACC-05)
+6. ADMIN CẤP TÀI KHOẢN & DUYỆT HTX (UC-ACC-06)
+7. ADMIN KHÓA / MỞ KHÓA TÀI KHOẢN (UC-ACC-07)
+IV. QUẢN LÝ TRẠNG THÁI TÀI KHOẢN (ACCOUNT STATE MACHINE)
+State machine quản lý toàn bộ vòng đời tài khoản trên nền tảng Mobile App:
+V. TỔNG HỢP BUSINESS RULES (QUY TẮC NGHIỆP VỤ CONTROL)
+VI. DATA DICTIONARY (BẢNG DỮ LIỆU ĐÃ BỔ SUNG MOBILE)
+1. Bảng `users` (Tài khoản & Định danh Mobile)
+2. Bảng `user_addresses` (Sổ địa chỉ GPS Mobile)
+VII. DANH SÁCH API MOBILE KEY ENDPOINTS
+Các API chính phục vụ trao đổi dữ liệu Mobile App & Backend Services:
+POST /api/v1/auth/register: Đăng ký tài khoản Khách hàng / Nộp hồ sơ HTX (tải ảnh Giấy phép/Chứng nhận)
+POST /api/v1/auth/login: Đăng nhập mật khẩu/OTP, cấp cặp JWT Access & Refresh Token.
+POST /api/v1/auth/biometric-login: [MOBILE] Xác thực Đăng nhập bằng Vân tay / Face ID trên thiết bị đã được tin tưởng.
+POST /api/v1/auth/device-token: [MOBILE] Cập nhật FCM Token để nhận Push Notification.
+GET/POST/PUT /api/v1/me/addresses: Quản lý Sổ địa chỉ GPS Khách hàng.
+POST /api/v1/me/addresses: Thêm địa chỉ mới, tiếp nhận tọa độ Latitude & Longitude lấy từ GPS máy để hỗ trợ định vị và tính phí Giao hỏa tốc.
+PUT /api/v1/me/addresses/{addressId}: Cập nhật thông tin địa chỉ.
+DELETE /api/v1/me/addresses/{addressId}: Xóa địa chỉ khỏi sổ địa chỉ.
+GET /api/v1/admin/users: Lấy danh sách, tìm kiếm, lọc tài khoản theo Role/Trạng thái.
+POST /api/v1/admin/htx/{htxId}/approve: Admin Phê duyệt hồ sơ HTX, tự động kích hoạt tài khoản ACTIVE và gửi SMS/Push kích hoạt.  
+POST /api/v1/admin/htx/{htxId}/reject: Admin Từ chối hồ sơ HTX (kèm lý do).
+POST /api/v1/admin/users/{userId}/lock: Admin Khóa tài khoản (bắt buộc nhập lí do) + Gửi Silent Push ngắt Session.
+POST /api/v1/admin/users/{userId}/unlock: Admin Mở khóa tài khoản về lại trạng thái ACTIVE
+Role Name
+Mục đích sử dụng
+Cơ chế tạo tài khoản
+Quyền trên App Mobile
+Phạm vi dữ liệu
+CUSTOMER
+(Khách hàng)
+Mua hàng thường, Preorder, thanh toán, quản lý sổ địa chỉ, khiếu nại.
+Tự đăng ký (App Mobile).
+Đăng nhập, Sinh trắc học, Sổ địa chỉ GPS, Mua hàng, OTP.
+Dữ liệu cá nhân, giỏ hàng, đơn hàng của chính mình.
+HTX_ADMIN
+(Quản trị HTX)
+Nộp hồ sơ HTX, tạo/sửa sản phẩm, cấu hình Preorder, xác nhận đơn.
+Tự đăng ký hồ sơ HTX (Chờ Admin duyệt MST/Giấy phép).
+Chụp ảnh camera nộp giấy tờ, Quản lý sản phẩm/đơn hàng HTX.
+Dữ liệu sản phẩm, tồn kho, đơn hàng thuộc HTX của mình.
+SUPER_ADMIN
+(Admin Hệ thống)
+Duyệt HTX, duyệt sản phẩm, cấp/khóa tài khoản, cấu hình tham số.
+Khởi tạo từ Seeder / Admin Portal.
+Duyệt nhanh hồ sơ HTX, Khóa/Mở tài khoản, Audit Log.
+Toàn bộ dữ liệu hệ thống.
+GOV_MONITOR
+(Cơ quan QLNN)
+Xem các báo cáo giám sát số lượng HTX, sản phẩm nguồn gốc, khiếu nại.
+Do Admin cấp tài khoản [PROPOSED].
+Xem Báo cáo di động (Read-only Dashboard).
+Chỉ xem (Read-only) các Báo cáo tổng hợp/giám sát.
+DELIVERY_STAFF
+(Vận chuyển)
+Nhận hàng, cập nhật trạng thái giao hàng/chuyển hoàn.
+Admin cấp hoặc API Partner [PROPOSED].
+Quét QR, Cập nhật vị trí GPS, Trạng thái đơn hàng.
+Đơn hàng được phân công giao.
+MÔ HÌNH PHÁT TRUYỂN APP UNIFIED: Dựa trên đề xuất [PROPOSED 04], ứng dụng sẽ sử dụng 1 Mobile App duy nhất trên App Store / Google Play dành cho Khách hàng & HTX (Hệ thống hỗ trợ nút 'Chuyển sang giao diện HTX' đối với tài khoản đã được cấp quyền). Admin và Giám sát sử dụng Web Portal hoặc App Quản trị riêng.
+Function ID / Name:
+UC-ACC-01 - Đăng ký tài khoản Khách hàng / Nộp Hồ sơ HTX
+Mục tiêu:
+Cho phép người dùng tự tạo tài khoản Khách hàng hoặc gửi hồ sơ đăng ký HTX để Admin kiểm duyệt ngay trên App.
+Actor / Trigger:
+Actor: Khách hàng (Khách vãng lai), Đại diện HTX.
+Trigger: Người dùng chọn 'Đăng ký' trên App Mobile.
+Preconditions:
+Chưa đăng nhập hệ thống.
+Main Flow (Mobile):
+1. Khách chọn 'Đăng ký tài khoản Khách hàng'.
+2. App hiển thị Form: Họ tên, Số điện thoại, Email (optional), Mật khẩu.
+3. Khách tích 'Đồng ý Điều khoản & Chính sách' -> Nhấn 'Đăng ký'.
+4. Hệ thống gửi OTP 6 chữ số qua SMS/ZNS. App tự động bắt SMS Auto-fill OTP.
+5. Khách xác nhận OTP -> Kích hoạt `ACTIVE`, tự động đăng nhập và quay lại trang trước đó.
+Alt / Exception Flow:
+Alternative Flow (Đăng ký HTX): Đại diện HTX nhập MST (kiểm tra duy nhất BR-HTX-02), Tên HTX, SĐT, Địa chỉ, dùng Camera App chụp Giấy phép kinh doanh & Chứng nhận. Hồ sơ ở trạng thái `PENDING_APPROVAL` chờ Admin duyệt.
+Exception Flow: SĐT/MST đã tồn tại -> Báo lỗi cụ thể. OTP sai/hết hạn -> Cho gửi lại tối đa 3 lần/15 phút.
+Business Rules liên quan:
+BR-ACC-001 (SĐT duy nhất đối với Khách hàng); BR-HTX-02 (MST duy nhất đối với HTX); BR-ACC-002 (OTP hiệu lực 120s); BR-ACC-003 (Mật khẩu 8-32 ký tự, đủ ký tự đặc biệt).
+Function ID / Name:
+UC-ACC-02 - Đăng nhập & Xác thực Biometric
+Mục tiêu:
+Xác thực danh tính người dùng qua Password, SĐT+OTP hoặc Face ID/Vân tay trên Mobile App.
+Actor / Trigger:
+Actor: Customer, HTX, Admin, Giám sát.
+Trigger: Mở App Mobile và chọn Đăng nhập.
+Preconditions:
+Tài khoản đã tồn tại trên hệ thống.
+Main Flow (Mobile):
+1. Đăng nhập lần đầu: Nhập Username/SĐT + Mật khẩu (hoặc SĐT + OTP). Hệ thống trả về JWT Access Token & Refresh Token. App hỏi 'Bật đăng nhập bằng Face ID / Vân tay cho lần sau?'.
+2. Đăng nhập lần sau: Nhấn Icon Biometric -> Xác thực vân tay/Face ID native -> Đăng nhập thành công tức thì.
+3. Điều hướng theo Role: Customer về Trang chủ; HTX về Dashboard HTX; Giám sát về Báo cáo Mobile.
+Alt / Exception Flow:
+Exception Flow: Sai mật khẩu -> Báo lỗi chung; Sai quá 5 lần -> Khóa tạm 15 phút. Tài khoản bị `LOCKED` -> Hiển thị Lý do khóa và Hotline hỗ trợ.
+Business Rules liên quan:
+BR-ACC-004 (Không tiết lộ chi tiết lỗi đăng nhập); BR-ACC-005 (Khóa tạm 15m khi sai 5 lần); Chịu tác động của BR-ACC-016 (Kick session ngay khi Admin khóa).
+Function ID / Name:
+UC-ACC-03 - Đăng xuất
+Mục tiêu:
+Hủy phiên làm việc an toàn, xóa Keychain/Keystore và Device Token khỏi hệ thống.
+Actor / Trigger:
+Actor: Tất cả các Role đã đăng nhập.
+Trigger: Chọn 'Đăng xuất' trong Menu Tài khoản trên App.
+Preconditions:
+Đang ở trạng thái Đã đăng nhập.
+Main Flow (Mobile):
+1. Khách bấm 'Đăng xuất'.
+2. Pop-up Native xác nhận: 'Bạn có chắc chắn muốn đăng xuất?'.
+3. Bấm 'Xác nhận' -> Hệ thống thu hồi Refresh Token (Blacklist Redis), hủy `device_token` nhận Push Notification trên Server và xóa Token trong bộ nhớ mã hóa của thiết bị (Keychain/Keystore).
+4. Điều hướng về Màn hình Đăng nhập / Trang chủ Khách hàng.
+Alt / Exception Flow:
+Exception Flow: Token hết hạn từ trước -> Tự động dọn dẹp Cache Client và chuyển về Màn hình Đăng nhập.
+Business Rules liên quan:
+BR-ACC-015 (Cập nhật danh sách Device Tokens khi đăng xuất).
+Function ID / Name:
+UC-ACC-04 - Xem & Cập nhật Profile
+Mục tiêu:
+Quản lý thông tin cá nhân Khách hàng và Hồ sơ pháp lý HTX ngay trên Mobile App.
+Actor / Trigger:
+Actor: Customer, HTX, Admin, Giám sát.
+Trigger: Vào mục 'Hồ sơ cá nhân' trên App.
+Preconditions:
+Đã đăng nhập.
+Main Flow (Mobile):
+1. Khách xem Profile -> Cập nhật Họ tên, Email, Avatar (Chụp từ Camera hoặc chọn từ Thư viện ảnh).
+2. Đổi mật khẩu: Nhập Pass cũ -> Pass mới -> Xác nhận -> Thoát ra và đăng nhập lại bằng Pass mới.
+3. Với HTX: Được xem thông tin pháp lý (MST, Tên HTX). Muốn chỉnh sửa thông tin pháp lý đã duyệt phải gửi yêu cầu 'Duyệt lại hồ sơ'.
+Alt / Exception Flow:
+Exception Flow: Email trùng lặp -> Báo lỗi Validation. SĐT chính không được sửa trực tiếp.
+Business Rules liên quan:
+BR-ACC-006 (SĐT không tự sửa trực tiếp); BR-ACC-007 (MST HTX duy nhất và cố định sau khi duyệt).
+Function ID / Name:
+UC-ACC-05 - Sổ địa chỉ nhận hàng GPS
+Mục tiêu:
+Quản lý địa chỉ giao hàng của Khách hàng, tích hợp GPS định vị tọa độ phục vụ tính phí Giao hỏa tốc.
+Actor / Trigger:
+Actor: Khách hàng (CUSTOMER).
+Trigger: Vào 'Sổ địa chỉ' hoặc chọn địa chỉ tại bước Checkout Đơn hàng.
+Preconditions:
+Đã đăng nhập.
+Main Flow (Mobile):
+1. Thêm địa chỉ mới: Khách bấm '+ Thêm địa chỉ' -> Bấm nút 'Lấy vị trí hiện tại (GPS)' -> App tự động điền Tỉnh/Thành, Quận/Huyện, Phường/Xã và Tọa độ Lat/Long.
+2. Khách chỉnh sửa Số nhà/Tên đường, Họ tên người nhận, SĐT người nhận.
+3. Tích 'Đặt làm địa chỉ mặc định' -> Bấm 'Lưu'.
+4. Liên kết đơn hàng: Khi chốt đơn, hệ thống chụp SNAPSHOT toàn bộ địa chỉ vào bảng Đơn hàng.
+Alt / Exception Flow:
+Alternative Flow: Khách tự chọn Tỉnh/Thành, Quận/Huyện thủ công từ Picker Menu.
+Exception Flow: Đơn Giao hỏa tốc yêu cầu địa chỉ thuộc Bắc Giang, nếu chọn địa chỉ ngoài tỉnh -> Hệ thống thông báo không hỗ trợ hỏa tốc.
+Business Rules liên quan:
+BR-ACC-008 (Snapshot địa chỉ vào đơn hàng); BR-ACC-009 (Sửa sổ địa chỉ không làm đổi đơn hàng cũ); BR-ACC-010 (Tối đa 10 địa chỉ); BR-ACC-011 (Hỏa tốc bắt buộc nội tỉnh Bắc Giang).
+Function ID / Name:
+UC-ACC-06 - Admin Cấp tài khoản & Duyệt HTX
+Mục tiêu:
+Cho phép Admin tạo tài khoản Nội bộ/Giám sát và Phê duyệt kích hoạt tài khoản HTX từ hồ sơ.
+Actor / Trigger:
+Actor: Admin (SUPER_ADMIN).
+Trigger: Vào Màn hình Phê duyệt HTX hoặc Cấp tài khoản trên Admin Portal/App Admin.
+Preconditions:
+Admin đã đăng nhập.
+Main Flow (Mobile):
+1. Duyệt HTX: Admin mở danh sách Hồ sơ HTX PENDING_APPROVAL -> Kiểm tra thông tin, giấy phép kinh doanh, chứng nhận  -> Bấm 'Phê duyệt'  -> Trạng thái HTX chuyển ACTIVE.
+2. Hệ thống KHÔNG gửi mật khẩu trực tiếp qua SMS/Push. Hệ thống tự động gửi Email/SMS chứa "Link/Mã OTP kích hoạt thiết lập mật khẩu" (hiệu lực 24h) tới SĐT/Email đăng ký của HTX.
+3. Đại diện HTX nhấn vào Link/nhập OTP trên App Mobile -> Tự đặt mật khẩu mới cho tài khoản của mình.
+
+Alt / Exception Flow:
+Exception Flow: Admin Từ chối duyệt HTX -> Bắt buộc nhập Lý do từ chối  -> Hồ sơ chuyển `REJECTED` để HTX sửa lại.
+Business Rules liên quan:
+BR-ACC-013 (Admin không cấp quyền cao hơn chính mình); BR-HTX-05 (HTX chỉ được bán hàng sau khi Admin duyệt).
+Function ID / Name:
+UC-ACC-07 - Admin Khóa / Mở khóa tài khoản
+Mục tiêu:
+Vô hiệu hóa hoặc khôi phục quyền truy cập của tài khoản, gửi Silent Push kích văng phiên làm việc tức thì.
+Actor / Trigger:
+Actor: Admin (SUPER_ADMIN).
+Trigger: Chọn tài khoản trong Danh sách -> Bấm 'Khóa' hoặc 'Mở khóa'.
+Preconditions:
+Tài khoản tồn tại trên hệ thống.
+Main Flow (Mobile):
+1. Admin chọn 'Khóa tài khoản' -> Pop-up bắt buộc nhập 'Lý do khóa'.
+2. Bấm 'Xác nhận' -> Hệ thống chuyển `status = LOCKED`, ghi log `locked_by`, `lock_reason`.
+3. Đồng thời gửi lềnh Silent Push Notification tới thiết bị Mobile của User -> App Mobile nhận lệnh lập tức xóa local cache/token và chuyển về Màn hình Đăng nhập kèm thông báo lý do bị khóa.
+4. Mở khóa: Admin chọn 'Mở khóa' -> Trạng thái về `ACTIVE` -> User đăng nhập lại bình thường.
+Alt / Exception Flow:
+Exception Flow: Admin cố tình tự khóa chính mình -> Báo lỗi 'Không thể tự khóa tài khoản cá nhân'.
+Business Rules liên quan:
+BR-ACC-012 (Token bị vô hiệu hóa ngay khi khóa); BR-ACC-013 (Bắt buộc lý do khóa); BR-ACC-016 (Silent Push kick session mobile).
+Current Status
+Action / Event
+Actor
+Next Status
+Điều kiện & Quy tắc Mobile
+REGISTERED
+Xác thực OTP thành công
+Customer / App
+ACTIVE
+SĐT chưa tồn tại. OTP đúng trong 120s. Tự động đăng nhập.
+PENDING_APPROVAL
+Admin duyệt Hồ sơ HTX 
+SUPER_ADMIN
+ACTIVE
+Hồ sơ giấy phép & chứng nhận hợp lệ. Gửi Email/SMS Link kích hoạt để HTX tự tạo mật khẩu.
+PENDING_APPROVAL
+Admin từ chối Hồ sơ HTX 
+SUPER_ADMIN
+REJECTED
+Bắt buộc nhập lý do. HTX được sửa hồ sơ trên App để nộp lại.
+REJECTED
+HTX nộp lại Hồ sơ 
+Đại diện HTX
+PENDING_APPROVAL
+Đã cập nhật giấy tờ theo phản hồi của Admin.
+ACTIVE
+Admin Khóa tài khoản
+SUPER_ADMIN
+LOCKED
+Bắt buộc nhập Lý do khóa. Gửi Silent Push hủy Session Mobile tức thì.
+Mã BR
+Quy tắc nghiệp vụ (Business Rule)
+Phân loại / Nguồn
+BR-ACC-001
+Một Số điện thoại chỉ được liên kết với 1 tài khoản Khách hàng đang hoạt động.
+Official - BRD Luồng hàng 
+BR-ACC-002
+Mã OTP có hiệu lực 120s. Tối đa 3 lần gửi lại OTP trong 15 phút.
+PROPOSED (Mobile)
+BR-ACC-003
+Mật khẩu dài 8-32 ký tự, gồm ít nhất 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt.
+PROPOSED
+BR-ACC-004
+Khi đăng nhập thất bại, trả về thông báo chung để chống dò quét mật khẩu.
+PROPOSED
+BR-ACC-005
+Khóa tạm thời 15 phút nếu nhập sai mật khẩu 5 lần liên tiếp trên App.
+PROPOSED
+BR-ACC-006
+Số điện thoại chính chủ không cho sửa trực tiếp, phải xác thực qua OTP mới.
+PROPOSED
+BR-ACC-007
+Mã số thuế (MST) của HTX là định danh duy nhất. Mỗi HTX chỉ có 1 MST trên hệ thống.
+Official - BRD HTX 
+BR-ACC-008
+Khi chốt đơn, hệ thống chụp lại Dữ liệu Địa chỉ (Snapshot) vào Đơn hàng.
+Official - BRD Đơn hàng 
+BR-ACC-009
+Chỉnh sửa Sổ địa chỉ tuyệt đối không làm thay đổi thông tin trên Đơn hàng đã tạo.
+Official - BRD Đơn hàng 
+BR-ACC-010
+Mỗi Khách hàng lưu tối đa 10 địa chỉ nhận hàng trên App Mobile.
+PROPOSED (Mobile Optimization)
+BR-ACC-011
+Đơn hàng Giao hỏa tốc bắt buộc địa chỉ nhận hàng thuộc Tỉnh Bắc Giang.
+Official - BRD Đơn hàng 
+BR-ACC-012
+Tài khoản bị KHÓA (LOCKED) bị thu hồi ngay lập tức Token và ngắt Session.
+PROPOSED
+BR-ACC-013
+Admin khi khóa tài khoản bắt buộc phải nhập Lý do khóa.
+PROPOSED
+BR-ACC-014
+Cán bộ Cơ quan QLNN (Giám sát) chỉ xem Báo cáo, không sửa dữ liệu.
+Official - BRD HTX 
+BR-ACC-015
+Mỗi tài khoản lưu tối đa 3 Device Tokens hoạt động để nhận Push Notification.
+PROPOSED (Mobile)
+BR-ACC-016
+Khi tài khoản bị khóa, hệ thống gửi Silent Push kick văng khỏi App tức thì.
+PROPOSED (Mobile)
+BR-ACC-017
+App xin quyền GPS khi chọn vị trí giao hàng và xin quyền Camera khi nộp ảnh HTX.
+PROPOSED (Mobile Native) 
+Field Name
+Data Type
+PK/FK
+Req
+Editable
+Mô tả & Ghi chú Mobile
+user_id
+BIGINT
+PK
+Y
+N
+ID định danh người dùng duy nhất
+username
+VARCHAR(50)
+-
+Y
+N
+Tên đăng nhập / Số điện thoại
+phone_number
+VARCHAR(15)
+-
+Y
+N
+Số điện thoại chính chính chủ
+email
+VARCHAR(100)
+-
+N
+Y
+Email liên hệ
+password_hash
+VARCHAR(255)
+-
+Y
+Y
+Mật khẩu đã mã hóa Bcrypt
+full_name
+VARCHAR(100)
+-
+Y
+Y
+Họ và tên hiển thị
+role
+VARCHAR(20)
+-
+Y
+N
+CUSTOMER, HTX_ADMIN, SUPER_ADMIN, GOV_MONITOR, DELIVERY_STAFF 
+status
+VARCHAR(20)
+-
+Y
+N
+REGISTERED, PENDING_APPROVAL, ACTIVE, LOCKED, REJECTED
+htx_id
+BIGINT
+FK
+N
+N
+ID HTX liên kết (nếu role HTX) 
+device_token
+VARCHAR(255)
+-
+N
+Y
+[MOBILE] FCM Token nhận Push Notification
+biometric_enabled
+BOOLEAN
+-
+N
+Y
+[MOBILE] Trạng thái bật/tắt Vân tay/Face ID
+device_id
+VARCHAR(100)
+-
+N
+Y
+[MOBILE] Mã định danh thiết bị Mobile
+locked_by
+BIGINT
+FK
+N
+N
+ID Admin thực hiện khóa tài khoản
+lock_reason
+TEXT
+-
+N
+N
+Lý do khóa tài khoản (Bắt buộc khi LOCKED)
+created_at
+TIMESTAMP
+-
+Y
+N
+Thời gian khởi tạo bản ghi
+is_default
+BOOLEAN
+-
+Y
+Y
+TRUE nếu là địa chỉ nhận hàng mặc định, mặc định FALSE
+Field Name
+Data Type
+PK/FK
+Req
+Editable
+Mô tả & Ghi chú Mobile
+address_id
+BIGINT
+PK
+Y
+N
+ID địa chỉ nhận hàng
+user_id
+BIGINT
+FK
+Y
+N
+ID Khách hàng sở hữu
+receiver_name
+VARCHAR(100)
+-
+Y
+Y
+Họ tên người nhận hàng
+receiver_phone
+VARCHAR(15)
+-
+Y
+Y
+SĐT người nhận hàng
+province_name
+VARCHAR(100)
+-
+Y
+Y
+Tỉnh/Thành phố (VD: Tỉnh Bắc Giang)
+district_name
+VARCHAR(100)
+-
+Y
+Y
+Quận/Huyện (VD: Huyện Lục Ngạn)
+address_detail
+VARCHAR(255)
+-
+Y
+Y
+Số nhà, đường, xóm
+latitude
+DECIMAL(10,8)
+-
+N
+Y
+[MOBILE] Vĩ độ định vị GPS 
+longitude
+DECIMAL(11,8)
+-
+N
+Y
+[MOBILE] Kinh độ định vị GPS 

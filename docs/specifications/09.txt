@@ -1,0 +1,1185 @@
+# Đặc tả UC từ FR-DT-01 tới FR-DT-04, FR-HT-01.docx
+Nguồn: https://docs.google.com/document/d/1e3_bhiciTUkYjWAovnN_m4GDVyDrCqg3/edit?usp=drivesdk&ouid=118008469128637664818&rtpof=true&sd=true
+
+Cập nhật 12/10/2026
+Đặc tả Use Case và Business Rule
+Module Quản lý doanh thu (FR-DT-01 → FR-DT-04) và Quản lý hệ thống – Quản lý ưu đãi (FR-HT-01)
+1. Danh sách FR và Use Case
+Nguồn phạm vi và phân quyền: “Bảng chức năng theo module 8/10”. Mỗi FR có tối đa 5 UC; tổng cộng 16 UC.
+2. Giả định, tham số cấu hình và điểm cần chốt
+Các số tiền, tỷ lệ và quy tắc chia chi phí trong nhóm Doanh thu/Ưu đãi hiện đều là giả định trong file “Các điểm phát sinh tiền cần nghiên cứu”. Tài liệu này đặc tả theo hướng tham số cấu hình: giá trị đổi được không phải sửa lại luồng. Chỗ nào chưa chốt được đánh dấu [Giả định] hoặc [Tham số chưa chốt] trong BR.
+2.1. Tham số cấu hình
+2.2. Điểm lệch giữa các tài liệu và câu hỏi cần chốt
+3. Đặc tả Use Case
+FR-DT-01 – Dashboard doanh thu
+Phân quyền: HTX – Của mình; Admin – Chỉ xem; Cơ quan QLNN – không có quyền.
+UC-DT-01 – Xem dashboard doanh thu của HTX
+UC-DT-02 – Xem dashboard doanh thu toàn hệ thống
+FR-DT-02 – Xem đối soát tiền chi trả, chiết khấu
+Phân quyền: HTX – Của mình; Admin – Chỉ xem. Các nhóm tiền tách riêng: tiền hàng, hoa hồng, phí ship, tiền hoàn (BR-DT-03).
+UC-DT-03 – Xem tổng hợp đối soát theo kỳ (HTX)
+UC-DT-04 – Xem chi tiết chiết khấu, khoản trừ và tiền giữ lại
+UC-DT-05 – Xem tổng hợp đối soát toàn hệ thống (Admin)
+FR-DT-03 – Xem đối soát theo đơn, HTX
+Phân quyền: HTX – Của mình; Admin – Chỉ xem (xem theo HTX chỉ dành cho Admin).
+UC-DT-06 – Xem danh sách đối soát theo đơn (HTX)
+UC-DT-07 – Xem chi tiết đối soát một đơn
+UC-DT-08 – Xem đối soát theo HTX (Admin)
+FR-DT-04 – Chốt kỳ, chi trả HTX
+Phân quyền: Admin thao tác (xem mục 2.2, điểm 1); HTX chỉ xem kết quả ở FR-DT-02/03.
+UC-DT-09 – Rà soát bảng kê đối soát của kỳ
+UC-DT-10 – Chốt kỳ đối soát
+UC-DT-11 – Thực hiện và ghi nhận chi trả cho HTX
+UC-DT-12 – Điều chỉnh sau chốt, giải phóng tiền giữ lại và xử lý công nợ
+FR-HT-01 – Quản lý ưu đãi
+Phân quyền: Admin – Có. Phạm vi giai đoạn 1: nhập mã tại checkout, chưa có ví voucher (DX-09).
+UC-HT-01 – Tạo mã ưu đãi
+UC-HT-02 – Sửa, tạm dừng, kích hoạt lại và kết thúc mã ưu đãi
+UC-HT-03 – Xem danh sách và theo dõi sử dụng mã ưu đãi
+UC-HT-04 – Hoàn lại lượt dùng mã ưu đãi khi đơn không hoàn tất
+FR
+Chức năng
+Mã UC
+Tên Use Case
+Tác nhân chính
+Ưu tiên
+FR-DT-01
+Dashboard doanh thu
+UC-DT-01
+Xem dashboard doanh thu của HTX
+HTX
+Trung bình
+FR-DT-01
+Dashboard doanh thu
+UC-DT-02
+Xem dashboard doanh thu toàn hệ thống
+Admin
+Trung bình
+FR-DT-02
+Xem đối soát tiền chi trả, chiết khấu,…
+UC-DT-03
+Xem tổng hợp đối soát theo kỳ (HTX)
+HTX
+Cao
+FR-DT-02
+Xem đối soát tiền chi trả, chiết khấu,…
+UC-DT-04
+Xem chi tiết chiết khấu, khoản trừ và tiền giữ lại
+HTX; Admin
+Cao
+FR-DT-02
+Xem đối soát tiền chi trả, chiết khấu,…
+UC-DT-05
+Xem tổng hợp đối soát toàn hệ thống (Admin)
+Admin
+Cao
+FR-DT-03
+Xem đối soát theo đơn, HTX
+UC-DT-06
+Xem danh sách đối soát theo đơn (HTX)
+HTX
+Cao
+FR-DT-03
+Xem đối soát theo đơn, HTX
+UC-DT-07
+Xem chi tiết đối soát một đơn
+HTX; Admin
+Cao
+FR-DT-03
+Xem đối soát theo đơn, HTX
+UC-DT-08
+Xem đối soát theo HTX (Admin)
+Admin
+Cao
+FR-DT-04
+Chốt kỳ, chi trả HTX
+UC-DT-09
+Rà soát bảng kê đối soát của kỳ
+Admin
+Cao
+FR-DT-04
+Chốt kỳ, chi trả HTX
+UC-DT-10
+Chốt kỳ đối soát
+Admin
+Cao
+FR-DT-04
+Chốt kỳ, chi trả HTX
+UC-DT-11
+Thực hiện và ghi nhận chi trả cho HTX
+Admin
+Cao
+FR-DT-04
+Chốt kỳ, chi trả HTX
+UC-DT-12
+Điều chỉnh sau chốt, giải phóng tiền giữ lại và xử lý công nợ
+Admin; Hệ thống
+Trung bình
+FR-HT-01
+Quản lý ưu đãi
+UC-HT-01
+Tạo mã ưu đãi
+Admin
+Trung bình
+FR-HT-01
+Quản lý ưu đãi
+UC-HT-02
+Sửa, tạm dừng, kích hoạt lại và kết thúc mã ưu đãi
+Admin
+Trung bình
+FR-HT-01
+Quản lý ưu đãi
+UC-HT-03
+Xem danh sách và theo dõi sử dụng mã ưu đãi
+Admin
+Trung bình
+FR-HT-01
+Quản lý ưu đãi
+UC-HT-04
+Hoàn lại lượt dùng mã ưu đãi khi đơn không hoàn tất
+Hệ thống
+Trung bình
+Tham số
+Giá trị đề xuất/hiện có
+Nguồn
+Trạng thái
+Chu kỳ đối soát/chi trả
+Hàng tuần
+Các điểm phát sinh tiền – phương án B
+Chưa chốt
+Ngày/giờ cắt kỳ
+Chưa có đề xuất
+–
+Cần chốt
+Tỷ lệ hoa hồng/phí sàn
+3–5% (có thể 0% trong 3–6 tháng đầu)
+Các điểm phát sinh tiền (dòng 13, phương án B)
+Giả định, chờ Lead/PO
+Phí cổng thanh toán
+1–1,5% (hoặc đã gộp trong 3–5%)
+Các điểm phát sinh tiền (dòng 14)
+Giả định, chờ Lead
+Tỷ lệ tiền giữ lại mỗi kỳ
+Chưa có; giải phóng sau 2 kỳ (~2 tuần)
+Các điểm phát sinh tiền (chu kỳ trả tiền HTX)
+Cần chốt tỷ lệ
+Ngưỡng chi trả tối thiểu
+Chưa có đề xuất
+–
+Cần chốt
+Tỷ lệ cọc Preorder
+30%
+BRD Luồng mua hàng, DX-03
+Giả định, chờ PO/HTX
+Thời hạn yêu cầu trả hàng/hoàn tiền
+10 ngày (thường); 24 giờ (tươi sống, đông lạnh)
+BRD Chính sách đơn hàng, mục D
+Đề xuất
+Thời gian giữ thanh toán online
+15 phút
+BRD Luồng mua hàng
+Đề xuất
+Phụ phí hỏa tốc (tham chiếu)
+0–5 km: 20k; 5–10 km: 30k; 10–15 km: 40k; >15 km: không áp dụng
+Các điểm phát sinh tiền (dòng 5)
+Giả định; BRD đơn hàng yêu cầu cấu hình theo ĐVVC/tuyến
+Điều kiện hoàn mã khi hủy đơn
+Hoàn khi hủy do khách (trước bàn giao), HTX, hệ thống; không hoàn khi mất cọc/giao thất bại do khách
+BRD Luồng mua hàng, DX-09
+Đề xuất (Nháp)
+#
+Vấn đề
+Ảnh hưởng/giả định đang dùng
+Người chốt đề xuất
+1
+Quyền Admin ở FR-DT-04: bảng 8/10 ghi “Chỉ xem”, nhưng chốt kỳ và chi trả cần Admin thao tác; HTX ghi “—”.
+Tài liệu này giả định Admin có quyền thao tác (tương đương “Có”). Cần sửa bảng 8/10 nếu đồng ý. Nếu không thì thao tác chốt sổ dự kiến là như thế nào?
+Lead BA
+2
+Tiền COD: bảng “Các điểm phát sinh tiền” (dòng 2) giả định ĐVVC thu hộ rồi chuyển về sàn; BRD Luồng mua hàng (BR-MH-42, nháp) ghi COD thì HTX giữ tiền mặt và hoa hồng trừ vào kỳ chi trả sau.
+Hai cách cho công thức đối soát khác nhau (kỳ chi trả có thể âm/công nợ). Đã dùng thuộc tính “Nguồn thu tiền” (BR-DT-08) để chứa được cả hai.
+Lead/PO, BA 1, BA 2
+3
+Phí sàn và phí cổng: phần “cân nhắc thêm” ghi 3–5% đã gồm phí cổng; dòng 13–14 ghi hoa hồng 3–5% và phí cổng 1–1,5% là hai khoản riêng (Đề xuất: 1-1.5% phí cổng là để làm rõ nếu xảy ra sự cố hoàn tiền thì HTX sẽ phải chịu phần chi phí cổng, còn những đơn hàng hoàn thành bình thường thì hoa hồng 3-5% đã bao gồm phí cổng ở trong đó)
+Quyết định HTX có chịu phí cổng riêng hay không. Đã tách thành hai tham số.
+Lead/PO
+4
+Cơ sở tính hoa hồng với đơn có mã ưu đãi, hộp quà, phí ship: chưa BRD nào nêu.
+Đã giả định chi phí ưu đãi do sàn chịu, HTX nhận đủ tiền hàng; cơ sở tính hoa hồng (trước/sau giảm) để tham số (BR-DT-07).
+Lead/PO
+5
+Điều kiện đưa đơn vào kỳ và tiền giữ lại: chu kỳ tuần, giữ lại một phần giải phóng sau 2 kỳ, trong khi thời hạn yêu cầu trả hàng là 10 ngày (24 giờ với hàng tươi). Chưa có tỷ lệ giữ lại.
+Đã giả định đơn Đã giao và không có hoàn/ticket mở thì vào kỳ (BR-DT-18, BR-DT-19). Cần chốt tỷ lệ giữ lại.
+Lead BA
+6
+Khoản cọc Preorder không hoàn thuộc về ai: bảng tiền ghi HTX nhận cọc trừ phí cổng; BRD Luồng mua hàng ghi đề xuất “HTX, trừ hoa hồng như đơn thường” và chưa chốt.
+Ảnh hưởng dòng “cọc không hoàn” ở BR-DT-09 (có trừ hoa hồng hay không).
+BA 2, Lead BA
+7
+Mã ưu đãi sau khi hoàn tiền (đã giao): bảng tiền ghi “mã có được trả lại cho khách không chưa rõ”.
+Đã giả định không trả lại mã khi hoàn tiền sau giao; hoàn mã khi hủy trước bàn giao (BR-HT-13).
+Lead BA
+8
+Cách chuyển tiền chi trả HTX: chưa có tích hợp thanh toán hộ hay ngân hàng.
+Đã giả định chuyển khoản thủ công ngoài hệ thống, Admin ghi nhận (BR-DT-26).
+Lead/PO, Dev
+9
+Cơ quan quản lý nhà nước không có quyền ở nhóm FR-DT (“—”), nhưng có quyền tổng hợp ở FR-BCTK.
+Giữ nguyên theo bảng 8/10: các UC doanh thu/đối soát không cho Cơ quan QLNN. Số liệu tổng hợp cho vai trò này thuộc FR-BCTK (Đức Hiếu).
+Lead BA
+10
+Chính sách đền bù cho HTX (HTX mong muốn trong BRD Chính sách đơn hàng) và phạt HTX: chưa có; giai đoạn demo không phạt tiền.
+UC-DT-12 chỉ để chỗ cho điều chỉnh loại “Đền bù/khác” khi có chính sách.
+Lead/PO
+Hạng mục
+Nội dung
+Tên UC
+Xem dashboard doanh thu của HTX
+Danh sách chức năng
+Quản lý doanh thu – Dashboard doanh thu
+Độ ưu tiên
+Trung bình – Should Have. Giúp HTX theo dõi kết quả bán hàng và số tiền sẽ nhận; chưa chặn luồng đặt hàng nên có thể làm sau các chức năng đối soát. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+HTX đã đăng nhập, hồ sơ HTX đã được Admin duyệt.
+Tác nhân phụ
+Hệ thống
+Mô tả
+Là HTX, tôi muốn xem tổng quan doanh thu, số đơn, các khoản trừ và số tiền sắp nhận của riêng HTX mình theo từng khoảng thời gian, để nắm tình hình kinh doanh và biết khi nào được chi trả.
+Điều kiện trước
+1. HTX đã đăng nhập thành công, tài khoản ở trạng thái Đang hoạt động.
+2. Hồ sơ HTX đã được Admin duyệt.
+3. Thiết bị có kết nối Internet.
+4. Chưa có đơn hàng vẫn xem được dashboard (hiển thị giá trị 0 và thông báo chưa có dữ liệu).
+Kích hoạt UC
+HTX chọn menu Doanh thu → Dashboard doanh thu.
+Luồng sự kiện chính (Happy Case)
+1. HTX mở menu Doanh thu và chọn Dashboard doanh thu.
+2. Hệ thống xác định HTX từ tài khoản đăng nhập và chỉ lấy dữ liệu thuộc HTX đó.
+3. Hệ thống áp dụng bộ lọc mặc định: 30 ngày gần nhất, tất cả loại đơn, tất cả phương thức thanh toán.
+4. Hệ thống hiển thị khối chỉ số tổng quan: Doanh thu tiền hàng (đơn Đã giao), Số đơn Đã giao, Giá trị đơn trung bình, Hoa hồng/phí sàn tạm tính, Tiền hoàn thuộc trách nhiệm HTX, Doanh thu thực nhận tạm tính.
+5. Hệ thống hiển thị khối “Tiền của tôi”: Chờ đưa vào kỳ đối soát, Đang giữ lại, Chờ chi trả (kỳ đã chốt), Đã chi trả; riêng Preorder hiển thị thêm “Cọc đang giữ”.
+6. Hệ thống hiển thị biểu đồ doanh thu theo ngày/tuần/tháng (tự chọn mức theo khoảng thời gian đang lọc).
+7. Hệ thống hiển thị cơ cấu doanh thu theo loại đơn (mua thường/Preorder), phương thức thanh toán (online/COD) và Top sản phẩm bán chạy.
+8. Hệ thống hiển thị phí vận chuyển ở dạng tham chiếu, tách riêng, không cộng vào doanh thu HTX.
+9. Hệ thống hiển thị thời điểm cập nhật gần nhất và nhãn Tạm tính/Đã chốt cho từng chỉ số.
+10. HTX thay đổi bộ lọc (khoảng thời gian, loại đơn, phương thức thanh toán, sản phẩm). Hệ thống tính lại toàn bộ chỉ số và biểu đồ.
+11. HTX bấm vào một chỉ số hoặc cột biểu đồ. Hệ thống chuyển sang màn hình đối soát tương ứng (FR-DT-02/FR-DT-03) với bộ lọc đã chọn.
+Luồng thay thế
+A1 – Chưa có dữ liệu: Tại bước 4, nếu chưa có đơn Đã giao trong khoảng lọc, hệ thống hiển thị giá trị 0 và thông báo “Chưa có doanh thu trong khoảng thời gian này.”
+A2 – Khoảng thời gian tùy chọn: Tại bước 10, HTX chọn khoảng từ ngày – đến ngày; hệ thống kiểm tra hợp lệ rồi tính lại.
+A3 – So sánh với kỳ trước: HTX bật “So sánh”; hệ thống hiển thị mức tăng/giảm (%) của từng chỉ số so với khoảng thời gian liền trước có cùng độ dài.
+A4 – Cảnh báo cần chú ý: Hệ thống hiển thị thông báo khi tiền hoàn tăng bất thường, khi kỳ sắp chốt, hoặc khi có khoản bị tạm giữ chi trả.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Chưa đăng nhập/hết phiên: Hệ thống điều hướng sang màn hình Đăng nhập, sau đó quay lại Dashboard.
+E2 – Tài khoản HTX chưa được duyệt hoặc bị khóa: Hệ thống chặn truy cập và hiển thị: “Tài khoản HTX chưa đủ điều kiện xem doanh thu.”
+E3 – Khoảng thời gian không hợp lệ: Nếu ngày bắt đầu lớn hơn ngày kết thúc hoặc vượt 12 tháng, hệ thống hiển thị: “Khoảng thời gian không hợp lệ. Vui lòng chọn tối đa 12 tháng.”
+E4 – Lỗi tải dữ liệu: Hệ thống không hiển thị số liệu sai, hiển thị: “Không thể tải dữ liệu doanh thu. Vui lòng thử lại.” kèm nút Tải lại.
+E5 – Số liệu lệch giữa các khối: Hệ thống hiển thị cảnh báo “Số liệu đang được đồng bộ, vui lòng xem lại sau” và ghi log để Admin kiểm tra.
+E6 – Mất kết nối Internet: Hệ thống giữ nguyên màn hình gần nhất và hiển thị thông báo lỗi kết nối.
+Điều kiện sau
+Mức 1: HTX xem được dashboard doanh thu đúng phạm vi dữ liệu của HTX mình.
+Mức 2: Chức năng chỉ đọc, không làm thay đổi dữ liệu đơn hàng, đối soát hoặc chi trả. Hệ thống có thể ghi log truy cập.
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-02: Cơ sở ghi nhận doanh thu: doanh thu hàng hóa của một đơn chỉ được ghi nhận khi đơn ở trạng thái Đã giao. Đơn Chờ xác nhận, Đã xác nhận, Đang chuẩn bị, Đang giao chỉ hiển thị ở nhóm “đang xử lý/dự kiến”; đơn Đã hủy không tính vào doanh thu.
+BR-DT-03: Tách bạch 4 nhóm tiền trên mọi màn hình doanh thu/đối soát: (1) tiền hàng, (2) hoa hồng/phí sàn (kèm phí cổng thanh toán nếu có), (3) phí vận chuyển (gồm phụ phí hỏa tốc), (4) tiền hoàn. Không cộng gộp các nhóm này thành một con số duy nhất khi chưa có diễn giải.
+BR-DT-04: Phí vận chuyển và phụ phí hỏa tốc do khách hàng trả cho đơn vị vận chuyển, không thuộc doanh thu của HTX; hệ thống chỉ hiển thị phí ship của đơn ở dạng tham chiếu để HTX đối chiếu. [Giả định – chờ BA 2 chốt cách tính phí ship theo đơn/theo giỏ]
+BR-DT-06: Hoa hồng/phí sàn = Tỷ lệ hoa hồng × cơ sở tính. Tỷ lệ là tham số cấu hình (đề xuất 3–5%, cho phép đặt 0% trong giai đoạn miễn phí đầu). Mỗi đơn lưu snapshot tỷ lệ tại thời điểm tạo đơn; đổi tham số không làm thay đổi đơn cũ. [Tham số chưa chốt – chờ PO/Lead]
+BR-DT-08: Hệ thống phân biệt nguồn thu tiền của đơn: Online (Hệ thống giữ tiền), COD, Cọc Preorder 30%, Phần còn lại Preorder 70% (COD hoặc online). Cách chuyển tiền COD (đơn vị vận chuyển thu hộ rồi chuyển về sàn, hay HTX giữ tiền mặt và trừ hoa hồng vào kỳ sau) chưa chốt nên được lưu bằng thuộc tính “Nguồn thu tiền” để đổi công thức không phải sửa dữ liệu.
+BR-DT-09: Preorder: tiền cọc được ghi nhận ở trạng thái “Hệ thống đang giữ” và chỉ tính vào doanh thu khi đơn Đã giao. Trường hợp khách hủy sau mốc mất cọc, khoản cọc không hoàn được ghi nhận cho HTX sau khi trừ phí cổng thanh toán; hệ thống nhận phần phí cổng. [Giả định – chờ BA 2 xác nhận mốc mất cọc]
+BR-DT-11: Bộ lọc thời gian dùng múi giờ GMT+7. Mặc định hiển thị 30 ngày gần nhất (dashboard) hoặc kỳ hiện tại (đối soát). Khoảng lọc tối đa 12 tháng (tham số cấu hình); ngày bắt đầu không được lớn hơn ngày kết thúc.
+BR-DT-12: Tính nhất quán: tổng trên dashboard phải khớp tổng bảng đối soát với cùng bộ lọc. Số liệu chưa chốt được cập nhật chậm nhất sau 5 phút (tham số); số liệu của kỳ đã chốt không thay đổi. Nếu phát hiện sai lệch giữa các màn hình, hệ thống hiển thị cảnh báo và không che giấu chênh lệch.
+BR-DT-13: Mọi số liệu tiền phải mang nhãn trạng thái: “Tạm tính” (kỳ chưa chốt) hoặc “Đã chốt” (kỳ đã chốt). Chỉ số liệu Đã chốt là căn cứ chi trả cho HTX.
+BR-DT-15: Định dạng tiền: VND, làm trò n đến đồng, làm tròn ở từng dòng đơn; tổng của kỳ bằng tổng các dòng đã làm tròn.
+Giao diện
+Màn hình 1 – Dashboard HTX: thanh bộ lọc (khoảng thời gian, loại đơn, phương thức thanh toán, sản phẩm); thẻ chỉ số tổng quan; khối Tiền của tôi; biểu đồ doanh thu; biểu đồ cơ cấu; bảng Top sản phẩm; vùng cảnh báo.
+Màn hình 2 – Trạng thái trống/lỗi: thông báo, nút Tải lại, nút Xem hướng dẫn nhận tiền.
+Hạng mục
+Nội dung
+Tên UC
+Xem dashboard doanh thu toàn hệ thống
+Danh sách chức năng
+Quản lý doanh thu – Dashboard doanh thu
+Độ ưu tiên
+Trung bình – Should Have. Giúp Admin kiểm soát dòng tiền của sàn (doanh thu hoa hồng, tiền đang giữ, chi phí ưu đãi, tiền hoàn). PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+Admin đã đăng nhập (quyền chỉ xem).
+Tác nhân phụ
+Hệ thống 
+Mô tả
+Là Admin, tôi muốn xem tổng quan doanh thu và dòng tiền của toàn sàn (tiền hàng, hoa hồng, phí cổng, ưu đãi, tiền hoàn, tiền đang giữ, công nợ HTX) theo từng khoảng thời gian, để giám sát hoạt động tài chính và phát hiện bất thường sớm.
+Điều kiện trước
+1. Admin đã đăng nhập thành công và có quyền xem doanh thu.
+2. Có kết nối Internet.
+3. Hệ thống đã có dữ liệu đơn/giao dịch (nếu chưa có, hiển thị trạng thái trống).
+Kích hoạt UC
+Admin chọn menu Doanh thu → Dashboard doanh thu toàn hệ thống.
+Luồng sự kiện chính (Happy Case)
+1. Admin mở Dashboard doanh thu. Hệ thống kiểm tra quyền Admin.
+2. Hệ thống áp dụng bộ lọc mặc định: 30 ngày gần nhất, tất cả HTX, tất cả loại đơn.
+3. Hệ thống hiển thị chỉ số toàn sàn: Tổng tiền hàng (đơn Đã giao), Số đơn Đã giao, Số HTX có doanh thu, Hoa hồng thu được, Phí cổng thanh toán, Chi phí ưu đãi do sàn chịu, Tổng tiền hoàn (tách theo người chịu: HTX, đơn vị vận chuyển, Hệ thống).
+4. Hệ thống hiển thị khối dòng tiền: Tiền Hệ thống đang giữ (online chưa chi trả, cọc Preorder), Tiền đã chi trả HTX, Chờ chi trả, Tiền giữ lại, Công nợ HTX.
+5. Hệ thống hiển thị phí vận chuyển tham chiếu, tách riêng khỏi doanh thu.
+6. Hệ thống hiển thị biểu đồ xu hướng theo ngày/tuần/tháng và Top HTX theo doanh thu.
+7. Admin lọc theo HTX, loại đơn, phương thức thanh toán, nhóm sản phẩm, khoảng thời gian. Hệ thống tính lại.
+8. Admin bấm vào một HTX hoặc một chỉ số. Hệ thống chuyển sang đối soát tương ứng (UC-DT-05/UC-DT-08).
+9. Hệ thống hiển thị nhãn Tạm tính/Đã chốt và thời điểm cập nhật gần nhất.
+Luồng thay thế
+A1 – Lọc theo một HTX: Tại bước 7, Admin chọn một HTX; dashboard chuyển sang số liệu của HTX đó (vẫn ở chế độ chỉ xem).
+A2 – Xem riêng Preorder: Admin lọc loại đơn Preorder; hệ thống hiển thị tách Cọc đang giữ, Cọc mất (đã ghi nhận cho HTX) và Phần còn lại 70%.
+A3 – Xem cảnh báo bất thường: Hệ thống nêu bật HTX có tỷ lệ hoàn cao, số dư công nợ âm, hoặc kỳ quá hạn chốt.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Nếu người dùng không phải Admin, hệ thống chặn và hiển thị: “Bạn không có quyền truy cập chức năng này.”
+E2 – Khoảng thời gian không hợp lệ: Hệ thống hiển thị thông báo giống E3 của UC-DT-01.
+E3 – Lỗi tải dữ liệu: Hệ thống không hiển thị số liệu sai, hiển thị thông báo lỗi và nút Tải lại.
+E4 – Dữ liệu sai lệch giữa dashboard và đối soát: Hệ thống hiển thị cảnh báo kèm chênh lệch và ghi log để Admin tra soát.
+E5 – Chưa có dữ liệu: Hệ thống hiển thị các chỉ số bằng 0 và thông báo chưa có giao dịch.
+Điều kiện sau
+Mức 1: Admin xem được tổng quan doanh thu và dòng tiền toàn sàn.
+Mức 2: Chức năng chỉ đọc; Admin không sửa số liệu tại màn hình này. Hệ thống có thể ghi log truy cập.
+Điều hướng: Admin có thể đi sang Đối soát toàn hệ thống (UC-DT-05) hoặc Chốt kỳ, chi trả (UC-DT-09).
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-02: Cơ sở ghi nhận doanh thu: doanh thu hàng hóa của một đơn chỉ được ghi nhận khi đơn ở trạng thái Đã giao. Đơn Chờ xác nhận, Đã xác nhận, Đang chuẩn bị, Đang giao chỉ hiển thị ở nhóm “đang xử lý/dự kiến”; đơn Đã hủy không tính vào doanh thu.
+BR-DT-03: Tách bạch 4 nhóm tiền trên mọi màn hình doanh thu/đối soát: (1) tiền hàng, (2) hoa hồng/phí sàn (kèm phí cổng thanh toán nếu có), (3) phí vận chuyển (gồm phụ phí hỏa tốc), (4) tiền hoàn. Không cộng gộp các nhóm này thành một con số duy nhất khi chưa có diễn giải.
+BR-DT-04: Phí vận chuyển và phụ phí hỏa tốc do khách hàng trả cho đơn vị vận chuyển, không thuộc doanh thu của HTX; hệ thống chỉ hiển thị phí ship của đơn ở dạng tham chiếu để HTX đối chiếu. [Giả định – chờ BA 2 chốt cách tính phí ship theo đơn/theo giỏ]
+BR-DT-06: Hoa hồng/phí sàn = Tỷ lệ hoa hồng × cơ sở tính. Tỷ lệ là tham số cấu hình (đề xuất 3–5%, cho phép đặt 0% trong giai đoạn miễn phí đầu). Mỗi đơn lưu snapshot tỷ lệ tại thời điểm tạo đơn; đổi tham số không làm thay đổi đơn cũ. [Tham số chưa chốt – chờ PO/Lead]
+BR-DT-07: Chi phí giảm giá của mã ưu đãi do Hệ thống chịu, HTX vẫn nhận đủ tiền hàng; hệ thống hiển thị riêng dòng “Ưu đãi do sàn chịu”. Việc tính hoa hồng trên giá trước hay sau giảm là tham số cấu hình. [Giả định – chờ chốt]
+BR-DT-08: Hệ thống phân biệt nguồn thu tiền của đơn: Online (Hệ thống giữ tiền), COD, Cọc Preorder 30%, Phần còn lại Preorder 70% (COD hoặc online). Cách chuyển tiền COD (đơn vị vận chuyển thu hộ rồi chuyển về sàn, hay HTX giữ tiền mặt và trừ hoa hồng vào kỳ sau) chưa chốt nên được lưu bằng thuộc tính “Nguồn thu tiền” để đổi công thức không phải sửa dữ liệu.
+BR-DT-09: Preorder: tiền cọc được ghi nhận ở trạng thái “Hệ thống đang giữ” và chỉ tính vào doanh thu khi đơn Đã giao. Trường hợp khách hủy sau mốc mất cọc, khoản cọc không hoàn được ghi nhận cho HTX sau khi trừ phí cổng thanh toán; hệ thống nhận phần phí cổng. [Giả định – chờ BA 2 xác nhận mốc mất cọc]
+BR-DT-10: Hoàn tiền/hoàn hàng được ghi nhận bằng dòng điều chỉnh âm gắn với đơn gốc, kèm người chịu trách nhiệm (HTX, đơn vị vận chuyển, Hệ thống, Khách hàng). Chỉ phần thuộc trách nhiệm HTX mới trừ vào số tiền HTX thực nhận. Chỉ ghi nhận khi Admin đã quyết định hoàn và giao dịch hoàn tiền thành công; số tiền hoàn không vượt số tiền khách đã thanh toán cho phần hàng được hoàn.
+BR-DT-11: Bộ lọc thời gian dùng múi giờ GMT+7. Mặc định hiển thị 30 ngày gần nhất (dashboard) hoặc kỳ hiện tại (đối soát). Khoảng lọc tối đa 12 tháng (tham số cấu hình); ngày bắt đầu không được lớn hơn ngày kết thúc.
+BR-DT-12: Tính nhất quán: tổng trên dashboard phải khớp tổng bảng đối soát với cùng bộ lọc. Số liệu chưa chốt được cập nhật chậm nhất sau 5 phút (tham số); số liệu của kỳ đã chốt không thay đổi. Nếu phát hiện sai lệch giữa các màn hình, hệ thống hiển thị cảnh báo và không che giấu chênh lệch.
+BR-DT-13: Mọi số liệu tiền phải mang nhãn trạng thái: “Tạm tính” (kỳ chưa chốt) hoặc “Đã chốt” (kỳ đã chốt). Chỉ số liệu Đã chốt là căn cứ chi trả cho HTX.
+BR-DT-16: Chỉ Admin được xem đối soát theo từng HTX và so sánh giữa các HTX; HTX không xem được dữ liệu của HTX khác dưới bất kỳ hình thức nào (kể cả đổi mã trên đường dẫn).
+Giao diện
+Màn hình 1 – Dashboard Admin: bộ lọc; thẻ chỉ số toàn sàn; khối dòng tiền; biểu đồ xu hướng; bảng Top HTX; vùng cảnh báo.
+Màn hình 2 – Trạng thái trống/lỗi: thông báo, nút Tải lại 
+Hạng mục
+Nội dung
+Tên UC
+Xem tổng hợp đối soát theo kỳ (HTX)
+Danh sách chức năng
+Quản lý doanh thu – Xem đối soát tiền chi trả, chiết khấu
+Độ ưu tiên
+Cao – Must Have. HTX cần biết rõ mình sẽ nhận bao nhiêu tiền, khi nào và bị trừ những khoản gì để tin tưởng nền tảng. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+HTX đã đăng nhập.
+Tác nhân phụ
+Hệ thống 
+Mô tả
+Là HTX, tôi muốn xem danh sách các kỳ đối soát của HTX mình cùng số tiền hàng, hoa hồng, phí ship, tiền hoàn và số tiền được chi trả của từng kỳ, để đối chiếu với đơn thực tế và biết thời điểm nhận tiền.
+Điều kiện trước
+1. HTX đã đăng nhập, tài khoản Đang hoạt động, hồ sơ đã được duyệt.
+2. Hệ thống đã tạo ít nhất một kỳ đối soát (kể cả kỳ hiện tại chưa chốt).
+3. Thiết bị có kết nối Internet.
+Kích hoạt UC
+HTX chọn Doanh thu → Đối soát và chi trả.
+Luồng sự kiện chính (Happy Case)
+1. HTX mở màn hình Đối soát và chi trả. Hệ thống chỉ lấy các kỳ của HTX đó.
+2. Hệ thống hiển thị danh sách kỳ, mới nhất ở trên: mã kỳ, từ ngày – đến ngày, trạng thái (Tạm tính, Đã chốt, Đã chi trả, Chi trả thất bại, Tạm giữ), số đơn.
+3. Với mỗi kỳ, hệ thống hiển thị các nhóm tiền tách riêng: Tiền hàng; Hoa hồng/phí sàn (và phí cổng nếu có); Phí vận chuyển (tham chiếu); Tiền hoàn; Tiền giữ lại; Tiền giữ lại được giải phóng; Điều chỉnh/công nợ; Số tiền chi trả.
+4. HTX lọc theo khoảng thời gian và trạng thái kỳ. Hệ thống tính lại danh sách.
+5. HTX chọn một kỳ. Hệ thống hiển thị bảng tổng hợp của kỳ: công thức tính số tiền chi trả (BR-DT-20), từng thành phần và nhãn Tạm tính/Đã chốt.
+6. Với kỳ Đã chi trả, hệ thống hiển thị ngày chi, mã tham chiếu giao dịch và tài khoản nhận (ẩn bớt số).
+7. HTX chọn Xem chi tiết khoản trừ (UC-DT-04) hoặc Xem đơn trong kỳ (UC-DT-06).
+Luồng thay thế
+A1 – Kỳ hiện tại chưa chốt: Hệ thống hiển thị số liệu Tạm tính kèm ghi chú “Số liệu có thể thay đổi đến khi chốt kỳ” và ngày dự kiến chốt.
+A2 – Kỳ có tiền giữ lại: Hệ thống hiển thị riêng số tiền giữ lại và kỳ dự kiến được giải phóng.
+A3 – Kỳ bị tạm giữ chi trả: Hệ thống hiển thị lý do tạm giữ (ví dụ thiếu tài khoản nhận tiền) và hướng dẫn HTX cập nhật hồ sơ.
+A4 – Số tiền chi trả bằng 0 hoặc dưới ngưỡng tối thiểu: Hệ thống hiển thị “Cộng dồn sang kỳ sau” theo BR-DT-21.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Chưa đăng nhập/hết phiên: Hệ thống điều hướng sang Đăng nhập.
+E2 – Chưa có kỳ nào: Hệ thống hiển thị “Chưa có kỳ đối soát. Kỳ đầu tiên sẽ được tạo khi có đơn Đã giao.”
+E3 – Truy cập kỳ không thuộc HTX: Hệ thống chặn và hiển thị: “Bạn không có quyền xem kỳ đối soát này.”
+E4 – Khoảng thời gian không hợp lệ: Hệ thống hiển thị thông báo tương tự E3 của UC-DT-01.
+E5 – Lỗi tải dữ liệu/mất mạng: Hệ thống không hiển thị số sai, hiển thị thông báo lỗi kèm nút Tải lại.
+Điều kiện sau
+Mức 1: HTX xem được đối soát từng kỳ của HTX mình với các nhóm tiền tách riêng.
+Mức 2: Chức năng chỉ đọc; không làm thay đổi dữ liệu đối soát. Hệ thống có thể ghi log truy cập.
+Điều hướng: sang Chi tiết khoản trừ (UC-DT-04) hoặc Danh sách đối soát theo đơn (UC-DT-06).
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-03: Tách bạch 4 nhóm tiền trên mọi màn hình doanh thu/đối soát: (1) tiền hàng, (2) hoa hồng/phí sàn (kèm phí cổng thanh toán nếu có), (3) phí vận chuyển (gồm phụ phí hỏa tốc), (4) tiền hoàn. Không cộng gộp các nhóm này thành một con số duy nhất khi chưa có diễn giải.
+BR-DT-04: Phí vận chuyển và phụ phí hỏa tốc do khách hàng trả cho đơn vị vận chuyển, không thuộc doanh thu của HTX; hệ thống chỉ hiển thị phí ship của đơn ở dạng tham chiếu để HTX đối chiếu. [Giả định – chờ BA 2 chốt cách tính phí ship theo đơn/theo giỏ]
+BR-DT-05: Số tiền HTX thực nhận của một đơn = Tiền hàng − Hoa hồng − Phí cổng thanh toán (nếu HTX chịu) − Tiền hoàn thuộc trách nhiệm HTX − Chi phí chuyển hoàn/ship lại thuộc trách nhiệm HTX. Người chịu từng khoản được xác định theo nguyên nhân. [Giả định – chờ Lead BA chốt]
+BR-DT-06: Hoa hồng/phí sàn = Tỷ lệ hoa hồng × cơ sở tính. Tỷ lệ là tham số cấu hình (đề xuất 3–5%, cho phép đặt 0% trong giai đoạn miễn phí đầu). Mỗi đơn lưu snapshot tỷ lệ tại thời điểm tạo đơn; đổi tham số không làm thay đổi đơn cũ. [Tham số chưa chốt – chờ PO/Lead]
+BR-DT-10: Hoàn tiền/hoàn hàng được ghi nhận bằng dòng điều chỉnh âm gắn với đơn gốc, kèm người chịu trách nhiệm (HTX, đơn vị vận chuyển, Hệ thống, Khách hàng). Chỉ phần thuộc trách nhiệm HTX mới trừ vào số tiền HTX thực nhận. Chỉ ghi nhận khi Admin đã quyết định hoàn và giao dịch hoàn tiền thành công; số tiền hoàn không vượt số tiền khách đã thanh toán cho phần hàng được hoàn.
+BR-DT-12: Tính nhất quán: tổng trên dashboard phải khớp tổng bảng đối soát với cùng bộ lọc. Số liệu chưa chốt được cập nhật chậm nhất sau 5 phút (tham số); số liệu của kỳ đã chốt không thay đổi. Nếu phát hiện sai lệch giữa các màn hình, hệ thống hiển thị cảnh báo và không che giấu chênh lệch.
+BR-DT-13: Mọi số liệu tiền phải mang nhãn trạng thái: “Tạm tính” (kỳ chưa chốt) hoặc “Đã chốt” (kỳ đã chốt). Chỉ số liệu Đã chốt là căn cứ chi trả cho HTX.
+BR-DT-15: Định dạng tiền: VND, làm tròn đến đồng, làm tròn ở từng dòng đơn; tổng của kỳ bằng tổng các dòng đã làm tròn.
+BR-DT-17: Chu kỳ đối soát mặc định theo tuần (đề xuất phương án B trong tài liệu “Các điểm phát sinh tiền”); ngày/giờ cắt kỳ là tham số cấu hình. Các kỳ không chồng lấn và mỗi đơn chỉ thuộc đúng một kỳ.
+BR-DT-19: Tiền giữ lại: một phần doanh thu mỗi kỳ được giữ lại để bù cho hoàn trả phát sinh muộn; tỷ lệ giữ lại là tham số cấu hình (chưa chốt). Phần giữ lại được giải phóng sau 2 kỳ (khoảng 2 tuần) sau khi trừ chi phí hoàn trả phát sinh (nếu có).
+BR-DT-20: Số tiền chi trả của HTX trong kỳ = Tổng số tiền thực nhận của các đơn trong kỳ − Tiền giữ lại của kỳ + Tiền giữ lại đến hạn giải phóng ± Điều chỉnh/khấu trừ hoàn trả phát sinh sau kỳ trước ± Công nợ kỳ trước. Công thức và từng thành phần phải hiển thị rõ cho cả Admin và HTX.
+BR-DT-21: Nếu số tiền chi trả nhỏ hơn hoặc bằng 0, hoặc nhỏ hơn ngưỡng chi trả tối thiểu (tham số), hệ thống không tạo lệnh chi trả và chuyển số dư sang kỳ kế tiếp dưới dạng công nợ/cộng dồn; không bao giờ ghi nhận “Đã chi trả” cho số tiền âm.
+Giao diện
+Màn hình 1 – Danh sách kỳ đối soát: bộ lọc; bảng kỳ với các cột nhóm tiền; nhãn trạng thái.
+Màn hình 2 – Chi tiết kỳ: tiêu đề kỳ, công thức, bảng thành phần, thông tin chi trả, nút Xem khoản trừ, nút Xem đơn trong kỳ.
+Hạng mục
+Nội dung
+Tên UC
+Xem chi tiết chiết khấu, khoản trừ và tiền giữ lại
+Danh sách chức năng
+Quản lý doanh thu – Xem đối soát tiền chi trả, chiết khấu
+Độ ưu tiên
+Cao – Must Have. Minh bạch từng khoản bị trừ là điều kiện để HTX chấp nhận mức phí sàn và quy định giữ tiền. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+HTX đã đăng nhập (xem dữ liệu của mình); Admin đã đăng nhập (chỉ xem, mọi HTX).
+Tác nhân phụ
+Hệ thống App Đặc sản Bắc Giang
+Mô tả
+Là HTX (hoặc Admin), tôi muốn xem từng khoản chiết khấu và khoản trừ trong kỳ – hoa hồng, phí cổng thanh toán, tiền hoàn theo người chịu trách nhiệm, chi phí chuyển hoàn, tiền giữ lại và điều chỉnh – kèm cách tính, để hiểu vì sao số tiền chi trả ra con số đó.
+Điều kiện trước
+1. Người dùng đã đăng nhập và có quyền xem kỳ đối soát (HTX chỉ kỳ của mình).
+2. Kỳ đối soát tồn tại (Tạm tính hoặc Đã chốt).
+3. Thiết bị có kết nối Internet.
+Kích hoạt UC
+HTX/Admin bấm Xem chi tiết khoản trừ tại màn hình chi tiết kỳ (UC-DT-03/UC-DT-05).
+Luồng sự kiện chính (Happy Case)
+1. Người dùng chọn một kỳ đối soát và bấm Xem chi tiết khoản trừ.
+2. Hệ thống hiển thị nhóm Hoa hồng/phí sàn: tỷ lệ áp dụng (theo snapshot của từng đơn), cơ sở tính, tổng tiền hoa hồng.
+3. Hệ thống hiển thị nhóm Phí cổng thanh toán (nếu HTX chịu): tỷ lệ, số tiền, kể cả phí phát sinh khi hoàn.
+4. Hệ thống hiển thị nhóm Tiền hoàn: danh sách các khoản hoàn, mã đơn, lý do, người chịu trách nhiệm (HTX/đơn vị vận chuyển/Hệ thống/Khách hàng) và số tiền thuộc trách nhiệm HTX.
+5. Hệ thống hiển thị nhóm Chi phí chuyển hoàn/giao lại thuộc trách nhiệm HTX (nếu có).
+6. Hệ thống hiển thị nhóm Ưu đãi do sàn chịu (chỉ để đối chiếu, không trừ vào HTX).
+7. Hệ thống hiển thị nhóm Tiền giữ lại: số tiền giữ lại của kỳ, số tiền giữ lại các kỳ trước đang chờ giải phóng và kỳ dự kiến giải phóng.
+8. Hệ thống hiển thị nhóm Điều chỉnh và công nợ từ các kỳ trước (nếu có), kèm lý do và tham chiếu kỳ/đơn gốc.
+9. Hệ thống hiển thị phần “Cách tính” diễn giải công thức số tiền chi trả theo BR-DT-20 và đối chiếu tổng với màn hình tổng hợp.
+10. Người dùng bấm vào một dòng để xem đơn liên quan (UC-DT-07).
+Luồng thay thế
+A1 – Nhóm không phát sinh: Với nhóm không có dữ liệu (ví dụ chưa có điều chỉnh), hệ thống hiển thị 0 hoặc ẩn nhóm tùy cấu hình, nhưng luôn giữ đủ 4 nhóm tiền chính (BR-DT-03).
+A2 – Miễn hoa hồng giai đoạn đầu: Nếu tỷ lệ hoa hồng đang là 0%, hệ thống hiển thị dòng hoa hồng bằng 0 kèm ghi chú “Đang trong thời gian miễn phí”.
+A3 – Admin xem: Admin thấy cùng dữ liệu nhưng có thêm bộ chọn HTX; không có thao tác sửa.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Hệ thống chặn và hiển thị: “Bạn không có quyền xem thông tin này.”
+E2 – Kỳ không tồn tại/đã bị gỡ khỏi phạm vi: Hệ thống hiển thị: “Không tìm thấy kỳ đối soát.”
+E3 – Tổng các nhóm không khớp số tổng của kỳ: Hệ thống hiển thị cảnh báo chênh lệch và ghi log cho Admin (BR-DT-12).
+E4 – Lỗi tải dữ liệu/mất mạng: Hệ thống hiển thị thông báo lỗi và nút Tải lại.
+Điều kiện sau
+Mức 1: Người dùng hiểu được từng khoản trừ và cách tính số tiền chi trả.
+Mức 2: Chức năng chỉ đọc; không thay đổi dữ liệu.
+Điều hướng: quay lại chi tiết kỳ hoặc sang Chi tiết đối soát một đơn (UC-DT-07).
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-03: Tách bạch 4 nhóm tiền trên mọi màn hình doanh thu/đối soát: (1) tiền hàng, (2) hoa hồng/phí sàn (kèm phí cổng thanh toán nếu có), (3) phí vận chuyển (gồm phụ phí hỏa tốc), (4) tiền hoàn. Không cộng gộp các nhóm này thành một con số duy nhất khi chưa có diễn giải.
+BR-DT-05: Số tiền HTX thực nhận của một đơn = Tiền hàng − Hoa hồng − Phí cổng thanh toán (nếu HTX chịu) − Tiền hoàn thuộc trách nhiệm HTX − Chi phí chuyển hoàn/ship lại thuộc trách nhiệm HTX. Người chịu từng khoản được xác định theo nguyên nhân. [Giả định – chờ Lead BA chốt]
+BR-DT-06: Hoa hồng/phí sàn = Tỷ lệ hoa hồng × cơ sở tính. Tỷ lệ là tham số cấu hình (đề xuất 3–5%, cho phép đặt 0% trong giai đoạn miễn phí đầu). Mỗi đơn lưu snapshot tỷ lệ tại thời điểm tạo đơn; đổi tham số không làm thay đổi đơn cũ. [Tham số chưa chốt – chờ PO/Lead]
+BR-DT-07: Chi phí giảm giá của mã ưu đãi do Hệ thống chịu, HTX vẫn nhận đủ tiền hàng; hệ thống hiển thị riêng dòng “Ưu đãi do sàn chịu”. Việc tính hoa hồng trên giá trước hay sau giảm là tham số cấu hình. [Giả định – chờ chốt]
+BR-DT-10: Hoàn tiền/hoàn hàng được ghi nhận bằng dòng điều chỉnh âm gắn với đơn gốc, kèm người chịu trách nhiệm (HTX, đơn vị vận chuyển, Hệ thống, Khách hàng). Chỉ phần thuộc trách nhiệm HTX mới trừ vào số tiền HTX thực nhận. Chỉ ghi nhận khi Admin đã quyết định hoàn và giao dịch hoàn tiền thành công; số tiền hoàn không vượt số tiền khách đã thanh toán cho phần hàng được hoàn.
+BR-DT-12: Tính nhất quán: tổng trên dashboard phải khớp tổng bảng đối soát với cùng bộ lọc. Số liệu chưa chốt được cập nhật chậm nhất sau 5 phút (tham số); số liệu của kỳ đã chốt không thay đổi. Nếu phát hiện sai lệch giữa các màn hình, hệ thống hiển thị cảnh báo và không che giấu chênh lệch.
+BR-DT-13: Mọi số liệu tiền phải mang nhãn trạng thái: “Tạm tính” (kỳ chưa chốt) hoặc “Đã chốt” (kỳ đã chốt). Chỉ số liệu Đã chốt là căn cứ chi trả cho HTX.
+BR-DT-19: Tiền giữ lại: một phần doanh thu mỗi kỳ được giữ lại để bù cho hoàn trả phát sinh muộn; tỷ lệ giữ lại là tham số cấu hình (chưa chốt). Phần giữ lại được giải phóng sau 2 kỳ (khoảng 2 tuần) sau khi trừ chi phí hoàn trả phát sinh (nếu có).
+BR-DT-20: Số tiền chi trả của HTX trong kỳ = Tổng số tiền thực nhận của các đơn trong kỳ − Tiền giữ lại của kỳ + Tiền giữ lại đến hạn giải phóng ± Điều chỉnh/khấu trừ hoàn trả phát sinh sau kỳ trước ± Công nợ kỳ trước. Công thức và từng thành phần phải hiển thị rõ cho cả Admin và HTX.
+BR-DT-23: Không mở lại kỳ đã chốt. Mọi thay đổi sau chốt (hoàn muộn, sai sót, phạt/đền bù được duyệt) được ghi bằng dòng điều chỉnh vào kỳ kế tiếp, bắt buộc có lý do, người thực hiện và tham chiếu đơn/kỳ gốc.
+Giao diện
+Màn hình 1 – Chi tiết khoản trừ của kỳ: các khối Hoa hồng, Phí cổng, Tiền hoàn, Chuyển hoàn, Ưu đãi do sàn chịu, Tiền giữ lại, Điều chỉnh/công nợ; khối Cách tính ở cuối.
+Chú thích: mỗi khối có biểu tượng thông tin giải thích khoản đó là gì và ai chịu chi phí.
+Hạng mục
+Nội dung
+Tên UC
+Xem tổng hợp đối soát toàn hệ thống (Admin)
+Danh sách chức năng
+Quản lý doanh thu – Xem đối soát tiền chi trả, chiết khấu
+Độ ưu tiên
+Cao – Must Have. Admin cần tổng hợp để quyết định chốt kỳ và theo dõi dòng tiền toàn sàn. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+Admin đã đăng nhập (quyền chỉ xem).
+Tác nhân phụ
+Hệ thống 
+Mô tả
+Là Admin, tôi muốn xem đối soát tổng hợp theo kỳ cho toàn hệ thống, tách rõ tiền hàng, hoa hồng, phí cổng, phí ship, ưu đãi, tiền hoàn và số tiền phải chi trả HTX, để kiểm tra trước khi chốt kỳ và theo dõi sai lệch.
+Điều kiện trước
+1. Admin đã đăng nhập thành công và có quyền xem đối soát.
+2. Hệ thống đã tạo kỳ đối soát theo lịch.
+3. Thiết bị có kết nối Internet.
+Kích hoạt UC
+Admin chọn Doanh thu → Đối soát toàn hệ thống.
+Luồng sự kiện chính (Happy Case)
+1. Admin mở màn hình Đối soát toàn hệ thống. Hệ thống kiểm tra quyền.
+2. Hệ thống hiển thị danh sách kỳ: mã kỳ, từ ngày – đến ngày, trạng thái kỳ (Tạm tính, Đã chốt, Đang chi trả, Hoàn tất), số HTX, số đơn.
+3. Với mỗi kỳ, hệ thống hiển thị tổng theo nhóm: Tiền hàng, Hoa hồng/phí sàn, Phí cổng thanh toán, Phí vận chuyển (tham chiếu), Chi phí ưu đãi do sàn chịu, Tiền hoàn (theo người chịu), Tiền giữ lại, Tổng cần chi trả HTX.
+4. Hệ thống hiển thị số HTX theo trạng thái chi trả (Chờ chi trả, Đã chi trả, Thất bại, Tạm giữ) và số khoản cộng dồn/công nợ.
+5. Hệ thống hiển thị cảnh báo: đơn lỗi dữ liệu, chênh lệch tổng, kỳ quá hạn chốt, HTX thiếu tài khoản nhận tiền.
+6. Admin lọc theo khoảng thời gian, trạng thái kỳ, nguồn thu tiền (Online/COD/Cọc Preorder).
+7. Admin chọn một kỳ để xem chi tiết, hoặc bấm vào cảnh báo để xem danh sách HTX/đơn liên quan, hoặc chuyển sang UC-DT-08 để xem theo HTX.
+Luồng thay thế
+A1 – Đối chiếu COD: Admin lọc nguồn thu “COD”; hệ thống hiển thị riêng số tiền COD đã thu, đang chờ ĐVVC chuyển về và đã trừ vào kỳ chi trả (cách hiển thị phụ thuộc quyết định thu hộ COD – BR-DT-08).
+A2 – Kỳ chưa chốt: Hệ thống hiển thị số liệu Tạm tính và nút đi tới Chốt kỳ (UC-DT-09/UC-DT-10).
+A3 – Xem lại kỳ đã chốt: Hệ thống hiển thị số liệu khóa và các dòng điều chỉnh phát sinh sau chốt (nếu có).
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Hệ thống chặn và hiển thị: “Bạn không có quyền truy cập chức năng này.”
+E2 – Chưa có kỳ đối soát: Hệ thống hiển thị: “Chưa có kỳ đối soát.”
+E3 – Tổng không khớp: Hệ thống hiển thị cảnh báo mức chặn chốt kỳ kèm danh sách chênh lệch.
+E4 – Lỗi tải dữ liệu/mất mạng: Hệ thống hiển thị thông báo lỗi và nút Tải lại.
+Điều kiện sau
+Mức 1: Admin xem được đối soát tổng hợp từng kỳ cho toàn hệ thống.
+Mức 2: Chức năng chỉ đọc; không thay đổi dữ liệu.
+Điều hướng: sang Đối soát theo HTX (UC-DT-08) hoặc Rà soát bảng kê/chốt kỳ (UC-DT-09, UC-DT-10).
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-03: Tách bạch 4 nhóm tiền trên mọi màn hình doanh thu/đối soát: (1) tiền hàng, (2) hoa hồng/phí sàn (kèm phí cổng thanh toán nếu có), (3) phí vận chuyển (gồm phụ phí hỏa tốc), (4) tiền hoàn. Không cộng gộp các nhóm này thành một con số duy nhất khi chưa có diễn giải.
+BR-DT-04: Phí vận chuyển và phụ phí hỏa tốc do khách hàng trả cho đơn vị vận chuyển, không thuộc doanh thu của HTX; hệ thống chỉ hiển thị phí ship của đơn ở dạng tham chiếu để HTX đối chiếu. [Giả định – chờ BA 2 chốt cách tính phí ship theo đơn/theo giỏ]
+BR-DT-05: Số tiền HTX thực nhận của một đơn = Tiền hàng − Hoa hồng − Phí cổng thanh toán (nếu HTX chịu) − Tiền hoàn thuộc trách nhiệm HTX − Chi phí chuyển hoàn/ship lại thuộc trách nhiệm HTX. Người chịu từng khoản được xác định theo nguyên nhân. [Giả định – chờ Lead BA chốt]
+BR-DT-07: Chi phí giảm giá của mã ưu đãi do Hệ thống chịu, HTX vẫn nhận đủ tiền hàng; hệ thống hiển thị riêng dòng “Ưu đãi do sàn chịu”. Việc tính hoa hồng trên giá trước hay sau giảm là tham số cấu hình. [Giả định – chờ chốt]
+BR-DT-08: Hệ thống phân biệt nguồn thu tiền của đơn: Online (Hệ thống giữ tiền), COD, Cọc Preorder 30%, Phần còn lại Preorder 70% (COD hoặc online). Cách chuyển tiền COD (đơn vị vận chuyển thu hộ rồi chuyển về sàn, hay HTX giữ tiền mặt và trừ hoa hồng vào kỳ sau) chưa chốt nên được lưu bằng thuộc tính “Nguồn thu tiền” để đổi công thức không phải sửa dữ liệu.
+BR-DT-10: Hoàn tiền/hoàn hàng được ghi nhận bằng dòng điều chỉnh âm gắn với đơn gốc, kèm người chịu trách nhiệm (HTX, đơn vị vận chuyển, Hệ thống, Khách hàng). Chỉ phần thuộc trách nhiệm HTX mới trừ vào số tiền HTX thực nhận. Chỉ ghi nhận khi Admin đã quyết định hoàn và giao dịch hoàn tiền thành công; số tiền hoàn không vượt số tiền khách đã thanh toán cho phần hàng được hoàn.
+BR-DT-12: Tính nhất quán: tổng trên dashboard phải khớp tổng bảng đối soát với cùng bộ lọc. Số liệu chưa chốt được cập nhật chậm nhất sau 5 phút (tham số); số liệu của kỳ đã chốt không thay đổi. Nếu phát hiện sai lệch giữa các màn hình, hệ thống hiển thị cảnh báo và không che giấu chênh lệch.
+BR-DT-13: Mọi số liệu tiền phải mang nhãn trạng thái: “Tạm tính” (kỳ chưa chốt) hoặc “Đã chốt” (kỳ đã chốt). Chỉ số liệu Đã chốt là căn cứ chi trả cho HTX.
+BR-DT-17: Chu kỳ đối soát mặc định theo tuần (đề xuất phương án B trong tài liệu “Các điểm phát sinh tiền”); ngày/giờ cắt kỳ là tham số cấu hình. Các kỳ không chồng lấn và mỗi đơn chỉ thuộc đúng một kỳ.
+BR-DT-19: Tiền giữ lại: một phần doanh thu mỗi kỳ được giữ lại để bù cho hoàn trả phát sinh muộn; tỷ lệ giữ lại là tham số cấu hình (chưa chốt). Phần giữ lại được giải phóng sau 2 kỳ (khoảng 2 tuần) sau khi trừ chi phí hoàn trả phát sinh (nếu có).
+BR-DT-20: Số tiền chi trả của HTX trong kỳ = Tổng số tiền thực nhận của các đơn trong kỳ − Tiền giữ lại của kỳ + Tiền giữ lại đến hạn giải phóng ± Điều chỉnh/khấu trừ hoàn trả phát sinh sau kỳ trước ± Công nợ kỳ trước. Công thức và từng thành phần phải hiển thị rõ cho cả Admin và HTX.
+Giao diện
+Màn hình 1 – Đối soát toàn hệ thống: bộ lọc, bảng kỳ với các cột nhóm tiền, vùng cảnh báo.
+Màn hình 2 – Chi tiết kỳ toàn hệ thống: tổng theo nhóm, danh sách HTX trong kỳ và trạng thái chi trả.
+Hạng mục
+Nội dung
+Tên UC
+Xem danh sách đối soát theo đơn (HTX)
+Danh sách chức năng
+Quản lý doanh thu – Xem đối soát theo đơn, HTX
+Độ ưu tiên
+Cao – Must Have. HTX cần đối chiếu từng đơn với số tiền nhận để phát hiện sai lệch. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+HTX đã đăng nhập.
+Tác nhân phụ
+Hệ thống 
+Mô tả
+Là HTX, tôi muốn xem danh sách các đơn hàng của HTX mình kèm tiền hàng, hoa hồng, phí ship, tiền hoàn, số tiền thực nhận và trạng thái đối soát của từng đơn, để đối chiếu từng đơn với số tiền chi trả.
+Điều kiện trước
+1. HTX đã đăng nhập, tài khoản Đang hoạt động, hồ sơ đã duyệt.
+2. Thiết bị có kết nối Internet.
+3. HTX có ít nhất một đơn phát sinh (nếu chưa có, hiển thị trạng thái trống).
+Kích hoạt UC
+HTX chọn Doanh thu → Đối soát theo đơn, hoặc bấm Xem đơn trong kỳ từ UC-DT-03.
+Luồng sự kiện chính (Happy Case)
+1. HTX mở màn hình Đối soát theo đơn. Hệ thống chỉ lấy các đơn thuộc HTX đó.
+2. Hệ thống áp dụng bộ lọc mặc định: kỳ hiện tại (hoặc kỳ được chuyển từ UC-DT-03), mọi loại đơn.
+3. Hệ thống hiển thị bảng: mã đơn, ngày giao, loại đơn (mua thường/Preorder), phương thức thanh toán (Online/COD/Cọc + phần còn lại), tiền hàng, hoa hồng, phí cổng, phí ship (tham chiếu), tiền hoàn, thực nhận, trạng thái đối soát.
+4. Trạng thái đối soát gồm: Chưa vào kỳ, Trong kỳ – Tạm tính, Đã chốt, Đã chi trả, Có điều chỉnh, Chờ xử lý hoàn.
+5. HTX tìm theo mã đơn, lọc theo khoảng ngày giao, loại đơn, phương thức thanh toán, trạng thái đối soát, có/không có hoàn tiền. Hệ thống tính lại danh sách có phân trang.
+6. Hệ thống hiển thị dòng tổng cuối bảng, khớp với tổng kỳ ở UC-DT-03 khi cùng bộ lọc kỳ.
+7. HTX chọn một đơn để xem chi tiết đối soát (UC-DT-07).
+Luồng thay thế
+A1 – Đơn chưa vào kỳ: Đơn Đã giao nhưng chưa đủ điều kiện (đang có yêu cầu hoàn/ticket) hiển thị trạng thái “Chưa vào kỳ” kèm lý do (BR-DT-18).
+A2 – Đơn Preorder: Hệ thống hiển thị tách tiền cọc 30% và phần còn lại 70%, kèm trạng thái từng phần thu.
+A3 – Đơn có điều chỉnh/hoàn: Dòng đơn hiển thị biểu tượng điều chỉnh; bấm xem lý do và người chịu trách nhiệm.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Chưa đăng nhập/hết phiên: Hệ thống điều hướng sang Đăng nhập.
+E2 – Không tìm thấy đơn: Hệ thống hiển thị: “Không tìm thấy đơn phù hợp.”
+E3 – Mã đơn không thuộc HTX: Hệ thống không trả kết quả (không tiết lộ đơn của HTX khác).
+E4 – Khoảng thời gian không hợp lệ: Hệ thống hiển thị thông báo giống E3 của UC-DT-01.
+E5 – Lỗi tải dữ liệu/mất mạng: Hệ thống hiển thị thông báo lỗi và nút Tải lại.
+Điều kiện sau
+Mức 1: HTX xem được đối soát từng đơn của HTX mình.
+Mức 2: Chức năng chỉ đọc. Không hiển thị số điện thoại/địa chỉ khách.
+Điều hướng: sang Chi tiết đối soát một đơn (UC-DT-07).
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-02: Cơ sở ghi nhận doanh thu: doanh thu hàng hóa của một đơn chỉ được ghi nhận khi đơn ở trạng thái Đã giao. Đơn Chờ xác nhận, Đã xác nhận, Đang chuẩn bị, Đang giao chỉ hiển thị ở nhóm “đang xử lý/dự kiến”; đơn Đã hủy không tính vào doanh thu.
+BR-DT-03: Tách bạch 4 nhóm tiền trên mọi màn hình doanh thu/đối soát: (1) tiền hàng, (2) hoa hồng/phí sàn (kèm phí cổng thanh toán nếu có), (3) phí vận chuyển (gồm phụ phí hỏa tốc), (4) tiền hoàn. Không cộng gộp các nhóm này thành một con số duy nhất khi chưa có diễn giải.
+BR-DT-04: Phí vận chuyển và phụ phí hỏa tốc do khách hàng trả cho đơn vị vận chuyển, không thuộc doanh thu của HTX; hệ thống chỉ hiển thị phí ship của đơn ở dạng tham chiếu để HTX đối chiếu. [Giả định – chờ BA 2 chốt cách tính phí ship theo đơn/theo giỏ]
+BR-DT-05: Số tiền HTX thực nhận của một đơn = Tiền hàng − Hoa hồng − Phí cổng thanh toán (nếu HTX chịu) − Tiền hoàn thuộc trách nhiệm HTX − Chi phí chuyển hoàn/ship lại thuộc trách nhiệm HTX. Người chịu từng khoản được xác định theo nguyên nhân. [Giả định – chờ Lead BA chốt]
+BR-DT-08: Hệ thống phân biệt nguồn thu tiền của đơn: Online (Hệ thống giữ tiền), COD, Cọc Preorder 30%, Phần còn lại Preorder 70% (COD hoặc online). Cách chuyển tiền COD (đơn vị vận chuyển thu hộ rồi chuyển về sàn, hay HTX giữ tiền mặt và trừ hoa hồng vào kỳ sau) chưa chốt nên được lưu bằng thuộc tính “Nguồn thu tiền” để đổi công thức không phải sửa dữ liệu.
+BR-DT-09: Preorder: tiền cọc được ghi nhận ở trạng thái “Hệ thống đang giữ” và chỉ tính vào doanh thu khi đơn Đã giao. Trường hợp khách hủy sau mốc mất cọc, khoản cọc không hoàn được ghi nhận cho HTX sau khi trừ phí cổng thanh toán; hệ thống nhận phần phí cổng. [Giả định – chờ BA 2 xác nhận mốc mất cọc]
+BR-DT-10: Hoàn tiền/hoàn hàng được ghi nhận bằng dòng điều chỉnh âm gắn với đơn gốc, kèm người chịu trách nhiệm (HTX, đơn vị vận chuyển, Hệ thống, Khách hàng). Chỉ phần thuộc trách nhiệm HTX mới trừ vào số tiền HTX thực nhận. Chỉ ghi nhận khi Admin đã quyết định hoàn và giao dịch hoàn tiền thành công; số tiền hoàn không vượt số tiền khách đã thanh toán cho phần hàng được hoàn.
+BR-DT-11: Bộ lọc thời gian dùng múi giờ GMT+7. Mặc định hiển thị 30 ngày gần nhất (dashboard) hoặc kỳ hiện tại (đối soát). Khoảng lọc tối đa 12 tháng (tham số cấu hình); ngày bắt đầu không được lớn hơn ngày kết thúc.
+BR-DT-14: Bảo vệ dữ liệu khách hàng: màn hình đối soát theo đơn chỉ hiển thị mã đơn và tên khách rút gọn, không hiển thị số điện thoại hoặc địa chỉ đầy đủ (theo NFR-DH-06).
+BR-DT-15: Định dạng tiền: VND, làm tròn đến đồng, làm tròn ở từng dòng đơn; tổng của kỳ bằng tổng các dòng đã làm tròn.
+BR-DT-18: Điều kiện đưa đơn vào kỳ: đơn Đã giao trước thời điểm cắt kỳ và không có yêu cầu trả hàng/hoàn tiền hoặc ticket khiếu nại đang mở. Đơn chưa đủ điều kiện được chuyển sang kỳ kế tiếp, không bị mất khỏi đối soát. [Giả định – chờ Lead BA chốt, cần đối chiếu thời hạn hoàn tiền 10 ngày/24 giờ ở BRD Chính sách đơn hàng]
+Giao diện
+Màn hình 1 – Danh sách đối soát theo đơn: thanh tìm kiếm, bộ lọc, bảng đơn, dòng tổng, phân trang.
+Chú thích: chip trạng thái đối soát theo màu; biểu tượng điều chỉnh ở dòng có hoàn/điều chỉnh.
+Hạng mục
+Nội dung
+Tên UC
+Xem chi tiết đối soát một đơn
+Danh sách chức năng
+Quản lý doanh thu – Xem đối soát theo đơn, HTX
+Độ ưu tiên
+Cao – Must Have. Là căn cứ giải quyết thắc mắc của HTX về từng khoản tiền của một đơn. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+HTX đã đăng nhập (đơn của mình); Admin đã đăng nhập (chỉ xem, mọi đơn).
+Tác nhân phụ
+Hệ thống
+Mô tả
+Là HTX (hoặc Admin), tôi muốn xem dòng tiền chi tiết của một đơn – tiền khách đã trả, cách thu (online/COD/cọc), ưu đãi, hoa hồng, phí, tiền hoàn, kỳ chứa đơn và số tiền HTX thực nhận – để kiểm tra và giải thích số tiền của đơn đó.
+Điều kiện trước
+1. Người dùng đã đăng nhập; HTX chỉ xem đơn của mình.
+2. Đơn tồn tại trên hệ thống.
+3. Thiết bị có kết nối Internet.
+Kích hoạt UC
+Người dùng chọn một đơn trong danh sách đối soát (UC-DT-06, UC-DT-08) hoặc từ một dòng khoản trừ (UC-DT-04).
+Luồng sự kiện chính (Happy Case)
+1. Người dùng chọn một đơn. Hệ thống kiểm tra quyền xem đơn.
+2. Hệ thống hiển thị thông tin chung: mã đơn, ngày đặt, ngày giao, loại đơn, hình thức giao, trạng thái đơn, kỳ đối soát chứa đơn và trạng thái đối soát.
+3. Hệ thống hiển thị các dòng sản phẩm: tên, số lượng, đơn giá, thành tiền (tiền hàng).
+4. Hệ thống hiển thị dòng tiền khách trả theo thời gian: thanh toán online, cọc Preorder 30%, thanh toán phần còn lại 70%, COD đã thu (kèm nguồn thu tiền), mã giao dịch.
+5. Hệ thống hiển thị ưu đãi: mã áp dụng, số tiền giảm, bên chịu chi phí (Hệ thống).
+6. Hệ thống hiển thị các khoản: Hoa hồng (tỷ lệ snapshot, cơ sở tính, số tiền), Phí cổng, Phí ship và phụ phí hỏa tốc (tham chiếu), Chi phí chuyển hoàn (nếu có).
+7. Nếu đơn có hoàn tiền/trả hàng, hệ thống hiển thị: mã yêu cầu, lý do, quyết định của Admin, số tiền hoàn, người chịu trách nhiệm, trạng thái và mã giao dịch hoàn.
+8. Hệ thống hiển thị công thức và kết quả “Số tiền HTX thực nhận” của đơn theo BR-DT-05.
+9. Hệ thống hiển thị liên kết tới chi tiết đơn hàng và ticket liên quan (nếu có).
+Luồng thay thế
+A1 – Đơn Preorder bị khách hủy mất cọc: Hệ thống hiển thị cọc, phí cổng và khoản cọc không hoàn ghi nhận cho HTX; ghi chú mốc hủy.
+A2 – Đơn COD: Hệ thống hiển thị nguồn thu tiền và trạng thái đối soát tiền COD (đã thu hộ, chờ ĐVVC chuyển, đã trừ kỳ sau) theo cấu hình BR-DT-08.
+A3 – Đơn chưa vào kỳ: Hệ thống hiển thị lý do chưa vào kỳ và dự kiến kỳ đưa vào.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Nếu đơn không thuộc HTX, hệ thống hiển thị: “Bạn không có quyền xem đơn này.”
+E2 – Đơn không tồn tại: Hệ thống hiển thị: “Không tìm thấy đơn hàng.”
+E3 – Dữ liệu thanh toán/hoàn chưa đồng bộ: Hệ thống hiển thị trạng thái “Đang đồng bộ”, không tự suy diễn số tiền (NFR-DH-20).
+E4 – Lỗi tải dữ liệu/mất mạng: Hệ thống hiển thị thông báo lỗi và nút Tải lại.
+Điều kiện sau
+Mức 1: Người dùng xem được dòng tiền và kết quả đối soát của đơn.
+Mức 2: Chức năng chỉ đọc; không hiển thị số điện thoại/địa chỉ khách (BR-DT-14).
+Điều hướng: sang chi tiết đơn hàng hoặc ticket liên quan.
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-02: Cơ sở ghi nhận doanh thu: doanh thu hàng hóa của một đơn chỉ được ghi nhận khi đơn ở trạng thái Đã giao. Đơn Chờ xác nhận, Đã xác nhận, Đang chuẩn bị, Đang giao chỉ hiển thị ở nhóm “đang xử lý/dự kiến”; đơn Đã hủy không tính vào doanh thu.
+BR-DT-03: Tách bạch 4 nhóm tiền trên mọi màn hình doanh thu/đối soát: (1) tiền hàng, (2) hoa hồng/phí sàn (kèm phí cổng thanh toán nếu có), (3) phí vận chuyển (gồm phụ phí hỏa tốc), (4) tiền hoàn. Không cộng gộp các nhóm này thành một con số duy nhất khi chưa có diễn giải.
+BR-DT-05: Số tiền HTX thực nhận của một đơn = Tiền hàng − Hoa hồng − Phí cổng thanh toán (nếu HTX chịu) − Tiền hoàn thuộc trách nhiệm HTX − Chi phí chuyển hoàn/ship lại thuộc trách nhiệm HTX. Người chịu từng khoản được xác định theo nguyên nhân. [Giả định – chờ Lead BA chốt]
+BR-DT-06: Hoa hồng/phí sàn = Tỷ lệ hoa hồng × cơ sở tính. Tỷ lệ là tham số cấu hình (đề xuất 3–5%, cho phép đặt 0% trong giai đoạn miễn phí đầu). Mỗi đơn lưu snapshot tỷ lệ tại thời điểm tạo đơn; đổi tham số không làm thay đổi đơn cũ. [Tham số chưa chốt – chờ PO/Lead]
+BR-DT-07: Chi phí giảm giá của mã ưu đãi do Hệ thống chịu, HTX vẫn nhận đủ tiền hàng; hệ thống hiển thị riêng dòng “Ưu đãi do sàn chịu”. Việc tính hoa hồng trên giá trước hay sau giảm là tham số cấu hình. [Giả định – chờ chốt]
+BR-DT-08: Hệ thống phân biệt nguồn thu tiền của đơn: Online (Hệ thống giữ tiền), COD, Cọc Preorder 30%, Phần còn lại Preorder 70% (COD hoặc online). Cách chuyển tiền COD (đơn vị vận chuyển thu hộ rồi chuyển về sàn, hay HTX giữ tiền mặt và trừ hoa hồng vào kỳ sau) chưa chốt nên được lưu bằng thuộc tính “Nguồn thu tiền” để đổi công thức không phải sửa dữ liệu.
+BR-DT-09: Preorder: tiền cọc được ghi nhận ở trạng thái “Hệ thống đang giữ” và chỉ tính vào doanh thu khi đơn Đã giao. Trường hợp khách hủy sau mốc mất cọc, khoản cọc không hoàn được ghi nhận cho HTX sau khi trừ phí cổng thanh toán; hệ thống nhận phần phí cổng. [Giả định – chờ BA 2 xác nhận mốc mất cọc]
+BR-DT-10: Hoàn tiền/hoàn hàng được ghi nhận bằng dòng điều chỉnh âm gắn với đơn gốc, kèm người chịu trách nhiệm (HTX, đơn vị vận chuyển, Hệ thống, Khách hàng). Chỉ phần thuộc trách nhiệm HTX mới trừ vào số tiền HTX thực nhận. Chỉ ghi nhận khi Admin đã quyết định hoàn và giao dịch hoàn tiền thành công; số tiền hoàn không vượt số tiền khách đã thanh toán cho phần hàng được hoàn.
+BR-DT-14: Bảo vệ dữ liệu khách hàng: màn hình đối soát theo đơn chỉ hiển thị mã đơn và tên khách rút gọn, không hiển thị số điện thoại hoặc địa chỉ đầy đủ (theo NFR-DH-06).
+BR-DT-15: Định dạng tiền: VND, làm tròn đến đồng, làm tròn ở từng dòng đơn; tổng của kỳ bằng tổng các dòng đã làm tròn.
+Giao diện
+Màn hình 1 – Chi tiết đối soát đơn: khối thông tin chung; bảng sản phẩm; timeline dòng tiền; khối khoản trừ; khối hoàn tiền; khối kết quả thực nhận; liên kết đơn hàng/ticket.
+Hạng mục
+Nội dung
+Tên UC
+Xem đối soát theo HTX (Admin)
+Danh sách chức năng
+Quản lý doanh thu – Xem đối soát theo đơn, HTX
+Độ ưu tiên
+Cao – Must Have. Admin cần xem từng HTX nhận bao nhiêu, còn công nợ hay tiền giữ lại bao nhiêu trước khi chi trả. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+Admin đã đăng nhập (quyền chỉ xem).
+Tác nhân phụ
+Hệ thống 
+Mô tả
+Là Admin, tôi muốn xem đối soát theo từng HTX – các kỳ, các đơn, tiền giữ lại, công nợ và tình trạng chi trả – để kiểm tra từng HTX và giải đáp thắc mắc khi HTX khiếu nại về số tiền.
+Điều kiện trước
+1. Admin đã đăng nhập thành công và có quyền xem đối soát.
+2. HTX cần xem tồn tại trên hệ thống.
+3. Thiết bị có kết nối Internet.
+Kích hoạt UC
+Admin chọn Doanh thu → Đối soát theo HTX, hoặc bấm vào một HTX từ dashboard/UC-DT-05.
+Luồng sự kiện chính (Happy Case)
+1. Admin mở màn hình Đối soát theo HTX. Hệ thống kiểm tra quyền.
+2. Hệ thống hiển thị danh sách HTX với: tên HTX, mã HTX, tổng tiền hàng, hoa hồng, tiền hoàn thuộc trách nhiệm HTX, tiền đang giữ lại, công nợ, số tiền chờ chi trả, trạng thái chi trả gần nhất.
+3. Admin tìm kiếm theo tên/mã HTX; lọc theo kỳ, trạng thái chi trả, có công nợ/không, có tạm giữ/không. Hệ thống tính lại.
+4. Admin chọn một HTX. Hệ thống hiển thị hồ sơ đối soát của HTX: thông tin HTX, tài khoản nhận tiền (ẩn bớt số), danh sách các kỳ của HTX và trạng thái từng kỳ.
+5. Admin chọn một kỳ của HTX. Hệ thống hiển thị bảng tổng hợp kỳ của HTX (tương tự UC-DT-03) và nút xem chi tiết khoản trừ (UC-DT-04).
+6. Admin chọn Xem đơn của HTX trong kỳ. Hệ thống hiển thị danh sách đối soát theo đơn (tương tự UC-DT-06), Admin chọn một đơn để xem UC-DT-07.
+7. Hệ thống hiển thị lịch sử điều chỉnh, giải phóng tiền giữ lại và chi trả của HTX theo thứ tự thời gian.
+Luồng thay thế
+A1 – HTX có công nợ: Hệ thống nêu bật số công nợ và nguồn gốc (kỳ/đơn) để Admin xử lý ở UC-DT-12.
+A2 – HTX thiếu tài khoản nhận tiền hoặc bị khóa: Hệ thống hiển thị cảnh báo tạm giữ chi trả (BR-DT-24).
+A3 – So sánh giữa các HTX: Admin sắp xếp theo doanh thu, tỷ lệ hoàn, công nợ để tìm HTX bất thường.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Hệ thống chặn và hiển thị: “Bạn không có quyền truy cập chức năng này.”
+E2 – Không tìm thấy HTX: Hệ thống hiển thị: “Không tìm thấy HTX phù hợp.”
+E3 – HTX chưa có dữ liệu đối soát: Hệ thống hiển thị trạng thái trống.
+E4 – Lỗi tải dữ liệu/mất mạng: Hệ thống hiển thị thông báo lỗi và nút Tải lại.
+Điều kiện sau
+Mức 1: Admin xem được toàn bộ đối soát của từng HTX.
+Mức 2: Chức năng chỉ đọc; không thay đổi dữ liệu; tài khoản nhận tiền chỉ hiển thị ẩn bớt số.
+Điều hướng: sang Rà soát bảng kê (UC-DT-09) hoặc Xử lý điều chỉnh/công nợ (UC-DT-12).
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-03: Tách bạch 4 nhóm tiền trên mọi màn hình doanh thu/đối soát: (1) tiền hàng, (2) hoa hồng/phí sàn (kèm phí cổng thanh toán nếu có), (3) phí vận chuyển (gồm phụ phí hỏa tốc), (4) tiền hoàn. Không cộng gộp các nhóm này thành một con số duy nhất khi chưa có diễn giải.
+BR-DT-05: Số tiền HTX thực nhận của một đơn = Tiền hàng − Hoa hồng − Phí cổng thanh toán (nếu HTX chịu) − Tiền hoàn thuộc trách nhiệm HTX − Chi phí chuyển hoàn/ship lại thuộc trách nhiệm HTX. Người chịu từng khoản được xác định theo nguyên nhân. [Giả định – chờ Lead BA chốt]
+BR-DT-10: Hoàn tiền/hoàn hàng được ghi nhận bằng dòng điều chỉnh âm gắn với đơn gốc, kèm người chịu trách nhiệm (HTX, đơn vị vận chuyển, Hệ thống, Khách hàng). Chỉ phần thuộc trách nhiệm HTX mới trừ vào số tiền HTX thực nhận. Chỉ ghi nhận khi Admin đã quyết định hoàn và giao dịch hoàn tiền thành công; số tiền hoàn không vượt số tiền khách đã thanh toán cho phần hàng được hoàn.
+BR-DT-12: Tính nhất quán: tổng trên dashboard phải khớp tổng bảng đối soát với cùng bộ lọc. Số liệu chưa chốt được cập nhật chậm nhất sau 5 phút (tham số); số liệu của kỳ đã chốt không thay đổi. Nếu phát hiện sai lệch giữa các màn hình, hệ thống hiển thị cảnh báo và không che giấu chênh lệch.
+BR-DT-13: Mọi số liệu tiền phải mang nhãn trạng thái: “Tạm tính” (kỳ chưa chốt) hoặc “Đã chốt” (kỳ đã chốt). Chỉ số liệu Đã chốt là căn cứ chi trả cho HTX.
+BR-DT-14: Bảo vệ dữ liệu khách hàng: màn hình đối soát theo đơn chỉ hiển thị mã đơn và tên khách rút gọn, không hiển thị số điện thoại hoặc địa chỉ đầy đủ (theo NFR-DH-06).
+BR-DT-16: Chỉ Admin được xem đối soát theo từng HTX và so sánh giữa các HTX; HTX không xem được dữ liệu của HTX khác dưới bất kỳ hình thức nào (kể cả đổi mã trên đường dẫn).
+BR-DT-19: Tiền giữ lại: một phần doanh thu mỗi kỳ được giữ lại để bù cho hoàn trả phát sinh muộn; tỷ lệ giữ lại là tham số cấu hình (chưa chốt). Phần giữ lại được giải phóng sau 2 kỳ (khoảng 2 tuần) sau khi trừ chi phí hoàn trả phát sinh (nếu có).
+BR-DT-20: Số tiền chi trả của HTX trong kỳ = Tổng số tiền thực nhận của các đơn trong kỳ − Tiền giữ lại của kỳ + Tiền giữ lại đến hạn giải phóng ± Điều chỉnh/khấu trừ hoàn trả phát sinh sau kỳ trước ± Công nợ kỳ trước. Công thức và từng thành phần phải hiển thị rõ cho cả Admin và HTX.
+BR-DT-21: Nếu số tiền chi trả nhỏ hơn hoặc bằng 0, hoặc nhỏ hơn ngưỡng chi trả tối thiểu (tham số), hệ thống không tạo lệnh chi trả và chuyển số dư sang kỳ kế tiếp dưới dạng công nợ/cộng dồn; không bao giờ ghi nhận “Đã chi trả” cho số tiền âm.
+BR-DT-24: Chỉ chi trả cho HTX có hồ sơ đã duyệt và tài khoản nhận tiền hợp lệ (đã khai báo trong hồ sơ HTX). HTX bị khóa/ngừng hoạt động hoặc thiếu tài khoản nhận tiền thì lệnh chi trả bị giữ ở trạng thái “Tạm giữ” để Admin xử lý. [Giả định]
+Giao diện
+Màn hình 1 – Danh sách HTX: tìm kiếm, bộ lọc, bảng tổng hợp theo HTX.
+Màn hình 2 – Hồ sơ đối soát HTX: thông tin HTX, tài khoản nhận tiền, danh sách kỳ, lịch sử điều chỉnh/chi trả.
+Hạng mục
+Nội dung
+Tên UC
+Rà soát bảng kê đối soát của kỳ
+Danh sách chức năng
+Quản lý doanh thu – Chốt kỳ, chi trả HTX
+Độ ưu tiên
+Cao – Must Have. Là bước kiểm soát bắt buộc trước khi chốt kỳ và chuyển tiền, giảm rủi ro chi trả sai. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+Admin đã đăng nhập, có quyền chốt kỳ/chi trả.
+Tác nhân phụ
+Hệ thống 
+Mô tả
+Là Admin, tôi muốn rà soát bảng kê của kỳ đến hạn – danh sách HTX, số tiền phải chi trả, các cảnh báo và đơn bị loại khỏi kỳ – để xử lý bất thường trước khi chốt kỳ.
+Điều kiện trước
+1. Admin đã đăng nhập và có quyền chốt kỳ/chi trả.
+2. Hệ thống đã tự tạo kỳ đối soát theo lịch và kỳ đã qua thời điểm cắt (BR-DT-17).
+3. Kỳ ở trạng thái Tạm tính (chưa chốt).
+4. Thiết bị có kết nối Internet.
+Kích hoạt UC
+Admin mở một kỳ ở trạng thái Tạm tính đã qua thời điểm cắt, hoặc bấm vào thông báo kỳ đến hạn chốt.
+Luồng sự kiện chính (Happy Case)
+1. Hệ thống đến thời điểm cắt kỳ: tự tạo/cập nhật bảng kê của kỳ gồm các đơn đủ điều kiện (BR-DT-18) và gửi thông báo cho Admin.
+2. Admin mở kỳ cần rà soát. Hệ thống hiển thị bảng kê theo HTX: tổng tiền hàng, hoa hồng, phí cổng, tiền hoàn thuộc HTX, tiền giữ lại, tiền giữ lại được giải phóng, điều chỉnh/công nợ kỳ trước, số tiền chi trả dự kiến.
+3. Hệ thống hiển thị khối cảnh báo, phân mức Chặn chốt và Lưu ý: đơn lỗi dữ liệu (thiếu giá/thiếu giao dịch), tổng không khớp, HTX thiếu hoặc sai tài khoản nhận tiền, HTX bị khóa, số tiền chi trả âm hoặc dưới ngưỡng tối thiểu, đơn có hoàn đang xử lý.
+4. Admin xem chi tiết từng HTX (UC-DT-08) và từng đơn (UC-DT-07) khi cần.
+5. Admin chuyển các đơn chưa đủ điều kiện (ví dụ có ticket/hoàn tiền đang mở) sang kỳ sau. Hệ thống yêu cầu nhập lý do và cập nhật lại bảng kê.
+6. Admin đánh dấu HTX cần tạm giữ chi trả (nếu có lý do) và nhập lý do. Hệ thống ghi nhận trạng thái Tạm giữ cho HTX đó trong kỳ.
+7. Hệ thống tính lại bảng kê sau mỗi thay đổi và cập nhật số cảnh báo còn lại.
+8. Khi hết cảnh báo mức Chặn chốt, hệ thống bật nút Chốt kỳ (UC-DT-10).
+Luồng thay thế
+A1 – Không có đơn đủ điều kiện: Hệ thống đánh dấu kỳ “Không phát sinh”, cho phép Admin chốt kỳ rỗng để giữ chuỗi kỳ liên tục.
+A2 – Xuất bảng kê để kiểm tra ngoài hệ thống: Admin xuất bảng kê của kỳ (định dạng bảng tính); hệ thống ghi log lần xuất. [Chi tiết xuất báo cáo thuộc FR-BCTK-03]
+A3 – Kỳ có HTX công nợ: Hệ thống đề xuất khấu trừ vào số tiền chi trả hoặc cộng dồn sang kỳ sau; Admin xác nhận.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Hệ thống chặn và hiển thị: “Bạn không có quyền thực hiện chức năng này.”
+E2 – Kỳ đã chốt: Hệ thống không cho chỉnh bảng kê, hiển thị: “Kỳ đã chốt. Mọi thay đổi phải thực hiện bằng điều chỉnh ở kỳ kế tiếp.”
+E3 – Kỳ chưa đến thời điểm cắt: Hệ thống chỉ cho xem, không cho chuyển đơn/chốt.
+E4 – Thiếu lý do khi chuyển đơn sang kỳ sau/tạm giữ: Hệ thống hiển thị: “Vui lòng nhập lý do.”
+E5 – Hai Admin cùng chỉnh một kỳ: Hệ thống ghi nhận thao tác đến trước, báo thao tác sau đã lỗi thời và yêu cầu tải lại.
+E6 – Lỗi tải/ghi dữ liệu: Hệ thống không lưu thay đổi dở dang, hiển thị thông báo lỗi và cho thử lại.
+Điều kiện sau
+Mức 1: Bảng kê của kỳ đã được rà soát, các cảnh báo mức Chặn chốt đã được xử lý, các đơn không đủ điều kiện đã chuyển kỳ sau.
+Mức 2: Hệ thống lưu bảng kê, danh sách đơn bị chuyển kỳ, danh sách HTX tạm giữ cùng lý do và log thao tác (BR-DT-27). Kỳ vẫn ở trạng thái Tạm tính.
+Điều hướng: Admin tiếp tục sang Chốt kỳ (UC-DT-10).
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-05: Số tiền HTX thực nhận của một đơn = Tiền hàng − Hoa hồng − Phí cổng thanh toán (nếu HTX chịu) − Tiền hoàn thuộc trách nhiệm HTX − Chi phí chuyển hoàn/ship lại thuộc trách nhiệm HTX. Người chịu từng khoản được xác định theo nguyên nhân. [Giả định – chờ Lead BA chốt]
+BR-DT-10: Hoàn tiền/hoàn hàng được ghi nhận bằng dòng điều chỉnh âm gắn với đơn gốc, kèm người chịu trách nhiệm (HTX, đơn vị vận chuyển, Hệ thống, Khách hàng). Chỉ phần thuộc trách nhiệm HTX mới trừ vào số tiền HTX thực nhận. Chỉ ghi nhận khi Admin đã quyết định hoàn và giao dịch hoàn tiền thành công; số tiền hoàn không vượt số tiền khách đã thanh toán cho phần hàng được hoàn.
+BR-DT-12: Tính nhất quán: tổng trên dashboard phải khớp tổng bảng đối soát với cùng bộ lọc. Số liệu chưa chốt được cập nhật chậm nhất sau 5 phút (tham số); số liệu của kỳ đã chốt không thay đổi. Nếu phát hiện sai lệch giữa các màn hình, hệ thống hiển thị cảnh báo và không che giấu chênh lệch.
+BR-DT-17: Chu kỳ đối soát mặc định theo tuần (đề xuất phương án B trong tài liệu “Các điểm phát sinh tiền”); ngày/giờ cắt kỳ là tham số cấu hình. Các kỳ không chồng lấn và mỗi đơn chỉ thuộc đúng một kỳ.
+BR-DT-18: Điều kiện đưa đơn vào kỳ: đơn Đã giao trước thời điểm cắt kỳ và không có yêu cầu trả hàng/hoàn tiền hoặc ticket khiếu nại đang mở. Đơn chưa đủ điều kiện được chuyển sang kỳ kế tiếp, không bị mất khỏi đối soát. [Giả định – chờ Lead BA chốt, cần đối chiếu thời hạn hoàn tiền 10 ngày/24 giờ ở BRD Chính sách đơn hàng]
+BR-DT-19: Tiền giữ lại: một phần doanh thu mỗi kỳ được giữ lại để bù cho hoàn trả phát sinh muộn; tỷ lệ giữ lại là tham số cấu hình (chưa chốt). Phần giữ lại được giải phóng sau 2 kỳ (khoảng 2 tuần) sau khi trừ chi phí hoàn trả phát sinh (nếu có).
+BR-DT-20: Số tiền chi trả của HTX trong kỳ = Tổng số tiền thực nhận của các đơn trong kỳ − Tiền giữ lại của kỳ + Tiền giữ lại đến hạn giải phóng ± Điều chỉnh/khấu trừ hoàn trả phát sinh sau kỳ trước ± Công nợ kỳ trước. Công thức và từng thành phần phải hiển thị rõ cho cả Admin và HTX.
+BR-DT-21: Nếu số tiền chi trả nhỏ hơn hoặc bằng 0, hoặc nhỏ hơn ngưỡng chi trả tối thiểu (tham số), hệ thống không tạo lệnh chi trả và chuyển số dư sang kỳ kế tiếp dưới dạng công nợ/cộng dồn; không bao giờ ghi nhận “Đã chi trả” cho số tiền âm.
+BR-DT-22: Chỉ Admin (hoặc người có quyền tương đương) được chốt kỳ; chỉ chốt được kỳ đã qua thời điểm cắt. Trước khi chốt, hệ thống kiểm tra: tổng đối soát khớp, không còn đơn lỗi dữ liệu, không còn cảnh báo mức chặn. Chốt kỳ phải có bước xác nhận của Admin. Sau khi chốt, kỳ bị khóa; không sửa trực tiếp số liệu.
+BR-DT-24: Chỉ chi trả cho HTX có hồ sơ đã duyệt và tài khoản nhận tiền hợp lệ (đã khai báo trong hồ sơ HTX). HTX bị khóa/ngừng hoạt động hoặc thiếu tài khoản nhận tiền thì lệnh chi trả bị giữ ở trạng thái “Tạm giữ” để Admin xử lý. [Giả định]
+BR-DT-27: Audit log: chốt kỳ, tạo/hủy/thử lại chi trả và điều chỉnh phải lưu người thực hiện, thời gian, trạng thái trước/sau, lý do và chứng từ (theo NFR-DH-17, NFR-DH-18).
+BR-DT-28: Thông báo: HTX nhận thông báo khi kỳ của mình đã chốt, khi đã chi trả, khi chi trả thất bại hoặc bị tạm giữ; Admin nhận cảnh báo khi kỳ đến hạn chốt mà chưa chốt.
+Giao diện
+Màn hình 1 – Bảng kê kỳ: tiêu đề kỳ, tổng toàn kỳ, bảng theo HTX, vùng cảnh báo (Chặn chốt/Lưu ý), nút Chuyển đơn sang kỳ sau, nút Tạm giữ HTX, nút Chốt kỳ.
+Màn hình 2 – Popup: nhập lý do chuyển kỳ/tạm giữ.
+Hạng mục
+Nội dung
+Tên UC
+Chốt kỳ đối soát
+Danh sách chức năng
+Quản lý doanh thu – Chốt kỳ, chi trả HTX
+Độ ưu tiên
+Cao – Must Have. Chốt kỳ khóa số liệu làm căn cứ chi trả; thiếu chức năng này không thể chi trả đúng và có thể truy vết. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+Admin có quyền chốt kỳ.
+Tác nhân phụ
+Hệ thống; HTX (nhận thông báo).
+Mô tả
+Là Admin, tôi muốn chốt kỳ đối soát sau khi đã rà soát để khóa số liệu và tạo lệnh chi trả cho từng HTX, bảo đảm số tiền chi trả chính xác và có thể truy vết.
+Điều kiện trước
+1. Admin đã đăng nhập và có quyền chốt kỳ.
+2. Kỳ ở trạng thái Tạm tính và đã qua thời điểm cắt.
+3. Không còn cảnh báo mức Chặn chốt (đã rà soát ở UC-DT-09).
+4. Thiết bị có kết nối Internet.
+Kích hoạt UC
+Admin bấm Chốt kỳ tại bảng kê của kỳ.
+Luồng sự kiện chính (Happy Case)
+1. Admin mở bảng kê của kỳ và bấm Chốt kỳ.
+2. Hệ thống kiểm tra điều kiện chốt: kỳ chưa chốt, đã qua thời điểm cắt, tổng đối soát khớp, không còn đơn lỗi dữ liệu, không còn cảnh báo mức Chặn chốt.
+3. Hệ thống hiển thị màn hình xác nhận tóm tắt: số HTX, số đơn, tổng tiền hàng, tổng hoa hồng, tổng tiền hoàn thuộc HTX, tổng tiền giữ lại, tổng giải phóng giữ lại, tổng tiền phải chi trả, số HTX tạm giữ, số HTX cộng dồn.
+4. Admin kiểm tra tóm tắt và bấm Xác nhận chốt kỳ.
+5. Hệ thống khóa kỳ: đổi trạng thái từ Tạm tính sang Đã chốt; đóng băng số liệu, snapshot tỷ lệ/tham số áp dụng.
+6. Hệ thống tạo lệnh chi trả cho từng HTX có số tiền chi trả dương và đạt ngưỡng tối thiểu, trạng thái Chờ chi trả; HTX tạm giữ ở trạng thái Tạm giữ; HTX có số tiền không đạt ngưỡng được cộng dồn sang kỳ sau (BR-DT-21).
+7. Hệ thống ghi nhận các khoản giữ lại mới và lịch giải phóng sau 2 kỳ (BR-DT-19).
+8. Hệ thống lưu audit log (người chốt, thời gian, tóm tắt) và gửi thông báo cho từng HTX: “Kỳ đối soát của bạn đã được chốt” kèm số tiền dự kiến chi trả.
+9. Hệ thống hiển thị: “Chốt kỳ thành công” và điều hướng đến danh sách lệnh chi trả (UC-DT-11).
+Luồng thay thế
+A1 – Hủy chốt: Tại bước 4, Admin bấm Hủy; hệ thống đóng màn hình xác nhận, kỳ giữ nguyên Tạm tính.
+A2 – Chốt kỳ không phát sinh: Với kỳ rỗng (A1 của UC-DT-09), hệ thống chốt, không tạo lệnh chi trả.
+A3 – Chốt lại sau khi sửa: Khi Admin phát hiện sai ở màn hình xác nhận, Admin quay lại UC-DT-09 để sửa trước khi chốt (không sửa sau chốt).
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Hệ thống chặn và hiển thị: “Bạn không có quyền chốt kỳ.”
+E2 – Kỳ chưa đến hạn cắt: Hệ thống hiển thị: “Kỳ chưa đến thời điểm chốt.”
+E3 – Còn cảnh báo mức Chặn chốt: Hệ thống hiển thị danh sách cảnh báo còn lại và không cho chốt.
+E4 – Kỳ đã được chốt (bấm lặp/Admin khác chốt trước): Hệ thống không chốt lần hai, hiển thị: “Kỳ đã được chốt.” (BR-DT-25).
+E5 – Số liệu thay đổi trong lúc xác nhận (có hoàn mới phát sinh): Hệ thống chặn chốt, yêu cầu tải lại bảng kê.
+E6 – Lỗi hệ thống giữa chừng: Hệ thống hoàn tác toàn bộ (kỳ giữ nguyên Tạm tính), không tạo lệnh chi trả dở dang và thông báo lỗi.
+Điều kiện sau
+Mức 1: Kỳ ở trạng thái Đã chốt; lệnh chi trả đã được tạo cho các HTX đủ điều kiện; HTX được thông báo.
+Mức 2: Hệ thống lưu bản chốt (snapshot số liệu), các lệnh chi trả, lịch giải phóng tiền giữ lại, danh sách cộng dồn/tạm giữ và audit log.
+Điều hướng: sang danh sách lệnh chi trả của kỳ (UC-DT-11).
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-13: Mọi số liệu tiền phải mang nhãn trạng thái: “Tạm tính” (kỳ chưa chốt) hoặc “Đã chốt” (kỳ đã chốt). Chỉ số liệu Đã chốt là căn cứ chi trả cho HTX.
+BR-DT-17: Chu kỳ đối soát mặc định theo tuần (đề xuất phương án B trong tài liệu “Các điểm phát sinh tiền”); ngày/giờ cắt kỳ là tham số cấu hình. Các kỳ không chồng lấn và mỗi đơn chỉ thuộc đúng một kỳ.
+BR-DT-19: Tiền giữ lại: một phần doanh thu mỗi kỳ được giữ lại để bù cho hoàn trả phát sinh muộn; tỷ lệ giữ lại là tham số cấu hình (chưa chốt). Phần giữ lại được giải phóng sau 2 kỳ (khoảng 2 tuần) sau khi trừ chi phí hoàn trả phát sinh (nếu có).
+BR-DT-20: Số tiền chi trả của HTX trong kỳ = Tổng số tiền thực nhận của các đơn trong kỳ − Tiền giữ lại của kỳ + Tiền giữ lại đến hạn giải phóng ± Điều chỉnh/khấu trừ hoàn trả phát sinh sau kỳ trước ± Công nợ kỳ trước. Công thức và từng thành phần phải hiển thị rõ cho cả Admin và HTX.
+BR-DT-21: Nếu số tiền chi trả nhỏ hơn hoặc bằng 0, hoặc nhỏ hơn ngưỡng chi trả tối thiểu (tham số), hệ thống không tạo lệnh chi trả và chuyển số dư sang kỳ kế tiếp dưới dạng công nợ/cộng dồn; không bao giờ ghi nhận “Đã chi trả” cho số tiền âm.
+BR-DT-22: Chỉ Admin (hoặc người có quyền tương đương) được chốt kỳ; chỉ chốt được kỳ đã qua thời điểm cắt. Trước khi chốt, hệ thống kiểm tra: tổng đối soát khớp, không còn đơn lỗi dữ liệu, không còn cảnh báo mức chặn. Chốt kỳ phải có bước xác nhận của Admin. Sau khi chốt, kỳ bị khóa; không sửa trực tiếp số liệu.
+BR-DT-23: Không mở lại kỳ đã chốt. Mọi thay đổi sau chốt (hoàn muộn, sai sót, phạt/đền bù được duyệt) được ghi bằng dòng điều chỉnh vào kỳ kế tiếp, bắt buộc có lý do, người thực hiện và tham chiếu đơn/kỳ gốc.
+BR-DT-24: Chỉ chi trả cho HTX có hồ sơ đã duyệt và tài khoản nhận tiền hợp lệ (đã khai báo trong hồ sơ HTX). HTX bị khóa/ngừng hoạt động hoặc thiếu tài khoản nhận tiền thì lệnh chi trả bị giữ ở trạng thái “Tạm giữ” để Admin xử lý. [Giả định]
+BR-DT-25: Mỗi cặp (kỳ, HTX) chỉ có một lệnh chi trả; thao tác gửi lặp không tạo thêm lệnh hoặc giao dịch (chống xử lý trùng theo NFR-DH-15). Trạng thái chi trả: Chờ chi trả → Đã chi trả / Chi trả thất bại / Tạm giữ. Không chuyển “Đã chi trả” khi chưa có mã tham chiếu giao dịch; chi trả thất bại phải lưu lý do lỗi và cho phép thử lại.
+BR-DT-27: Audit log: chốt kỳ, tạo/hủy/thử lại chi trả và điều chỉnh phải lưu người thực hiện, thời gian, trạng thái trước/sau, lý do và chứng từ (theo NFR-DH-17, NFR-DH-18).
+BR-DT-28: Thông báo: HTX nhận thông báo khi kỳ của mình đã chốt, khi đã chi trả, khi chi trả thất bại hoặc bị tạm giữ; Admin nhận cảnh báo khi kỳ đến hạn chốt mà chưa chốt.
+Giao diện
+Màn hình 1 – Bảng kê kỳ: (từ UC-DT-09) có nút Chốt kỳ.
+Màn hình 2 – Xác nhận chốt kỳ: tóm tắt số liệu, cảnh báo còn lại, ô xác nhận, nút Xác nhận chốt kỳ/Hủy.
+Màn hình 3 – Kết quả chốt kỳ: thông báo thành công, số lệnh chi trả đã tạo, nút Đi tới chi trả.
+Hạng mục
+Nội dung
+Tên UC
+Thực hiện và ghi nhận chi trả cho HTX
+Danh sách chức năng
+Quản lý doanh thu – Chốt kỳ, chi trả HTX
+Độ ưu tiên
+Cao – Must Have. Chi trả đúng hạn là lợi ích cốt lõi của HTX khi tham gia sàn. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+Admin có quyền chi trả.
+Tác nhân phụ
+Hệ thống; ngân hàng/đơn vị thanh toán (giai đoạn demo: chuyển khoản thủ công); HTX (nhận thông báo).
+Mô tả
+Là Admin, tôi muốn thực hiện chi trả cho HTX theo lệnh chi trả của kỳ đã chốt và ghi nhận kết quả (thành công/thất bại, mã giao dịch, chứng từ), để HTX nhận tiền đúng số và hệ thống lưu vết đầy đủ.
+Điều kiện trước
+1. Admin đã đăng nhập và có quyền chi trả.
+2. Kỳ đã ở trạng thái Đã chốt và có lệnh chi trả ở trạng thái Chờ chi trả.
+3. HTX nhận tiền có hồ sơ đã duyệt và tài khoản nhận tiền hợp lệ.
+4. Thiết bị có kết nối Internet.
+Kích hoạt UC
+Admin mở danh sách lệnh chi trả của kỳ đã chốt và chọn thực hiện chi trả.
+Luồng sự kiện chính (Happy Case)
+1. Admin mở danh sách lệnh chi trả của kỳ. Hệ thống hiển thị: HTX, số tiền, tài khoản nhận (ẩn bớt số), trạng thái (Chờ chi trả, Đã chi trả, Chi trả thất bại, Tạm giữ).
+2. Admin chọn một hoặc nhiều lệnh Chờ chi trả và bấm Xuất danh sách chi trả (hoặc xem thông tin chuyển khoản).
+3. Admin thực hiện chuyển khoản bên ngoài hệ thống theo danh sách (giai đoạn demo – BR-DT-26).
+4. Admin chọn lệnh đã chuyển và bấm Ghi nhận chi trả thành công.
+5. Hệ thống hiển thị form: ngày chi, mã giao dịch ngân hàng (bắt buộc), số tiền thực chi, tệp chứng từ (ảnh/PDF), ghi chú.
+6. Admin nhập dữ liệu và bấm Xác nhận.
+7. Hệ thống kiểm tra: lệnh đang ở Chờ chi trả, số tiền thực chi bằng số tiền lệnh, mã giao dịch chưa dùng cho lệnh khác, chứng từ đúng định dạng.
+8. Hệ thống chuyển lệnh sang Đã chi trả, lưu ngày chi, mã giao dịch, chứng từ, người ghi nhận; cập nhật trạng thái kỳ khi tất cả lệnh đã xử lý (Hoàn tất).
+9. Hệ thống cập nhật các dòng đơn thuộc kỳ sang trạng thái đối soát Đã chi trả và gửi thông báo cho HTX: “Bạn đã được chi trả [số tiền] cho kỳ [mã kỳ]”.
+10. Hệ thống lưu audit log (BR-DT-27).
+Luồng thay thế
+A1 – Chi trả thất bại: Tại bước 4, Admin chọn Ghi nhận chi trả thất bại, nhập lý do (sai số tài khoản, bị từ chối…). Hệ thống chuyển lệnh sang Chi trả thất bại, thông báo HTX cập nhật tài khoản nếu cần, cho phép Admin thử lại.
+A2 – Thử lại sau thất bại: Admin sửa thông tin cần thiết (nếu có), bấm Thử lại; hệ thống đưa lệnh về Chờ chi trả và giữ lịch sử các lần thử.
+A3 – Chi trả hàng loạt: Admin chọn nhiều lệnh và nhập file/bảng mã giao dịch; hệ thống kiểm tra từng lệnh và báo kết quả theo từng dòng (dòng lỗi không làm hỏng dòng đúng).
+A4 – Lệnh Tạm giữ: Admin xử lý nguyên nhân (cập nhật tài khoản, mở khóa HTX) rồi chuyển lệnh về Chờ chi trả; thay đổi cần lý do và được ghi log.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Hệ thống chặn và hiển thị: “Bạn không có quyền chi trả.”
+E2 – Lệnh không ở trạng thái Chờ chi trả: Hệ thống hiển thị: “Lệnh chi trả không còn ở trạng thái chờ.” (chống chi trả trùng).
+E3 – Thiếu mã giao dịch: Hệ thống hiển thị: “Vui lòng nhập mã giao dịch.”
+E4 – Số tiền thực chi khác số tiền lệnh: Hệ thống hiển thị: “Số tiền thực chi phải bằng số tiền chi trả của lệnh.” và không lưu.
+E5 – Mã giao dịch bị trùng: Hệ thống hiển thị: “Mã giao dịch đã được dùng cho lệnh khác.”
+E6 – Chứng từ sai định dạng/quá dung lượng: Hệ thống hiển thị: “Chứng từ không hợp lệ. Vui lòng chọn ảnh hoặc PDF, dung lượng tối đa 5 MB.” [Dung lượng là tham số]
+E7 – Gửi lặp thao tác: Hệ thống chỉ ghi nhận một lần, bỏ qua thao tác thứ hai (NFR-DH-15).
+E8 – Lỗi hệ thống/mất mạng: Hệ thống không đổi trạng thái lệnh, hiển thị thông báo lỗi và cho thử lại.
+Điều kiện sau
+Mức 1: Lệnh chi trả chuyển sang Đã chi trả (hoặc Chi trả thất bại kèm lý do); HTX được thông báo.
+Mức 2: Hệ thống lưu giao dịch chi trả (số tiền, ngày, mã giao dịch, chứng từ, người ghi nhận), cập nhật trạng thái đối soát của các đơn trong kỳ, cập nhật số liệu dashboard (đã chi trả/chờ chi trả) và audit log.
+Điều hướng: Admin quay lại danh sách lệnh chi trả; HTX xem kết quả tại UC-DT-03.
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-13: Mọi số liệu tiền phải mang nhãn trạng thái: “Tạm tính” (kỳ chưa chốt) hoặc “Đã chốt” (kỳ đã chốt). Chỉ số liệu Đã chốt là căn cứ chi trả cho HTX.
+BR-DT-20: Số tiền chi trả của HTX trong kỳ = Tổng số tiền thực nhận của các đơn trong kỳ − Tiền giữ lại của kỳ + Tiền giữ lại đến hạn giải phóng ± Điều chỉnh/khấu trừ hoàn trả phát sinh sau kỳ trước ± Công nợ kỳ trước. Công thức và từng thành phần phải hiển thị rõ cho cả Admin và HTX.
+BR-DT-21: Nếu số tiền chi trả nhỏ hơn hoặc bằng 0, hoặc nhỏ hơn ngưỡng chi trả tối thiểu (tham số), hệ thống không tạo lệnh chi trả và chuyển số dư sang kỳ kế tiếp dưới dạng công nợ/cộng dồn; không bao giờ ghi nhận “Đã chi trả” cho số tiền âm.
+BR-DT-24: Chỉ chi trả cho HTX có hồ sơ đã duyệt và tài khoản nhận tiền hợp lệ (đã khai báo trong hồ sơ HTX). HTX bị khóa/ngừng hoạt động hoặc thiếu tài khoản nhận tiền thì lệnh chi trả bị giữ ở trạng thái “Tạm giữ” để Admin xử lý. [Giả định]
+BR-DT-25: Mỗi cặp (kỳ, HTX) chỉ có một lệnh chi trả; thao tác gửi lặp không tạo thêm lệnh hoặc giao dịch (chống xử lý trùng theo NFR-DH-15). Trạng thái chi trả: Chờ chi trả → Đã chi trả / Chi trả thất bại / Tạm giữ. Không chuyển “Đã chi trả” khi chưa có mã tham chiếu giao dịch; chi trả thất bại phải lưu lý do lỗi và cho phép thử lại.
+BR-DT-26: Giai đoạn demo: việc chuyển tiền thực hiện ngoài hệ thống (chuyển khoản ngân hàng); Admin nhập ngày chi, mã giao dịch ngân hàng và đính kèm chứng từ để hệ thống ghi nhận. Khi có tích hợp thanh toán hộ sẽ thay bằng tự động. [Giả định – chờ Lead chốt]
+BR-DT-27: Audit log: chốt kỳ, tạo/hủy/thử lại chi trả và điều chỉnh phải lưu người thực hiện, thời gian, trạng thái trước/sau, lý do và chứng từ (theo NFR-DH-17, NFR-DH-18).
+BR-DT-28: Thông báo: HTX nhận thông báo khi kỳ của mình đã chốt, khi đã chi trả, khi chi trả thất bại hoặc bị tạm giữ; Admin nhận cảnh báo khi kỳ đến hạn chốt mà chưa chốt.
+Giao diện
+Màn hình 1 – Danh sách lệnh chi trả của kỳ: bộ lọc trạng thái, bảng lệnh, nút Xuất danh sách, nút Ghi nhận chi trả.
+Màn hình 2 – Form ghi nhận chi trả: ngày chi, mã giao dịch, số tiền thực chi, tệp chứng từ, ghi chú.
+Màn hình 3 – Chi tiết lệnh: lịch sử các lần ghi nhận/thử lại và audit log.
+Hạng mục
+Nội dung
+Tên UC
+Điều chỉnh sau chốt, giải phóng tiền giữ lại và xử lý công nợ
+Danh sách chức năng
+Quản lý doanh thu – Chốt kỳ, chi trả HTX
+Độ ưu tiên
+Trung bình – Should Have. Cần để xử lý hoàn tiền phát sinh muộn và quản lý tiền giữ lại; giai đoạn demo có thể xử lý thủ công một phần. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+Admin có quyền chi trả/điều chỉnh; Hệ thống (tự động giải phóng tiền giữ lại đến hạn).
+Tác nhân phụ
+Hệ thống; HTX (nhận thông báo).
+Mô tả
+Là Admin, tôi muốn ghi nhận điều chỉnh cho các khoản phát sinh sau khi kỳ đã chốt (hoàn muộn, sai sót, đền bù được duyệt), giải phóng tiền giữ lại đến hạn và xử lý công nợ của HTX, để số tiền chi trả các kỳ sau phản ánh đúng mà không phải mở lại kỳ đã chốt.
+Điều kiện trước
+1. Admin đã đăng nhập và có quyền điều chỉnh/chi trả.
+2. Có kỳ đã chốt hoặc khoản tiền giữ lại/công nợ cần xử lý.
+3. Có kỳ kế tiếp đang ở trạng thái Tạm tính để nhận dòng điều chỉnh.
+4. Thiết bị có kết nối Internet.
+Kích hoạt UC
+(a) Hệ thống phát sinh hoàn tiền thuộc trách nhiệm HTX cho đơn đã nằm trong kỳ đã chốt; (b) khoản giữ lại đến hạn giải phóng; hoặc (c) Admin chọn Tạo điều chỉnh tại hồ sơ đối soát HTX.
+Luồng sự kiện chính (Happy Case)
+1. Hệ thống (hoặc Admin) phát hiện khoản cần điều chỉnh: hoàn tiền muộn có người chịu là HTX, chi phí chuyển hoàn, sai lệch số tiền, hoặc đền bù đã được Admin duyệt.
+2. Admin mở hồ sơ đối soát HTX (UC-DT-08) và chọn Tạo điều chỉnh. Với khoản phát sinh tự động từ hoàn tiền thành công, hệ thống đã tạo sẵn dòng điều chỉnh ở trạng thái Chờ xác nhận.
+3. Hệ thống hiển thị form: HTX, kỳ/đơn gốc, loại điều chỉnh (Hoàn muộn, Chi phí chuyển hoàn, Sửa sai số liệu, Đền bù/khác), số tiền (cộng hoặc trừ), lý do, tệp đính kèm.
+4. Admin nhập thông tin và bấm Lưu.
+5. Hệ thống kiểm tra dữ liệu (đơn/kỳ gốc thuộc HTX, số tiền hợp lệ, có lý do) và ghi dòng điều chỉnh vào kỳ kế tiếp đang Tạm tính; kỳ gốc giữ nguyên Đã chốt.
+6. Đến hạn giải phóng (sau 2 kỳ), hệ thống tính: tiền giữ lại − chi phí hoàn trả phát sinh cho HTX; phần còn lại được cộng vào số tiền chi trả của kỳ tương ứng; phần thiếu (nếu có) tạo công nợ.
+7. Khi số tiền chi trả của HTX ở kỳ tiếp theo âm hoặc dưới ngưỡng, hệ thống cộng dồn thành công nợ và hiển thị trong hồ sơ HTX (BR-DT-21).
+8. Hệ thống hiển thị công nợ/điều chỉnh trong bảng kê kỳ kế tiếp (UC-DT-09) và gửi thông báo cho HTX về khoản điều chỉnh/công nợ kèm lý do.
+9. Hệ thống lưu audit log (BR-DT-27).
+Luồng thay thế
+A1 – Điều chỉnh tự động từ hoàn tiền: Khi giao dịch hoàn tiền thành công cho đơn đã chốt, hệ thống tự tạo dòng điều chỉnh theo người chịu trách nhiệm; Admin chỉ xác nhận hoặc từ chối kèm lý do.
+A2 – Từ chối điều chỉnh: Admin bấm Từ chối ở dòng Chờ xác nhận và nhập lý do; dòng điều chỉnh không tính vào kỳ nào, lịch sử vẫn được lưu.
+A3 – Khấu trừ toàn bộ công nợ ở kỳ sau: Số chi trả dương đủ bù, hệ thống tự trừ công nợ và hiển thị phần đã khấu trừ.
+A4 – Đền bù cho HTX (nếu chính sách có): Admin tạo điều chỉnh loại Đền bù có lý do và chứng từ. [Chính sách đền bù chưa có – BRD Chính sách đơn hàng ghi nhận mong muốn của HTX]
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Hệ thống chặn và hiển thị: “Bạn không có quyền thực hiện chức năng này.”
+E2 – Thiếu lý do: Hệ thống hiển thị: “Vui lòng nhập lý do điều chỉnh.”
+E3 – Đơn/kỳ gốc không thuộc HTX đã chọn: Hệ thống hiển thị: “Đơn không thuộc HTX này.”
+E4 – Không có kỳ kế tiếp đang Tạm tính: Hệ thống giữ dòng ở trạng thái Chờ xếp kỳ và đưa vào kỳ mới ngay khi được tạo.
+E5 – Điều chỉnh trùng với hoàn tiền đã tự động ghi nhận: Hệ thống cảnh báo “Khoản điều chỉnh trùng” và không cho lưu nếu không có lý do khác.
+E6 – Hoàn tiền thất bại hoặc chưa hoàn tất: Hệ thống không tạo điều chỉnh trừ HTX (BR-DT-10).
+E7 – Lỗi hệ thống/mất mạng: Hệ thống không lưu dòng dở dang, hiển thị thông báo lỗi và cho thử lại.
+Điều kiện sau
+Mức 1: Dòng điều chỉnh, tiền giữ lại giải phóng và công nợ được ghi nhận đúng vào kỳ kế tiếp; kỳ đã chốt không bị thay đổi.
+Mức 2: Hệ thống lưu dòng điều chỉnh (kỳ gốc, đơn gốc, loại, số tiền, lý do, người thực hiện), số dư tiền giữ lại, số dư công nợ và audit log.
+Điều hướng: kết quả hiển thị tại bảng kê kỳ kế tiếp (UC-DT-09) và hồ sơ HTX (UC-DT-08).
+Yêu cầu/Business rule
+BR-DT-01: Phân quyền dữ liệu: HTX chỉ xem doanh thu/đối soát của chính HTX mình; Admin xem toàn hệ thống ở chế độ chỉ xem (không sửa số liệu tại màn hình dashboard và đối soát); Khách vãng lai, Khách hàng và Cơ quan quản lý nhà nước không có quyền truy cập các màn hình này.
+BR-DT-10: Hoàn tiền/hoàn hàng được ghi nhận bằng dòng điều chỉnh âm gắn với đơn gốc, kèm người chịu trách nhiệm (HTX, đơn vị vận chuyển, Hệ thống, Khách hàng). Chỉ phần thuộc trách nhiệm HTX mới trừ vào số tiền HTX thực nhận. Chỉ ghi nhận khi Admin đã quyết định hoàn và giao dịch hoàn tiền thành công; số tiền hoàn không vượt số tiền khách đã thanh toán cho phần hàng được hoàn.
+BR-DT-19: Tiền giữ lại: một phần doanh thu mỗi kỳ được giữ lại để bù cho hoàn trả phát sinh muộn; tỷ lệ giữ lại là tham số cấu hình (chưa chốt). Phần giữ lại được giải phóng sau 2 kỳ (khoảng 2 tuần) sau khi trừ chi phí hoàn trả phát sinh (nếu có).
+BR-DT-20: Số tiền chi trả của HTX trong kỳ = Tổng số tiền thực nhận của các đơn trong kỳ − Tiền giữ lại của kỳ + Tiền giữ lại đến hạn giải phóng ± Điều chỉnh/khấu trừ hoàn trả phát sinh sau kỳ trước ± Công nợ kỳ trước. Công thức và từng thành phần phải hiển thị rõ cho cả Admin và HTX.
+BR-DT-21: Nếu số tiền chi trả nhỏ hơn hoặc bằng 0, hoặc nhỏ hơn ngưỡng chi trả tối thiểu (tham số), hệ thống không tạo lệnh chi trả và chuyển số dư sang kỳ kế tiếp dưới dạng công nợ/cộng dồn; không bao giờ ghi nhận “Đã chi trả” cho số tiền âm.
+BR-DT-23: Không mở lại kỳ đã chốt. Mọi thay đổi sau chốt (hoàn muộn, sai sót, phạt/đền bù được duyệt) được ghi bằng dòng điều chỉnh vào kỳ kế tiếp, bắt buộc có lý do, người thực hiện và tham chiếu đơn/kỳ gốc.
+BR-DT-24: Chỉ chi trả cho HTX có hồ sơ đã duyệt và tài khoản nhận tiền hợp lệ (đã khai báo trong hồ sơ HTX). HTX bị khóa/ngừng hoạt động hoặc thiếu tài khoản nhận tiền thì lệnh chi trả bị giữ ở trạng thái “Tạm giữ” để Admin xử lý. [Giả định]
+BR-DT-27: Audit log: chốt kỳ, tạo/hủy/thử lại chi trả và điều chỉnh phải lưu người thực hiện, thời gian, trạng thái trước/sau, lý do và chứng từ (theo NFR-DH-17, NFR-DH-18).
+BR-DT-28: Thông báo: HTX nhận thông báo khi kỳ của mình đã chốt, khi đã chi trả, khi chi trả thất bại hoặc bị tạm giữ; Admin nhận cảnh báo khi kỳ đến hạn chốt mà chưa chốt.
+Giao diện
+Màn hình 1 – Danh sách điều chỉnh/công nợ của HTX: loại, kỳ/đơn gốc, số tiền, trạng thái (Chờ xác nhận, Đã ghi nhận, Từ chối), nút Tạo điều chỉnh.
+Màn hình 2 – Form tạo điều chỉnh: HTX, kỳ/đơn gốc, loại, số tiền, lý do, đính kèm.
+Màn hình 3 – Sổ tiền giữ lại: các khoản giữ lại theo kỳ, kỳ dự kiến giải phóng, số đã giải phóng/đã trừ.
+Hạng mục
+Nội dung
+Tên UC
+Tạo mã ưu đãi
+Danh sách chức năng
+Quản lý hệ thống – Quản lý ưu đãi
+Độ ưu tiên
+Trung bình – Could Have/Should Have. FR-MH-08 (Áp dụng mã ưu đãi) đang ở mức Could Have trong BRD Luồng mua hàng, nên chức năng quản lý mã đi theo mức ưu tiên đó. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+Admin đã đăng nhập.
+Tác nhân phụ
+Hệ thống
+Mô tả
+Là Admin, tôi muốn tạo mã ưu đãi với mức giảm, điều kiện áp dụng và giới hạn sử dụng, để khách hàng nhập mã tại bước thanh toán và được giảm giá theo chương trình của sàn.
+Điều kiện trước
+1. Admin đã đăng nhập thành công và có quyền quản lý ưu đãi.
+2. Có kết nối Internet.
+3. Nếu chọn phạm vi theo HTX/sản phẩm: HTX/sản phẩm đã tồn tại và được duyệt trên hệ thống.
+Kích hoạt UC
+Admin chọn Quản lý hệ thống → Ưu đãi → Tạo mã ưu đãi.
+Luồng sự kiện chính (Happy Case)
+1. Admin mở danh sách mã ưu đãi và bấm Tạo mã ưu đãi. Hệ thống hiển thị form.
+2. Admin nhập thông tin chung: mã ưu đãi (hoặc để hệ thống gợi ý mã ngẫu nhiên), tên chương trình, mô tả hiển thị cho khách.
+3. Admin chọn loại ưu đãi: giảm theo phần trăm (nhập % và mức giảm tối đa) hoặc giảm số tiền cố định.
+4. Admin nhập điều kiện áp dụng: giá trị đơn tối thiểu, loại đơn áp dụng (mua thường/Preorder/cả hai), phạm vi áp dụng (toàn sàn, theo HTX, theo danh mục hoặc theo sản phẩm).
+5. Admin nhập thời gian hiệu lực (bắt đầu – kết thúc).
+6. Admin nhập giới hạn: tổng số lượt dùng toàn hệ thống và số lượt tối đa trên mỗi khách hàng.
+7. Admin chọn Lưu nháp hoặc Lưu và kích hoạt.
+8. Hệ thống kiểm tra dữ liệu bắt buộc, định dạng, tính duy nhất của mã và hợp lý của điều kiện (ví dụ ngày kết thúc sau ngày bắt đầu, mức giảm không vượt giới hạn).
+9. Hệ thống tạo mã ưu đãi: trạng thái Nháp (nếu lưu nháp), Chờ hiệu lực (nếu đã tới ngày bắt đầu sau này) hoặc Đang hoạt động (nếu đến hạn bắt đầu).
+10. Hệ thống lưu audit log và hiển thị: “Tạo mã ưu đãi thành công.” rồi điều hướng đến chi tiết mã.
+Luồng thay thế
+A1 – Lưu nháp: Tại bước 7, Admin chọn Lưu nháp; mã ở trạng thái Nháp, không áp dụng được cho khách; Admin có thể sửa tự do cho đến khi kích hoạt.
+A2 – Nhân bản mã: Admin chọn Nhân bản từ một mã cũ; hệ thống điền sẵn điều kiện, Admin đổi mã và thời gian rồi lưu.
+A3 – Phạm vi theo HTX/sản phẩm: Tại bước 4, Admin tìm và chọn một hoặc nhiều HTX/sản phẩm; hệ thống chỉ cho chọn đối tượng đang hoạt động.
+A4 – Mã tự sinh: Admin bấm Gợi ý mã; hệ thống sinh mã duy nhất, Admin có thể chỉnh lại.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Hệ thống chặn và hiển thị: “Bạn không có quyền quản lý ưu đãi.”
+E2 – Thiếu thông tin bắt buộc: Hệ thống hiển thị thông báo dưới từng trường, ví dụ: “Vui lòng nhập mức giảm.”
+E3 – Mã không đúng định dạng: Hệ thống hiển thị: “Mã gồm 4–20 ký tự chữ, số hoặc gạch dưới.”
+E4 – Mã bị trùng: Hệ thống hiển thị: “Mã ưu đãi đã tồn tại. Vui lòng chọn mã khác.”
+E5 – Thời gian không hợp lệ: Ngày kết thúc không sau ngày bắt đầu hoặc đã ở quá khứ; hệ thống hiển thị: “Thời gian hiệu lực không hợp lệ.”
+E6 – Mức giảm không hợp lệ: Phần trăm ngoài khoảng 1–100 hoặc số tiền ≤ 0; hệ thống hiển thị: “Mức giảm không hợp lệ.” Giảm theo % mà chưa nhập mức giảm tối đa: “Vui lòng nhập mức giảm tối đa.”
+E7 – Phạm vi trống: Chọn phạm vi theo HTX/sản phẩm nhưng chưa chọn đối tượng: “Vui lòng chọn ít nhất một đối tượng áp dụng.”
+E8 – Lỗi hệ thống/mất mạng: Hệ thống không tạo mã, hiển thị thông báo lỗi; dữ liệu đã nhập được giữ trên form.
+Điều kiện sau
+Mức 1: Mã ưu đãi được tạo với trạng thái phù hợp; khách hàng có thể nhập mã tại checkout khi mã Đang hoạt động.
+Mức 2: Hệ thống lưu mã, điều kiện, giới hạn, thời gian, trạng thái, người tạo, thời điểm tạo và audit log; mã được đồng bộ cho module Mua hàng để kiểm tra khi thanh toán.
+Điều hướng: từ form tạo mã sang chi tiết mã/danh sách mã (UC-HT-03).
+Yêu cầu/Business rule
+BR-HT-01: Chỉ Admin được tạo, sửa, tạm dừng, kết thúc mã ưu đãi. HTX và các vai trò khác không có quyền quản lý mã ở giai đoạn 1.
+BR-HT-02: Mã ưu đãi duy nhất toàn hệ thống, không phân biệt chữ hoa/thường, độ dài 4–20 ký tự gồm chữ, số, gạch dưới (tham số); mã đã kết thúc không được tạo lại trùng tên.
+BR-HT-03: Giai đoạn 1: khách chỉ nhập mã tại bước thanh toán; chưa có ví voucher, chưa phát mã vào tài khoản (theo DX-09 BRD Luồng mua hàng). Mỗi đơn áp dụng tối đa 1 mã.
+BR-HT-04: Mã chỉ giảm trên tiền hàng; không áp dụng cho hộp quà, phí giao hàng và phụ phí hỏa tốc (DX-09). Số tiền giảm không vượt quá tiền hàng thuộc phạm vi áp dụng.
+BR-HT-05: Loại ưu đãi: giảm theo phần trăm (bắt buộc có mức giảm tối đa) hoặc giảm số tiền cố định. Miễn phí vận chuyển nằm ngoài phạm vi giai đoạn 1. [Giả định]
+BR-HT-06: Điều kiện áp dụng bắt buộc khi tạo mã: thời gian hiệu lực (bắt đầu – kết thúc), giá trị đơn tối thiểu, phạm vi áp dụng (toàn sàn hoặc theo HTX/danh mục/sản phẩm), loại đơn áp dụng (mua thường, Preorder hoặc cả hai).
+BR-HT-07: Giới hạn sử dụng: tổng số lượt dùng toàn hệ thống và số lượt tối đa trên mỗi khách hàng (mặc định 1 lượt/khách). Khi hết lượt hoặc hết hạn, mã tự chuyển trạng thái tương ứng và không còn áp dụng được.
+BR-HT-08: Chi phí giảm giá do Hệ thống chịu, HTX vẫn nhận đủ tiền hàng; hệ thống thống kê tổng “Chi phí ưu đãi” theo mã để phục vụ đối soát và báo cáo. Với đơn Preorder, tiền cọc 30% tính trên giá sau giảm.
+BR-HT-09: Trạng thái mã: Nháp, Chờ hiệu lực, Đang hoạt động, Tạm dừng, Hết lượt, Hết hạn, Đã kết thúc. Hệ thống tự chuyển Chờ hiệu lực → Đang hoạt động → Hết hạn/Hết lượt theo thời gian và số lượt; chỉ Admin được Tạm dừng, Kích hoạt lại hoặc Kết thúc.
+BR-HT-14: Mọi thao tác tạo, sửa, đổi trạng thái, hoàn lượt dùng mã phải lưu audit log (người thực hiện, thời gian, giá trị trước/sau, lý do).
+Giao diện
+Màn hình 1 – Form Tạo mã ưu đãi: Mã ưu đãi, Tên chương trình, Mô tả, Loại ưu đãi (% / số tiền), Mức giảm, Mức giảm tối đa, Giá trị đơn tối thiểu, Loại đơn áp dụng, Phạm vi áp dụng, Thời gian hiệu lực, Tổng lượt dùng, Lượt tối đa/khách; nút Lưu nháp, Lưu và kích hoạt.
+Màn hình 2 – Chi tiết mã sau khi tạo: thông tin mã, trạng thái, nút Sửa/Tạm dừng/Kết thúc.
+Hạng mục
+Nội dung
+Tên UC
+Sửa, tạm dừng, kích hoạt lại và kết thúc mã ưu đãi
+Danh sách chức năng
+Quản lý hệ thống – Quản lý ưu đãi
+Độ ưu tiên
+Trung bình – Could Have/Should Have. Cần để xử lý khi chương trình thay đổi hoặc phát hiện mã bị lạm dụng. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+Admin đã đăng nhập.
+Tác nhân phụ
+Hệ thống 
+Mô tả
+Là Admin, tôi muốn chỉnh sửa điều kiện cho phép, tạm dừng, kích hoạt lại hoặc kết thúc mã ưu đãi, để kiểm soát chương trình và ngăn lạm dụng mà không ảnh hưởng các đơn đã áp mã.
+Điều kiện trước
+1. Admin đã đăng nhập thành công và có quyền quản lý ưu đãi.
+2. Mã ưu đãi tồn tại trên hệ thống.
+3. Có kết nối Internet.
+Kích hoạt UC
+Admin chọn một mã trong danh sách và bấm Sửa, Tạm dừng, Kích hoạt lại hoặc Kết thúc.
+Luồng sự kiện chính (Happy Case)
+1. Admin mở danh sách mã ưu đãi và chọn một mã.
+2. Hệ thống hiển thị chi tiết mã và các thao tác được phép theo trạng thái hiện tại (BR-HT-09, BR-HT-10).
+3. Admin chọn Sửa. Hệ thống mở form với các trường được phép sửa; các trường bị khóa hiển thị mờ kèm giải thích khi mã đã có lượt sử dụng.
+4. Admin chỉnh sửa (ví dụ gia hạn thời gian, tăng tổng lượt dùng, đổi mô tả) và bấm Lưu.
+5. Hệ thống kiểm tra dữ liệu (ví dụ tổng lượt dùng mới không thấp hơn số lượt đã dùng; ngày kết thúc mới sau ngày hiện tại).
+6. Hệ thống hiển thị tóm tắt thay đổi (giá trị trước – sau) và yêu cầu Admin xác nhận.
+7. Admin xác nhận. Hệ thống lưu thay đổi, áp dụng cho các đơn tạo từ thời điểm đó; đơn đã áp mã không bị thay đổi.
+8. Hệ thống lưu audit log (người sửa, thời gian, giá trị trước/sau) và hiển thị: “Cập nhật mã ưu đãi thành công.”
+Luồng thay thế
+A1 – Tạm dừng: Admin bấm Tạm dừng và nhập lý do; mã chuyển sang Tạm dừng, khách nhập mã nhận thông báo mã không khả dụng; đơn đã áp mã không bị ảnh hưởng.
+A2 – Kích hoạt lại: Admin bấm Kích hoạt lại mã Tạm dừng còn hạn và còn lượt; mã chuyển về Đang hoạt động.
+A3 – Kết thúc: Admin bấm Kết thúc và xác nhận; mã chuyển Đã kết thúc, không thể kích hoạt lại; hệ thống giữ toàn bộ lịch sử sử dụng.
+A4 – Xóa mã Nháp: Admin xóa mã Nháp chưa từng được áp dụng; hệ thống xóa sau khi xác nhận và vẫn lưu audit log (BR-HT-11).
+A5 – Mã bị nghi lạm dụng: Admin tạm dừng ngay, xem danh sách đơn đã dùng mã (UC-HT-03) rồi quyết định tiếp tục hoặc kết thúc.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Hệ thống chặn và hiển thị: “Bạn không có quyền quản lý ưu đãi.”
+E2 – Sửa trường bị khóa: Hệ thống hiển thị: “Mã đã có lượt sử dụng, không thể sửa trường này.”
+E3 – Tổng lượt dùng mới thấp hơn lượt đã dùng: Hệ thống hiển thị: “Tổng lượt dùng không được thấp hơn số lượt đã sử dụng.”
+E4 – Thời gian mới không hợp lệ: Hệ thống hiển thị: “Thời gian hiệu lực không hợp lệ.”
+E5 – Thao tác không phù hợp trạng thái: Ví dụ kích hoạt lại mã Đã kết thúc hoặc Hết hạn; hệ thống hiển thị: “Mã ở trạng thái hiện tại không thể thực hiện thao tác này.”
+E6 – Thiếu lý do khi tạm dừng/kết thúc: Hệ thống hiển thị: “Vui lòng nhập lý do.”
+E7 – Hai Admin cùng sửa một mã: Hệ thống giữ thay đổi đến trước, báo thay đổi sau đã lỗi thời và yêu cầu tải lại.
+E8 – Lỗi hệ thống/mất mạng: Hệ thống không lưu thay đổi dở dang và thông báo lỗi.
+Điều kiện sau
+Mức 1: Mã ưu đãi được cập nhật hoặc đổi trạng thái đúng thao tác; đơn đã áp mã không bị ảnh hưởng.
+Mức 2: Hệ thống lưu giá trị mới, lý do, người thực hiện, thời gian và audit log; đồng bộ trạng thái mã sang module Mua hàng.
+Điều hướng: quay lại chi tiết mã/danh sách mã.
+Yêu cầu/Business rule
+BR-HT-01: Chỉ Admin được tạo, sửa, tạm dừng, kết thúc mã ưu đãi. HTX và các vai trò khác không có quyền quản lý mã ở giai đoạn 1.
+BR-HT-06: Điều kiện áp dụng bắt buộc khi tạo mã: thời gian hiệu lực (bắt đầu – kết thúc), giá trị đơn tối thiểu, phạm vi áp dụng (toàn sàn hoặc theo HTX/danh mục/sản phẩm), loại đơn áp dụng (mua thường, Preorder hoặc cả hai).
+BR-HT-07: Giới hạn sử dụng: tổng số lượt dùng toàn hệ thống và số lượt tối đa trên mỗi khách hàng (mặc định 1 lượt/khách). Khi hết lượt hoặc hết hạn, mã tự chuyển trạng thái tương ứng và không còn áp dụng được.
+BR-HT-09: Trạng thái mã: Nháp, Chờ hiệu lực, Đang hoạt động, Tạm dừng, Hết lượt, Hết hạn, Đã kết thúc. Hệ thống tự chuyển Chờ hiệu lực → Đang hoạt động → Hết hạn/Hết lượt theo thời gian và số lượt; chỉ Admin được Tạm dừng, Kích hoạt lại hoặc Kết thúc.
+BR-HT-10: Sửa mã: mã đã có lượt sử dụng thì không được sửa loại ưu đãi, mức giảm, giá trị đơn tối thiểu, phạm vi áp dụng; chỉ được gia hạn thời gian, tăng tổng lượt dùng (không thấp hơn số lượt đã dùng), tạm dừng hoặc kết thúc. Đơn đã áp mã giữ nguyên điều kiện tại thời điểm đặt (snapshot).
+BR-HT-11: Không xóa vật lý mã đã có lượt sử dụng; chỉ cho phép xóa mã Nháp chưa từng được áp dụng. Mã đã dùng chỉ được Kết thúc/lưu trữ.
+BR-HT-12: Kiểm tra tại checkout: hệ thống kiểm tra lại toàn bộ điều kiện của mã tại thời điểm thanh toán. Lượt dùng được giữ khi đơn được tạo (đơn online/cọc ở Chờ thanh toán giữ 15 phút theo BRD Luồng mua hàng) và được nhả khi đơn hết thời gian giữ.
+BR-HT-14: Mọi thao tác tạo, sửa, đổi trạng thái, hoàn lượt dùng mã phải lưu audit log (người thực hiện, thời gian, giá trị trước/sau, lý do).
+Giao diện
+Màn hình 1 – Chi tiết mã: thông tin, trạng thái, số lượt đã dùng, nút Sửa/Tạm dừng/Kích hoạt lại/Kết thúc theo trạng thái.
+Màn hình 2 – Form Sửa mã: trường được sửa/trường bị khóa; màn hình xác nhận thay đổi (giá trị trước – sau).
+Màn hình 3 – Popup: nhập lý do tạm dừng/kết thúc.
+Hạng mục
+Nội dung
+Tên UC
+Xem danh sách và theo dõi sử dụng mã ưu đãi
+Danh sách chức năng
+Quản lý hệ thống – Quản lý ưu đãi
+Độ ưu tiên
+Trung bình – Should Have. Giúp Admin đo hiệu quả, kiểm soát chi phí ưu đãi (do sàn chịu) và phát hiện lạm dụng. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+Admin đã đăng nhập.
+Tác nhân phụ
+Hệ thống
+Mô tả
+Là Admin, tôi muốn xem danh sách mã ưu đãi và theo dõi số lượt sử dụng, tổng tiền giảm, số đơn áp dụng, số đơn bị hủy/hoàn lượt của từng mã, để đánh giá hiệu quả và kiểm soát chi phí ưu đãi.
+Điều kiện trước
+1. Admin đã đăng nhập thành công và có quyền quản lý ưu đãi.
+2. Có kết nối Internet.
+Kích hoạt UC
+Admin chọn Quản lý hệ thống → Ưu đãi.
+Luồng sự kiện chính (Happy Case)
+1. Admin mở màn hình Quản lý ưu đãi. Hệ thống hiển thị danh sách mã: mã, tên chương trình, loại, mức giảm, thời gian hiệu lực, trạng thái, lượt đã dùng/giới hạn, tổng tiền giảm.
+2. Admin tìm kiếm theo mã/tên và lọc theo trạng thái, loại đơn áp dụng, khoảng thời gian hiệu lực. Hệ thống tính lại danh sách có phân trang.
+3. Admin chọn một mã. Hệ thống hiển thị chi tiết: điều kiện áp dụng, giới hạn, lịch sử thay đổi.
+4. Hệ thống hiển thị thống kê sử dụng của mã: số lượt đã dùng/còn lại, số đơn áp dụng, tổng tiền giảm (chi phí do sàn chịu), giá trị đơn trung bình, số lượt được hoàn lại do đơn hủy.
+5. Hệ thống hiển thị danh sách đơn đã áp mã: mã đơn, ngày, tiền giảm, trạng thái đơn, trạng thái lượt dùng (Đang giữ, Đã dùng, Đã hoàn). Không hiển thị thông tin cá nhân của khách.
+6. Admin chọn một đơn để xem chi tiết đơn hàng (nếu có quyền).
+7. Admin chọn thao tác Sửa/Tạm dừng/Kết thúc (UC-HT-02) khi cần.
+Luồng thay thế
+A1 – Danh sách trống: Hệ thống hiển thị: “Chưa có mã ưu đãi. Bấm Tạo mã ưu đãi để bắt đầu.”
+A2 – Mã cảnh báo sắp hết lượt/hết hạn: Hệ thống nêu bật các mã còn dưới 10% lượt hoặc còn dưới 3 ngày (tham số) để Admin quyết định gia hạn.
+A3 – Phát hiện bất thường: Một khách dùng vượt giới hạn hoặc số lượt tăng đột biến trong thời gian ngắn; hệ thống gắn cờ cho Admin xem xét.
+Luồng rẽ nhánh/ngoại lệ
+E1 – Không có quyền: Hệ thống chặn và hiển thị: “Bạn không có quyền quản lý ưu đãi.”
+E2 – Không tìm thấy mã: Hệ thống hiển thị: “Không tìm thấy mã ưu đãi phù hợp.”
+E3 – Số liệu lượt dùng lệch với số đơn áp mã: Hệ thống hiển thị cảnh báo chênh lệch và ghi log để tra soát.
+E4 – Lỗi tải dữ liệu/mất mạng: Hệ thống hiển thị thông báo lỗi và nút Tải lại.
+Điều kiện sau
+Mức 1: Admin xem được danh sách mã và số liệu sử dụng của từng mã.
+Mức 2: Chức năng chỉ đọc; không hiển thị thông tin cá nhân của khách; số liệu “Chi phí ưu đãi” khớp với dòng “Ưu đãi do sàn chịu” trong đối soát (BR-HT-08).
+Điều hướng: sang Tạo mã (UC-HT-01) hoặc Sửa/Tạm dừng/Kết thúc (UC-HT-02).
+Yêu cầu/Business rule
+BR-HT-01: Chỉ Admin được tạo, sửa, tạm dừng, kết thúc mã ưu đãi. HTX và các vai trò khác không có quyền quản lý mã ở giai đoạn 1.
+BR-HT-07: Giới hạn sử dụng: tổng số lượt dùng toàn hệ thống và số lượt tối đa trên mỗi khách hàng (mặc định 1 lượt/khách). Khi hết lượt hoặc hết hạn, mã tự chuyển trạng thái tương ứng và không còn áp dụng được.
+BR-HT-08: Chi phí giảm giá do Hệ thống chịu, HTX vẫn nhận đủ tiền hàng; hệ thống thống kê tổng “Chi phí ưu đãi” theo mã để phục vụ đối soát và báo cáo. Với đơn Preorder, tiền cọc 30% tính trên giá sau giảm.
+BR-HT-09: Trạng thái mã: Nháp, Chờ hiệu lực, Đang hoạt động, Tạm dừng, Hết lượt, Hết hạn, Đã kết thúc. Hệ thống tự chuyển Chờ hiệu lực → Đang hoạt động → Hết hạn/Hết lượt theo thời gian và số lượt; chỉ Admin được Tạm dừng, Kích hoạt lại hoặc Kết thúc.
+BR-HT-13: Hoàn lại mã (lượt dùng) khi đơn bị hủy do khách hàng trước khi bàn giao vận chuyển, do HTX từ chối/quá hạn phản hồi, hoặc do Hệ thống; không hoàn khi khách mất cọc hoặc giao thất bại do lỗi khách hàng (DX-09). Khi trả hàng/hoàn tiền sau giao, chỉ hoàn số tiền khách đã thực trả; mã không được trả lại. [Giả định phần sau – chờ Lead BA chốt]
+BR-HT-14: Mọi thao tác tạo, sửa, đổi trạng thái, hoàn lượt dùng mã phải lưu audit log (người thực hiện, thời gian, giá trị trước/sau, lý do).
+BR-HT-15: Trang theo dõi mã hiển thị: số lượt đã dùng/giới hạn, tổng tiền giảm đã phát sinh, số đơn áp dụng, số đơn bị hủy/hoàn lượt; số liệu không chứa thông tin cá nhân của khách hàng (chỉ mã đơn).
+Giao diện
+Màn hình 1 – Danh sách mã ưu đãi: tìm kiếm, bộ lọc, bảng mã, nút Tạo mã ưu đãi.
+Màn hình 2 – Chi tiết mã: thông tin điều kiện, thống kê sử dụng, danh sách đơn đã áp mã, lịch sử thay đổi.
+Hạng mục
+Nội dung
+Tên UC
+Hoàn lại lượt dùng mã ưu đãi khi đơn không hoàn tất
+Danh sách chức năng
+Quản lý hệ thống – Quản lý ưu đãi
+Độ ưu tiên
+Trung bình – Should Have. Bảo đảm khách không mất quyền lợi khi đơn bị hủy không do lỗi của họ và số liệu lượt dùng đúng. PO/Business Owner quyết định mức ưu tiên cuối cùng theo MoSCoW.
+Tác nhân chính
+Hệ thống (tự động).
+Tác nhân phụ
+Admin (xem/xử lý ngoại lệ)
+Mô tả
+Là Hệ thống, tôi muốn tự động hoàn lại lượt dùng mã ưu đãi (và nhả lượt đang giữ) khi đơn áp mã bị hủy hoặc không hoàn tất theo quy định, để lượt dùng và chi phí ưu đãi phản ánh đúng và khách được dùng lại mã nếu còn hiệu lực.
+Điều kiện trước
+1. Đơn hàng đã áp mã ưu đãi hợp lệ.
+2. Đơn chuyển sang trạng thái Đã hủy hoặc hết thời gian giữ thanh toán.
+3. Mã còn tồn tại trên hệ thống (kể cả đã Hết hạn/Kết thúc).
+Kích hoạt UC
+Hệ thống nhận sự kiện đơn chuyển sang Đã hủy hoặc đơn Chờ thanh toán hết thời gian giữ 15 phút.
+Luồng sự kiện chính (Happy Case)
+1. Module Đơn hàng/Mua hàng gửi sự kiện đơn Đã hủy (hoặc hết thời gian giữ) kèm nguyên nhân hủy và mã đơn.
+2. Hệ thống kiểm tra đơn có áp mã ưu đãi và trạng thái lượt dùng của đơn (Đang giữ hoặc Đã dùng).
+3. Hệ thống xác định nguyên nhân hủy và đối chiếu quy tắc hoàn mã (BR-HT-13).
+4. Nếu thuộc nhóm được hoàn (khách hủy trước bàn giao vận chuyển, HTX từ chối/quá hạn phản hồi, hệ thống hủy, hết thời gian giữ thanh toán): hệ thống hoàn 1 lượt dùng cho mã và cho khách; đổi trạng thái lượt dùng của đơn sang Đã hoàn.
+5. Hệ thống cập nhật lại số lượt còn lại và số liệu tổng tiền giảm của mã.
+6. Nếu mã vẫn còn hiệu lực, khách có thể dùng lại mã cho đơn mới; nếu mã đã hết hạn, khách không dùng lại được dù lượt được hoàn.
+7. Hệ thống gửi thông báo cho khách: “Mã ưu đãi [mã] đã được hoàn lại cho bạn.” (nếu còn hiệu lực).
+8. Hệ thống lưu audit log (mã, đơn, nguyên nhân, kết quả hoàn).
+Luồng thay thế
+A1 – Nguyên nhân không được hoàn: Khách mất cọc Preorder hoặc giao thất bại do lỗi khách hàng; hệ thống không hoàn lượt, lượt dùng giữ nguyên Đã dùng và ghi lý do (BR-HT-13).
+A2 – Trả hàng/hoàn tiền sau khi đã giao: Hệ thống chỉ hoàn số tiền khách đã thực trả theo luồng hoàn tiền, không trả lại mã (mặc định theo BR-HT-13; chờ Lead BA chốt).
+A3 – Admin xử lý ngoại lệ: Với trường hợp đặc biệt, Admin hoàn lượt dùng thủ công kèm lý do; hệ thống chặn nếu đơn đã được hoàn lượt trước đó.
+A4 – Mã hết hạn nhưng đơn bị hủy hợp lệ: Hệ thống ghi nhận hoàn lượt để số liệu đúng; khách không dùng lại được mã (ngoại lệ gia hạn nếu Admin quyết định).
+Luồng rẽ nhánh/ngoại lệ
+E1 – Sự kiện lặp: Hệ thống nhận cùng một sự kiện nhiều lần, chỉ hoàn một lần cho mỗi đơn (chống xử lý trùng).
+E2 – Đơn không áp mã: Hệ thống bỏ qua sự kiện, không báo lỗi.
+E3 – Không xác định được nguyên nhân hủy: Hệ thống để lượt dùng ở trạng thái Chờ xử lý và gửi cảnh báo cho Admin; không tự hoàn.
+E4 – Lỗi cập nhật lượt dùng: Hệ thống thử lại tối đa theo cấu hình; nếu thất bại, ghi log và cảnh báo Admin.
+E5 – Hoàn vượt giới hạn: Việc hoàn không được làm số lượt đã dùng nhỏ hơn 0 hoặc vượt tổng lượt dùng.
+Điều kiện sau
+Mức 1: Lượt dùng mã được hoàn hoặc giữ nguyên đúng theo nguyên nhân hủy; khách được thông báo khi lượt được hoàn.
+Mức 2: Hệ thống lưu trạng thái lượt dùng của đơn, cập nhật số liệu sử dụng và chi phí ưu đãi của mã, và audit log (BR-HT-14).
+Điều hướng: không có; kết quả hiển thị ở UC-HT-03.
+Yêu cầu/Business rule
+BR-HT-03: Giai đoạn 1: khách chỉ nhập mã tại bước thanh toán; chưa có ví voucher, chưa phát mã vào tài khoản (theo DX-09 BRD Luồng mua hàng). Mỗi đơn áp dụng tối đa 1 mã.
+BR-HT-07: Giới hạn sử dụng: tổng số lượt dùng toàn hệ thống và số lượt tối đa trên mỗi khách hàng (mặc định 1 lượt/khách). Khi hết lượt hoặc hết hạn, mã tự chuyển trạng thái tương ứng và không còn áp dụng được.
+BR-HT-08: Chi phí giảm giá do Hệ thống chịu, HTX vẫn nhận đủ tiền hàng; hệ thống thống kê tổng “Chi phí ưu đãi” theo mã để phục vụ đối soát và báo cáo. Với đơn Preorder, tiền cọc 30% tính trên giá sau giảm.
+BR-HT-12: Kiểm tra tại checkout: hệ thống kiểm tra lại toàn bộ điều kiện của mã tại thời điểm thanh toán. Lượt dùng được giữ khi đơn được tạo (đơn online/cọc ở Chờ thanh toán giữ 15 phút theo BRD Luồng mua hàng) và được nhả khi đơn hết thời gian giữ.
+BR-HT-13: Hoàn lại mã (lượt dùng) khi đơn bị hủy do khách hàng trước khi bàn giao vận chuyển, do HTX từ chối/quá hạn phản hồi, hoặc do Hệ thống; không hoàn khi khách mất cọc hoặc giao thất bại do lỗi khách hàng (DX-09). Khi trả hàng/hoàn tiền sau giao, chỉ hoàn số tiền khách đã thực trả; mã không được trả lại. [Giả định phần sau – chờ Lead BA chốt]
+BR-HT-14: Mọi thao tác tạo, sửa, đổi trạng thái, hoàn lượt dùng mã phải lưu audit log (người thực hiện, thời gian, giá trị trước/sau, lý do).
+Giao diện
+Không có màn hình riêng. Kết quả xem tại chi tiết mã (UC-HT-03): cột trạng thái lượt dùng của đơn (Đang giữ, Đã dùng, Đã hoàn).
+Thông báo đẩy/trong ứng dụng cho khách khi lượt dùng được hoàn.

@@ -1,0 +1,486 @@
+# Đặc Tả - CSKH & REVIEW
+Nguồn: https://docs.google.com/document/d/1oRqtKEjhBxElO5GpcFQuUzHsTqEdY_5lO4bE6S1l0C4/edit?usp=drivesdk
+
+﻿UC-CS-01 – Tra cứu thông tin hỗ trợ sản phẩm 
+
+
+Hạng mục
+	Nội dung
+	Tên UC
+	Tra cứu thông tin hỗ trợ sản phẩm
+	Danh sách chức năng
+	CSKH – Hỗ trợ thông tin sản phẩm
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Khách hàng
+	Tác nhân phụ
+	Hệ thống App Đặc sản Bắc Giang; HTX/người bán
+	Mô tả
+	Là khách hàng, tôi muốn xem thông tin sản phẩm, giá, quy cách, nguồn gốc, chứng nhận, QR truy xuất, tồn kho và hướng dẫn bảo quản để có đủ thông tin trước khi mua
+	Điều kiện trước
+	Khách truy cập được trang chi tiết sản phẩm; sản phẩm đang được hiển thị trên app
+	Kích hoạt UC
+	Khách bấm vào một sản phẩm từ trang chủ, danh mục, kết quả tìm kiếm hoặc liên kết chia sẻ
+	Luồng chính
+	1. Khách mở trang chi tiết sản phẩm. 
+2. Hệ thống hiển thị ảnh, tên, giá, đơn vị tính, quy cách, mô tả, HTX, nguồn gốc, chứng nhận, QR truy xuất, tồn kho, hướng dẫn bảo quản và đánh giá. 3. Khách xem thông tin hoặc quét QR để tra cứu nguồn gốc. 
+4. Hệ thống hiển thị trạng thái còn hàng/sắp hết/hết hàng. 
+5. Nếu sản phẩm là preorder, hệ thống hiển thị ngày giao dự kiến và chính sách đặt trước.
+	Luồng thay thế
+	A1 – Sản phẩm hết hàng: hiển thị “Hết hàng” và cho phép đăng ký nhận thông báo nếu có. A2 – Sản phẩm preorder: hiển thị ngày giao dự kiến và ghi chú có thể thay đổi theo mùa vụ. A3 – Khách hỏi mua sỉ: hiển thị nút/yêu cầu tư vấn mua sỉ hoặc chuyển Admin/HTX xử lý.
+	Ngoại lệ
+	E1 – Sản phẩm không tồn tại/đã ẩn: hiển thị “Sản phẩm không còn khả dụng”. E2 – QR không quét được: hiển thị hướng dẫn liên hệ CSKH. E3 – Lỗi mạng: hiển thị thông báo thử lại.
+	Điều kiện sau
+	Khách xem được thông tin sản phẩm cần thiết; hệ thống ghi log lượt xem nếu cần phục vụ báo cáo
+	
+
+Mã
+	Quy tắc
+	BR01
+	Chỉ hiển thị sản phẩm ở trạng thái đang kinh doanh/công khai
+	BR02
+	Giá, khuyến mại và tồn kho hiển thị phải là dữ liệu mới nhất tại thời điểm truy vấn
+	BR03
+	Thông tin chứng nhận chỉ hiển thị khi còn hiệu lực và được HTX/Admin công khai
+	BR04
+	Thông tin truy xuất QR phải khớp với sản phẩm, HTX và lô hàng
+	
+
+UC-CS-02 – Tra cứu thông tin và trạng thái đơn hàng 
+
+
+Hạng mục
+	Nội dung
+	Tên UC
+	Tra cứu thông tin và trạng thái đơn hàng
+	Danh sách chức năng
+	CSKH – Hỗ trợ thông tin đơn hàng
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Khách hàng
+	Tác nhân phụ
+	Hệ thống App Đặc sản Bắc Giang; HTX/người bán; đơn vị vận chuyển
+	Mô tả
+	Là khách hàng, tôi muốn xem danh sách đơn hàng, chi tiết đơn và trạng thái giao hàng để biết đơn đang xử lý đến đâu và dự kiến nhận hàng khi nào
+	Điều kiện trước
+	Khách đã đăng nhập; khách có ít nhất một đơn hàng thuộc tài khoản
+	Kích hoạt UC
+	Khách vào mục Đơn hàng của tôi hoặc bấm thông báo cập nhật đơn hàng
+	Luồng chính
+	1. Khách mở Đơn hàng của tôi. 2. Hệ thống hiển thị danh sách đơn theo thời gian tạo, có bộ lọc theo trạng thái. 3. Khách chọn một đơn. 4. Hệ thống hiển thị mã đơn, sản phẩm, HTX, tổng tiền, phương thức thanh toán, trạng thái, timeline giao hàng và thông tin vận đơn nếu có. 5. Khách theo dõi trạng thái: Chờ xác nhận → Đang chuẩn bị → Đang giao → Đã giao. 6. Nếu đơn có vấn đề, khách có thể bấm Cần hỗ trợ để tạo ticket
+	Luồng thay thế
+	A1 – Đơn nhiều HTX/kiện hàng: hiển thị từng phần hàng và vận đơn tương ứng. A2 – Đơn bị hủy: hiển thị lý do hủy và trạng thái hoàn tiền nếu có. A3 – Đơn preorder: hiển thị ngày giao dự kiến và ghi chú có thể thay đổi theo mùa vụ
+	Ngoại lệ
+	E1 – Không tìm thấy đơn: hiển thị “Không tìm thấy đơn hàng”. E2 – Đơn không thuộc tài khoản: chặn truy cập. E3 – Lỗi lấy dữ liệu vận đơn: hiển thị trạng thái hệ thống có được và hướng dẫn liên hệ CSKH
+	Điều kiện sau
+	Khách xem được trạng thái và thông tin đơn; hệ thống ghi nhận lượt tra cứu nếu cần phục vụ báo cáo
+	
+
+Mã
+	Quy tắc
+	BR01
+	Khách chỉ được xem đơn hàng thuộc tài khoản của mình
+	BR02
+	Trạng thái đơn phải đồng bộ với trạng thái xử lý của HTX và vận chuyển
+	BR03
+	Thông tin vận chuyển chỉ hiển thị khi đơn vị vận chuyển cung cấp dữ liệu
+	BR04
+	Khi đơn bị hủy, hệ thống phải hiển thị lý do và trạng thái hoàn tiền nếu áp dụng
+	
+
+UC-CS-03 – Gửi yêu cầu hỗ trợ/khiếu nại 
+
+
+Hạng mục
+	Nội dung
+	Tên UC
+	Gửi yêu cầu hỗ trợ/khiếu nại
+	Danh sách chức năng
+	CSKH – Quản lý yêu cầu hỗ trợ/khiếu nại
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Khách hàng có đơn hàng cần hỗ trợ
+	Tác nhân phụ
+	Hệ thống App Đặc sản Bắc Giang; Admin/CSKH; HTX/người bán; đơn vị vận chuyển; bộ phận tài chính khi có hoàn tiền
+	Mô tả
+	Là khách hàng, tôi muốn gửi yêu cầu hỗ trợ hoặc khiếu nại cho đơn hàng của mình bằng cách chọn lý do, nhập mô tả và đính kèm ảnh để Admin/CSKH kiểm tra và xử lý
+	Điều kiện trước
+	Khách đã đăng nhập; khách có đơn hàng thuộc tài khoản; đơn tồn tại; còn trong thời hạn hỗ trợ/khiếu nại; khách có ảnh minh chứng nếu khiếu nại hàng hóa
+	Kích hoạt UC
+	Khách mở chi tiết đơn và bấm Cần hỗ trợ
+	Luồng chính
+	1. Khách chọn đơn. 2. Khách bấm Cần hỗ trợ. 3. Hệ thống hiển thị form tạo ticket. 4. Khách chọn nhóm lý do: Hỏi đơn hàng, Hàng hóa có vấn đề, Giao hàng có vấn đề, Hủy đơn, Hoàn tiền, Khác. 5. Khách chọn lý do chi tiết và sản phẩm liên quan nếu cần. 6. Khách nhập mô tả và đính kèm ảnh/video. 7. Khách chọn phương án mong muốn: kiểm tra, giao bù, đổi hàng, hủy đơn hoặc hoàn tiền. 8. Khách bấm Gửi yêu cầu. 9. Hệ thống kiểm tra dữ liệu. 10. Hệ thống tạo ticket, sinh mã duy nhất, ví dụ CSKH-2026-000001, gán trạng thái Mới tạo và xác định mức ưu tiên. 11. Hệ thống gửi thông báo cho khách và Admin/CSKH. 12. Khách được chuyển đến trang chi tiết ticket
+	Luồng thay thế
+	A1 – Hỏi thông tin đơn: hệ thống hiển thị thông tin/timeline để khách tự xem; nếu vẫn gửi thì tạo ticket mức Thường.
+ A2 – Yêu cầu hủy đơn: nếu đơn Chờ xác nhận, có thể cho khách tự hủy; nếu Đang giao thì tạo ticket để Admin xử lý. 
+A3 – Yêu cầu hoàn tiền: tạo ticket hoàn tiền; nếu duyệt thì chuyển tài chính/hệ thống thanh toán xử lý. A4 – Khiếu nại hàng hóa: yêu cầu chọn sản phẩm, mô tả và ảnh; Admin có thể yêu cầu HTX xác minh. A5 – Giao trễ: hệ thống lấy vận đơn và thời gian giao dự kiến để phối hợp xử lý. A6 – An toàn thực phẩm: gắn mức ưu tiên Khẩn cấp và thông báo ngay Admin/CSKH/Admin chất lượng
+	Ngoại lệ
+	E1 – Chưa đăng nhập: điều hướng đến Đăng nhập. E2 – Thiếu lý do/mô tả: hiển thị lỗi và không tạo ticket. E3 – Khiếu nại hàng hóa thiếu ảnh: yêu cầu bổ sung ảnh. E4 – File không hợp lệ: hiển thị lỗi định dạng/dung lượng. E5 – Ticket trùng: hiển thị ticket đang xử lý và chặn tạo trùng. E6 – Quá hạn khiếu nại: hiển thị thông báo không đủ điều kiện. E7 – Lỗi mạng: không tạo ticket và hiển thị thử lại
+	Điều kiện sau
+	Ticket được tạo, có mã duy nhất, liên kết đơn/sản phẩm/HTX/khách; Admin/CSKH nhận thông báo; khách theo dõi được trạng thái ticket
+	
+
+Mã
+	Quy tắc
+	BR01
+	Khách chỉ được tạo ticket cho đơn hàng thuộc tài khoản của mình
+	BR02
+	Nhóm lý do và mô tả là bắt buộc
+	BR03
+	Khiếu nại hàng hóa bắt buộc có ít nhất một ảnh/video minh chứng
+	BR04
+	Mỗi vấn đề trên một đơn chỉ được tạo một ticket đang xử lý; tránh ticket trùng
+	BR05
+	Ticket liên quan an toàn thực phẩm phải được gán mức ưu tiên Khẩn cấp
+	BR06
+	Hệ thống phải sinh mã ticket duy nhất và lưu lịch sử thay đổi trạng thái
+	BR07
+	Thời hạn gửi khiếu nại theo chính sách; mặc định đề xuất 48 giờ kể từ khi nhận hàng đối với vấn đề hàng hóa
+	
+
+UC-CS-04 – Theo dõi và bổ sung thông tin ticket 
+
+
+Hạng mục
+	Nội dung
+	Tên UC
+	Theo dõi và bổ sung thông tin ticket
+	Danh sách chức năng
+	CSKH – Theo dõi yêu cầu hỗ trợ/khiếu nại
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Khách hàng
+	Tác nhân phụ
+	Hệ thống App Đặc sản Bắc Giang; Admin/CSKH
+	Mô tả
+	Là khách hàng, tôi muốn xem trạng thái ticket, lịch sử xử lý và bổ sung ảnh/thông tin để cung cấp đủ dữ liệu cho CSKH xử lý
+	Điều kiện trước
+	Khách đã đăng nhập; khách có ticket thuộc tài khoản của mình
+	Kích hoạt UC
+	Khách vào Yêu cầu hỗ trợ của tôi hoặc bấm thông báo cập nhật ticket
+	Luồng chính
+	1. Khách mở danh sách ticket. 2. Hệ thống hiển thị mã ticket, đơn liên quan, lý do, ngày tạo, trạng thái và mức ưu tiên. 3. Khách chọn ticket. 4. Hệ thống hiển thị chi tiết ticket, mô tả, ảnh, lịch sử trao đổi và trạng thái. 5. Nếu ticket đang xử lý, khách có thể bổ sung mô tả hoặc ảnh. 6. Hệ thống lưu nội dung bổ sung và gửi thông báo cho Admin/CSKH. 7. Khách theo dõi đến khi ticket được đóng
+	Luồng thay thế
+	A1 – Ticket đã đóng: khách chỉ xem được, không bổ sung thêm; có thể tạo ticket mới nếu cần. A2 – CSKH yêu cầu bổ sung thông tin: hệ thống gửi thông báo và hiển thị yêu cầu bổ sung trong ticket
+	Ngoại lệ
+	E1 – Ticket không thuộc khách: chặn truy cập. E2 – Ticket đã đóng: không cho bổ sung. E3 – File không hợp lệ: hiển thị lỗi. E4 – Lỗi mạng: hiển thị thử lại
+	Điều kiện sau
+	Nội dung bổ sung được lưu vào ticket; Admin/CSKH nhận thông báo; lịch sử ticket được cập nhật
+	
+
+Mã
+	Quy tắc
+	BR01
+	Khách chỉ xem/bổ sung ticket thuộc tài khoản của mình
+	BR02
+	Ticket đã đóng không cho phép bổ sung nội dung
+	BR03
+	Mọi bổ sung phải được lưu vào lịch sử ticket
+	BR04
+	File đính kèm phải tuân thủ định dạng và dung lượng cho phép
+	BR05
+	Khi Admin/CSKH yêu cầu bổ sung, hệ thống phải gửi thông báo cho khách
+	UC-CS-05 – Tiếp nhận và phân công ticket 
+
+
+Hạng mục
+	Nội dung
+	Tên UC
+	Tiếp nhận và phân công ticket
+	Danh sách chức năng
+	CSKH – Quản lý ticket
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Admin/CSKH
+	Tác nhân phụ
+	Hệ thống App Đặc sản Bắc Giang; HTX/người bán; đơn vị vận chuyển
+	Mô tả
+	Là Admin/CSKH, tôi muốn xem danh sách ticket mới, tiếp nhận và phân công cho CSKH/HTX/đơn vị vận chuyển để đảm bảo ticket được xử lý đúng người và đúng SLA
+	Điều kiện trước
+	Admin/CSKH đã đăng nhập với quyền phù hợp; có ticket ở trạng thái Mới tạo hoặc Chờ xử lý
+	Kích hoạt UC
+	Admin/CSKH vào màn hình Quản lý ticket hoặc nhận thông báo ticket mới
+	Luồng chính
+	1. Admin/CSKH mở danh sách ticket. 2. Hệ thống hiển thị mã ticket, khách, đơn, lý do, mức ưu tiên, thời gian tạo và trạng thái. 3. Admin/CSKH lọc/tìm kiếm ticket. 4. Admin/CSKH chọn ticket. 5. Hệ thống hiển thị chi tiết ticket, khách, đơn, sản phẩm, ảnh và lịch sử. 6. Admin/CSKH bấm Tiếp nhận. 7. Hệ thống cập nhật trạng thái thành Đang xử lý và ghi nhận người tiếp nhận. 8. Admin/CSKH chọn người/đơn vị xử lý: CSKH, HTX hoặc đơn vị vận chuyển. 9. Hệ thống lưu phân công, gửi thông báo cho người được phân công và cập nhật thời hạn xử lý theo SLA
+	Luồng thay thế
+	A1 – Ticket khẩn cấp: hiển thị ưu tiên cao và yêu cầu xử lý sớm. A2 – Ticket cần HTX xác minh: phân công cho HTX kèm yêu cầu phản hồi. A3 – Ticket cần vận chuyển xác minh: phân công/forward cho đơn vị vận chuyển. A4 – Ticket ngoài phạm vi: chuyển bộ phận phù hợp hoặc đóng kèm lý do
+	Ngoại lệ
+	E1 – Không có quyền: chặn thao tác. E2 – Ticket đã được người khác tiếp nhận: hiển thị cảnh báo và không cho tiếp nhận trùng. E3 – Không chọn được người xử lý: hiển thị lỗi phân công. E4 – Lỗi mạng: không cập nhật trạng thái và hiển thị thử lại
+	Điều kiện sau
+	Ticket chuyển sang Đang xử lý; người/đơn vị xử lý được ghi nhận; thông báo được gửi; SLA được bắt đầu tính
+	
+
+Mã
+	Quy tắc
+	BR01
+	Chỉ Admin/CSKH có quyền tiếp nhận và phân công ticket
+	BR02
+	Một ticket chỉ có một người tiếp nhận chính tại một thời điểm
+	BR03
+	Ticket khẩn cấp phải được ưu tiên xử lý trước ticket thường
+	BR04
+	Ticket liên quan HTX/vận chuyển phải ghi nhận đơn vị được phân công và thời hạn phản hồi
+	BR05
+	Hệ thống phải lưu người tiếp nhận, người xử lý, thời gian tiếp nhận và lịch sử phân công
+	UC-CS-06 – Xác minh và xử lý khiếu nại 
+
+
+Hạng mục
+	Nội dung
+	Tên UC
+	Xác minh và xử lý khiếu nại
+	Danh sách chức năng
+	CSKH – Xử lý khiếu nại và hoàn tiền
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Admin/CSKH
+	Tác nhân phụ
+	Hệ thống App Đặc sản Bắc Giang; HTX/người bán; đơn vị vận chuyển; bộ phận tài chính; khách hàng
+	Mô tả
+	Là Admin/CSKH, tôi muốn xác minh khiếu nại dựa trên thông tin khách, HTX, vận chuyển và bằng chứng để cập nhật kết quả, xử lý đổi/giao bù/hoàn tiền và phản hồi khách
+	Điều kiện trước
+	Admin/CSKH đã đăng nhập; ticket đang ở trạng thái Đang xử lý hoặc Chờ xác minh; có đủ dữ liệu đơn, sản phẩm, vận đơn và bằng chứng
+	Kích hoạt UC
+	Admin/CSKH mở ticket cần xử lý và bấm Xử lý
+	Luồng chính
+	1. Admin/CSKH mở ticket. 2. Hệ thống hiển thị khiếu nại, khách, đơn, sản phẩm, HTX, vận đơn, ảnh và lịch sử. 3. Admin/CSKH yêu cầu HTX/vận chuyển xác minh nếu cần. 4. HTX/vận chuyển gửi kết quả xác minh hoặc bằng chứng. 5. Admin/CSKH đánh giá và chọn kết quả: không có lỗi, giao bù, đổi hàng, hủy đơn, hoàn tiền một phần hoặc hoàn tiền toàn bộ. 6. Nếu hoàn tiền, Admin/CSKH nhập số tiền và gửi phê duyệt/xử lý theo quy trình. 7. Hệ thống cập nhật kết quả và trạng thái ticket. 8. Hệ thống gửi thông báo kết quả cho khách. 9. Admin/CSKH đóng ticket khi xử lý xong
+	Luồng thay thế
+	A1 – Không đủ bằng chứng: yêu cầu khách bổ sung thông tin/ảnh. A2 – Lỗi do HTX: chuyển HTX xử lý đổi/giao bù và theo dõi tiến độ. A3 – Lỗi do vận chuyển: chuyển vận chuyển xác minh và xử lý theo chính sách. A4 – Hoàn tiền được duyệt: chuyển tài chính/hệ thống thanh toán xử lý và cập nhật trạng thái hoàn tiền. A5 – An toàn thực phẩm: xử lý khẩn cấp, gắn cờ sản phẩm/lô hàng và báo Admin chất lượng
+	Ngoại lệ
+	E1 – Không đủ quyền: chặn thao tác. E2 – Thiếu kết luận xử lý: không cho đóng ticket. E3 – Hoàn tiền thất bại: hiển thị lỗi và giữ ticket mở để xử lý lại. E4 – HTX/vận chuyển không phản hồi đúng hạn: hệ thống cảnh báo quá SLA. E5 – Lỗi mạng: không lưu kết quả và hiển thị thử lại
+	Điều kiện sau
+	Ticket có kết quả xử lý rõ ràng; khách nhận thông báo; nếu hoàn tiền thì trạng thái hoàn tiền được cập nhật; ticket được đóng hoặc chuyển bước tiếp theo
+	
+
+Mã
+	Quy tắc
+	BR01
+	Ticket phải có kết luận xử lý trước khi đóng
+	BR02
+	Mọi thay đổi kết quả xử lý phải được lưu lịch sử
+	BR03
+	Hoàn tiền chỉ được thực hiện sau khi có phê duyệt theo quy trình
+	BR04
+	Số tiền hoàn không được vượt tổng giá trị sản phẩm/đơn liên quan
+	BR05
+	Ticket an toàn thực phẩm phải được xử lý ưu tiên và thông báo cho bộ phận chất lượng
+	BR06
+	HTX/vận chuyển chỉ được phản hồi trong phạm vi ticket được phân công
+	BR07
+	Khách phải nhận được thông báo kết quả xử lý
+	
+
+UC-CS-07 – Đánh giá sản phẩm sau khi nhận hàng 
+
+
+Hạng mục
+	Nội dung
+	Tên UC
+	Đánh giá và review sản phẩm sau khi nhận hàng
+	Danh sách chức năng
+	CSKH – Đánh giá sản phẩm/Review sau mua
+	Độ ưu tiên
+	Trung bình – Should Have
+	Tác nhân chính
+	Khách hàng đã mua và nhận hàng thành công
+	Tác nhân phụ
+	Hệ thống App Đặc sản Bắc Giang; Admin; HTX/người bán
+	Mô tả
+	Là khách hàng đã nhận hàng, tôi muốn chấm điểm 1–5 sao, viết nhận xét và đính kèm ảnh để chia sẻ trải nghiệm, giúp khách khác tham khảo và HTX cải thiện chất lượng
+	Điều kiện trước
+	Khách đã đăng nhập; có đơn thuộc tài khoản; đơn ở trạng thái Đã giao; sản phẩm thuộc đơn; chưa review sản phẩm trong cùng đơn; còn trong thời hạn đánh giá, đề xuất 30 ngày kể từ ngày Đã giao
+	Kích hoạt UC
+	Khách bấm Đánh giá tại chi tiết đơn Đã giao hoặc bấm thông báo mời đánh giá
+	Luồng chính
+	1. Hệ thống gửi thông báo mời đánh giá khi đơn Đã giao. 2. Khách vào đơn hoặc thông báo. 3. Hệ thống hiển thị nút Đánh giá cho sản phẩm chưa review. 4. Khách bấm Đánh giá. 5. Hệ thống hiển thị form review và thông tin sản phẩm. 6. Khách chọn 1–5 sao. 7. Khách nhập nhận xét. 8. Khách đính kèm 0–5 ảnh. 9. Khách bấm Gửi đánh giá. 10. Hệ thống kiểm tra quyền, trạng thái đơn, sản phẩm, số sao, nội dung và ảnh. 11. Hệ thống tạo review, sinh mã duy nhất, ví dụ RV-2026-000001. 12. Hệ thống liên kết review với khách, đơn, sản phẩm và HTX. 13. Hệ thống lưu review với trạng thái Hiển thị hoặc Chờ kiểm duyệt theo cấu hình. 14. Nếu hiển thị, hệ thống cập nhật điểm trung bình và tổng số review. 15. Hệ thống thông báo thành công và gửi thông báo cho HTX/Admin nếu bật
+	Luồng thay thế
+	A1 – Đánh giá nhiều sản phẩm: sau khi gửi, hệ thống quay về danh sách sản phẩm để tiếp tục. A2 – Chọn 1–2 sao: yêu cầu nhận xét tối thiểu 20 ký tự và hiển thị nút Cần hỗ trợ. A3 – Không đính kèm ảnh: vẫn gửi được nếu đủ điều kiện khác. A4 – Review có ảnh: tối đa 5 ảnh, có thể xóa ảnh trước khi gửi. A5 – Admin kiểm duyệt: chuyển review sang Hiển thị hoặc Từ chối/Ẩn kèm lý do
+	Ngoại lệ
+	E1 – Chưa đăng nhập: điều hướng Đăng nhập. E2 – Đơn chưa Đã giao: không cho đánh giá. E3 – Sản phẩm không thuộc đơn: chặn thao tác. E4 – Đã có review: hiển thị review cũ. E5 – Chưa chọn sao: hiển thị lỗi. E6 – 1–2 sao thiếu nhận xét: yêu cầu nhập tối thiểu 20 ký tự. E7 – Nhận xét quá 500 ký tự: hiển thị lỗi. E8 – Quá 5 ảnh: hiển thị lỗi. E9 – Ảnh không hợp lệ: hiển thị lỗi định dạng/dung lượng. E10 – Quá hạn đánh giá: hiển thị thông báo. E11 – Nội dung rủi ro an toàn thực phẩm: gắn cờ và cảnh báo tạo ticket. E12 – Lỗi mạng: không tạo review và hiển thị thử lại
+	Điều kiện sau
+	Review được tạo và liên kết đúng dữ liệu; nếu hiển thị thì cập nhật điểm trung bình/tổng review; khách nhận thông báo thành công và xem lại review
+	
+
+Mã
+	Quy tắc
+	BR01
+	Chỉ khách có đơn ở trạng thái Đã giao mới được đánh giá
+	BR02
+	Khách chỉ được review sản phẩm thuộc đơn hàng của mình
+	BR03
+	Mỗi khách chỉ tạo một review cho một sản phẩm trong cùng một đơn hàng
+	BR04
+	Điểm sao bắt buộc, chỉ nhận số nguyên từ 1 đến 5
+	BR05
+	Nếu chọn 1–2 sao, nhận xét bắt buộc và tối thiểu 20 ký tự
+	BR06
+	Nhận xét tối đa 500 ký tự
+	BR07
+	Tối đa 5 ảnh; JPG/JPEG/PNG; tối đa 5 MB/ảnh
+	BR08
+	Review công khai có nhãn Đã mua hàng, không hiển thị thông tin nhạy cảm của khách
+	BR09
+	Điểm trung bình chỉ tính review ở trạng thái Hiển thị
+	BR10
+	Admin ẩn/từ chối review phải nhập lý do; không ẩn chỉ vì review tiêu cực
+	BR11
+	HTX chỉ xem/phản hồi review sản phẩm thuộc HTX mình
+	BR12
+	Review có dấu hiệu rủi ro an toàn thực phẩm phải được gắn cờ
+	BR13
+	Hệ thống lưu lịch sử tạo, duyệt, ẩn/từ chối và phản hồi review
+	
+
+UC-CS-08 – Kiểm duyệt và phản hồi review 
+
+
+Hạng mục
+	Nội dung
+	Tên UC
+	Kiểm duyệt và phản hồi review
+	Danh sách chức năng
+	CSKH – Quản trị review
+	Độ ưu tiên
+	Trung bình – Should Have
+	Tác nhân chính
+	Admin
+	Tác nhân phụ
+	Hệ thống App Đặc sản Bắc Giang; HTX/người bán; khách hàng
+	Mô tả
+	Là Admin/HTX, tôi muốn xem, kiểm duyệt, phản hồi và quản lý review để đảm bảo nội dung phù hợp, hỗ trợ khách và cải thiện chất lượng sản phẩm
+	Điều kiện trước
+	Admin/HTX đã đăng nhập với quyền phù hợp; có review mới hoặc review cần xử lý
+	Kích hoạt UC
+	Admin/HTX vào màn hình Quản lý review hoặc nhận thông báo review mới
+	Luồng chính
+	1. Admin/HTX mở danh sách review. 2. Hệ thống hiển thị review theo sản phẩm, HTX, số sao, trạng thái và ngày tạo. 3. Admin/HTX chọn review. 4. Hệ thống hiển thị nội dung, số sao, ảnh, khách, sản phẩm và trạng thái. 5. Nếu review ở trạng thái Chờ kiểm duyệt, Admin xem và chọn Duyệt hoặc Từ chối/Ẩn kèm lý do. 6. Hệ thống cập nhật trạng thái review. 7. Nếu được duyệt, hệ thống hiển thị review và cập nhật điểm trung bình/tổng review. 8. HTX/Admin nhập phản hồi công khai nếu cần. 9. Hệ thống lưu phản hồi và gửi thông báo cho khách nếu bật
+	Luồng thay thế
+	A1 – Review có nội dung rủi ro an toàn thực phẩm: Admin ưu tiên kiểm tra, có thể ẩn tạm thời và tạo/liên kết ticket xử lý. A2 – Review vi phạm: Admin ẩn/từ chối kèm lý do. A3 – HTX phản hồi: chỉ phản hồi review thuộc sản phẩm HTX mình. A4 – Khách sửa/xóa review: theo chính sách; nếu cho phép thì ghi lịch sử
+	Ngoại lệ
+	E1 – Không đủ quyền: chặn thao tác. E2 – Ẩn/từ chối thiếu lý do: hiển thị lỗi. E3 – HTX phản hồi review ngoài phạm vi: chặn thao tác. E4 – Lỗi mạng: không lưu thay đổi và hiển thị thử lại
+	Điều kiện sau
+	Review được duyệt/ẩn/từ chối đúng trạng thái; phản hồi được lưu; điểm trung bình được cập nhật nếu review hiển thị; lịch sử quản trị được ghi nhận
+	
+
+
+
+Mã
+	Quy tắc
+	BR01
+	Chỉ Admin có quyền duyệt, ẩn hoặc từ chối review
+	BR02
+	Admin ẩn/từ chối review bắt buộc nhập lý do
+	BR03
+	Admin không được ẩn review chỉ vì số sao thấp hoặc nội dung tiêu cực
+	BR04
+	HTX chỉ được phản hồi review sản phẩm thuộc HTX mình
+	BR05
+	HTX không được sửa hoặc xóa review của khách
+	BR06
+	Review có nội dung vi phạm hoặc rủi ro an toàn thực phẩm phải được xử lý ưu tiên
+	BR07
+	Mọi thao tác duyệt, ẩn, từ chối và phản hồi phải được lưu audit log
+	BR08
+	Chỉ review trạng thái Hiển thị được tính vào điểm trung bình
+	
+
+UC-CS-09 – Xem và quản lý thông báo 
+
+
+Hạng mục
+	Nội dung
+	Tên UC
+	Xem và quản lý thông báo
+	Danh sách chức năng
+	CSKH – Trung tâm thông báo
+	Độ ưu tiên
+	Cao – Must Have
+	Tác nhân chính
+	Khách hàng; Admin/CSKH; HTX/người bán
+	Tác nhân phụ
+	Hệ thống App Đặc sản Bắc Giang
+	Mô tả
+	Là người dùng, tôi muốn nhận và xem thông báo về đơn hàng, ticket, review, hoàn tiền và hoạt động liên quan để cập nhật tiến độ và hành động kịp thời
+	Điều kiện trước
+	Người dùng đã đăng nhập; hệ thống có sự kiện phát sinh thông báo
+	Kích hoạt UC
+	Người dùng bấm biểu tượng chuông/thông báo hoặc mở thông báo đẩy
+	Luồng chính
+	1. Hệ thống tạo thông báo khi có sự kiện: ticket mới, cập nhật ticket, kết quả xử lý, đơn Đã giao, mời review, review mới, phản hồi review, cập nhật hoàn tiền. 2. Người dùng mở trung tâm thông báo. 3. Hệ thống hiển thị danh sách thông báo theo thời gian, có phân biệt đã đọc/chưa đọc. 4. Người dùng bấm một thông báo. 5. Hệ thống đánh dấu đã đọc và điều hướng đến màn hình liên quan: chi tiết đơn, ticket, review hoặc trang sản phẩm. 6. Người dùng có thể đánh dấu tất cả là đã đọc
+	Luồng thay thế
+	A1 – Thông báo đẩy: hiển thị trên thiết bị nếu người dùng bật quyền; bấm vào để mở màn hình liên quan. A2 – Thông báo chưa đọc: hiển thị badge số lượng chưa đọc. A3 – Người dùng tắt loại thông báo: hệ thống không gửi loại đó, trừ thông báo bảo mật/khẩn cấp nếu có
+	Ngoại lệ
+	E1 – Chưa đăng nhập: điều hướng Đăng nhập. E2 – Thông báo không còn hợp lệ: hiển thị “Nội dung không còn khả dụng”. E3 – Lỗi mạng: hiển thị dữ liệu cache nếu có hoặc thông báo thử lại
+	Điều kiện sau
+	Thông báo được hiển thị đúng; trạng thái đã đọc được cập nhật; người dùng được điều hướng đúng màn hình liên quan
+	
+
+
+
+Mã
+	Quy tắc
+	BR01
+	Người dùng chỉ xem thông báo thuộc tài khoản của mình
+	BR02
+	Thông báo phải liên kết đến đúng đối tượng: đơn, ticket, review hoặc sản phẩm
+	BR03
+	Thông báo phải lưu trạng thái đã đọc/chưa đọc
+	BR04
+	Thông báo quan trọng như kết quả xử lý ticket hoặc hoàn tiền phải được gửi cho khách
+	BR05
+	Hệ thống phải lưu lịch sử gửi thông báo để phục vụ kiểm tra và báo cáo
+	
+
+UC-CS-10 – Xem báo cáo và theo dõi SLA CSKH 
+
+
+Hạng mục
+	Nội dung
+	Tên UC
+	Xem báo cáo và theo dõi SLA CSKH
+	Danh sách chức năng
+	CSKH – Báo cáo và giám sát SLA
+	Độ ưu tiên
+	Trung bình – Should Have
+	Tác nhân chính
+	Admin/Business Owner
+	Tác nhân phụ
+	Hệ thống App Đặc sản Bắc Giang; Admin/CSKH; HTX/người bán
+	Mô tả
+	Là Admin, tôi muốn xem báo cáo ticket, review, SLA phản hồi/xử lý và hiệu suất HTX để giám sát chất lượng CSKH và cải thiện vận hành
+	Điều kiện trước
+	Admin có quyền xem báo cáo; hệ thống đã có dữ liệu ticket, review, thời gian xử lý và SLA
+	Kích hoạt UC
+	Admin vào mục Báo cáo CSKH hoặc Dashboard
+	Luồng chính
+	1. Admin chọn khoảng thời gian, bộ lọc theo HTX, loại ticket, mức ưu tiên hoặc trạng thái. 2. Hệ thống tổng hợp dữ liệu ticket và review. 3. Hệ thống hiển thị số ticket mới, đang xử lý, đã đóng, quá SLA, thời gian phản hồi trung bình và thời gian xử lý trung bình. 4. Hệ thống hiển thị số review mới, điểm trung bình, review 1–2 sao, review bị gắn cờ và review chờ kiểm duyệt. 5. Admin xem chi tiết hoặc xuất báo cáo nếu chức năng được bật. 6. Admin theo dõi ticket/review quá hạn để nhắc xử lý
+	Luồng thay thế
+	A1 – Lọc theo HTX: hiển thị hiệu suất và chất lượng review theo từng HTX. A2 – Lọc theo loại ticket: hiển thị tỷ lệ khiếu nại hàng hóa, giao trễ, giao sai, hoàn tiền. A3 – Xuất báo cáo: hệ thống tạo file CSV/Excel nếu được cấu hình
+	Ngoại lệ
+	E1 – Không có quyền: chặn truy cập. E2 – Không có dữ liệu: hiển thị “Không có dữ liệu trong khoảng thời gian này”. E3 – Lỗi tổng hợp dữ liệu: hiển thị thông báo thử lại. E4 – Xuất file thất bại: hiển thị lỗi và cho thử lại
+	Điều kiện sau
+	Admin xem được báo cáo đúng dữ liệu và bộ lọc; hệ thống ghi nhận thao tác xem/xuất báo cáo nếu cần
+	
+
+Mã
+	Quy tắc
+	BR01
+	Chỉ người dùng có quyền báo cáo mới xem được dashboard/báo cáo
+	BR02
+	Báo cáo phải cho phép lọc theo thời gian, HTX, loại ticket, trạng thái và mức ưu tiên
+	BR03
+	SLA phải tính từ thời điểm ticket được tạo hoặc được phân công theo cấu hình
+	BR04
+	Ticket/review quá SLA phải được đánh dấu và hiển thị trong báo cáo
+	BR05
+	Điểm trung bình sản phẩm chỉ tính review trạng thái Hiển thị
+	BR06
+	Dữ liệu báo cáo phải bảo mật thông tin cá nhân của khách
+	BR07
+	Hệ thống phải lưu lịch sử xuất báo cáo nếu chức năng xuất được bật
