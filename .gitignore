@@ -12,3 +12,12 @@ playwright-report/
 artifacts/
 data/
 .npm-cache/
+.env
+.env.*
+!.env.example
+!.env.supabase.example
+backups/
+data/
+*.sqlite
+*.sqlite-*
+supabase-ca.crt
