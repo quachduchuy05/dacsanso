@@ -21,3 +21,6 @@ data/
 *.sqlite
 *.sqlite-*
 supabase-ca.crt
+
+!src/data/
+!src/data/seed.ts
