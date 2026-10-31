@@ -68,7 +68,7 @@ test('customer submits and withdraws an account deletion request without losing 
   await expect(page.getByText(/Chờ tiếp nhận ·/)).toBeVisible();await page.getByLabel('Lý do rút yêu cầu',{exact:true}).fill('Tôi muốn tiếp tục sử dụng dịch vụ.');await page.getByRole('button',{name:'Rút yêu cầu',exact:true}).click();await expect(page.getByText(/Đã rút yêu cầu ·/)).toBeVisible();await expect(page.getByRole('banner').getByRole('button',{name:'Đăng xuất',exact:true})).toBeVisible();
 });
 
-test('unified SRS limits seller product controls and Root navigation',async({browser})=>{
+test('seller controls remain scoped and unified Admin exposes every management area',async({browser})=>{
   for(const phone of ['0900000101','0900000209']){
     const context=await browser.newContext(),page=await context.newPage();
     try{
@@ -78,9 +78,16 @@ test('unified SRS limits seller product controls and Root navigation',async({bro
         await expect(page.getByRole('button',{name:'Thêm sản phẩm',exact:true})).toHaveCount(0);await expect(page.getByRole('button',{name:'Sửa nội dung',exact:true})).toHaveCount(0);
         await expect(page.getByRole('button',{name:'Lưu tồn kho',exact:true}).first()).toBeVisible();
       }else{
-        const nav=page.getByRole('navigation',{name:'Chức năng quản trị'});await expect(nav.getByRole('button',{name:'Phân quyền',exact:true})).toBeVisible();
-        await expect(nav.getByRole('button',{name:'Nhật ký',exact:true})).toBeVisible();await expect(nav.getByRole('button')).toHaveCount(3);
-        const roles=page.getByRole('combobox',{name:'Vai trò',exact:true});await expect(roles.locator('option')).toHaveCount(1);await expect(roles).toHaveValue('admin');
+        const nav=page.getByRole('navigation',{name:'Chức năng quản trị'});await expect(nav.getByRole('button',{name:'Phân quyền Admin',exact:true})).toBeVisible();
+        await expect(nav.getByRole('button',{name:'Nhật ký',exact:true})).toBeVisible();await expect(nav.getByRole('button')).toHaveCount(21);
+        await nav.getByRole('button',{name:'Cấp & khoá tài khoản',exact:true}).click();
+        const roles=page.getByRole('combobox',{name:'Vai trò',exact:true});await expect(roles.locator('option')).toHaveCount(4);await expect(roles).toHaveValue('admin');
+        await nav.getByRole('button',{name:'Duyệt sản phẩm & giá',exact:true}).click();
+        await expect(page.getByRole('button',{name:'Thêm sản phẩm',exact:true})).toBeVisible();
+        await nav.getByRole('button',{name:'Đối soát HTX',exact:true}).click();
+        await expect(page.getByRole('region',{name:'Chính sách chi trả HTX'})).toBeVisible();
+        await nav.getByRole('button',{name:'Tham số',exact:true}).click();
+        await expect(page.getByRole('textbox',{name:'Giá trị mới PAR-02',exact:true})).toBeEnabled();
       }
     }finally{await context.close();}
   }

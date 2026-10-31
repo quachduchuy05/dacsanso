@@ -1,9 +1,10 @@
+import {adminGroupCan} from '../src/domain/adminPermissions.ts';
 import {assert,hash} from './security.mjs';
 import {randomUUID} from 'node:crypto';
 
 export async function adjustmentRoute(method,body,{db,auth}){
   const user=auth.user;
-  assert(user.role==='admin'&&user.adminGroup==='finance',403,'Chỉ Tài chính xử lý bút toán chênh lệch.');
+  assert(user.role==='admin'&&adminGroupCan(user.adminGroup,'finance'),403,'Chỉ Tài chính xử lý bút toán chênh lệch.');
   const records=await db.sql.prepare("SELECT id,data FROM feature_records WHERE kind='reconciliation-adjustment'").all();
   const items=records.map(r=>({id:r.id,...db.decodeJSON(r.data)}));
   if(method==='GET')return {items:items.sort((a,b)=>b.createdAt.localeCompare(a.createdAt))};
@@ -36,7 +37,7 @@ export async function adjustmentRoute(method,body,{db,auth}){
   else assert(item.createdBy!==user.id,403,'Người lập không tự duyệt hoặc từ chối đề xuất của mình. Cần một nhân viên Tài chính khác.');
   if(body.action==='approve'){
     assert(body.confirm===true,400,'Xác nhận đã kiểm tra chứng từ và số tiền.');
-    assert(state.users.some(u=>u.id===item.createdBy&&u.status==='active'&&u.role==='admin'&&u.adminGroup==='finance'),409,'Người lập không còn quyền Tài chính. Cần lập lại đề xuất.');
+    assert(state.users.some(u=>u.id===item.createdBy&&u.status==='active'&&u.role==='admin'&&adminGroupCan(u.adminGroup,'finance')),409,'Người lập không còn quyền Tài chính. Cần lập lại đề xuất.');
     assert(state.orders.some(o=>o.id===item.orderId&&o.coopId===item.coopId),409,'Đơn/HTX của đề xuất không còn hợp lệ.');
     const ledgerRef='reconcile-adjustment:'+item.id;
     assert(!state.ledgerEntries.some(e=>e.refId===ledgerRef),409,'Đã có dòng sổ cho đề xuất.');

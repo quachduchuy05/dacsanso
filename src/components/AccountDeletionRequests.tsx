@@ -1,3 +1,4 @@
+import {adminGroupCan} from '../domain/adminPermissions';
 import {useCallback,useEffect,useState} from 'react';
 import {api} from '../store/backend';
 import {useUi} from '../app/UiContext';
@@ -6,7 +7,7 @@ type Item={id:string;userId:string;status:string;reason:string;createdAt:string;
 const labels:Record<string,string>={pending:'Chờ tiếp nhận',needs_information:'Cần bổ sung',retention_review:'Chờ kiểm tra chính sách lưu trữ',rejected:'Đã từ chối',withdrawn:'Đã rút yêu cầu',access_closed:'Đã đóng quyền truy cập, chưa xóa dữ liệu lịch sử'};
 export function AccountDeletionRequests(){
   const {user}=useUi(),[items,setItems]=useState<Item[]>([]),[password,setPassword]=useState(''),[reason,setReason]=useState(''),[confirm,setConfirm]=useState(false),[message,setMessage]=useState(''),[busy,setBusy]=useState(false);
-  const operations=user?.role==='admin'&&user.adminGroup==='operations',owner=user?.role==='customer'||user?.role==='coop',enabled=operations||owner;
+  const operations=user?.role==='admin'&&adminGroupCan(user.adminGroup,'operations'),owner=user?.role==='customer'||user?.role==='coop',enabled=operations||owner;
   const load=useCallback(async()=>{if(!enabled)return;try{setItems((await api('/api/v1/account-deletion-requests')).items);}catch(e){setMessage(e instanceof Error?e.message:'Không tải được yêu cầu.');}},[enabled,user?.id]);
   useEffect(()=>{void load();},[load]);
   if(!enabled)return null;

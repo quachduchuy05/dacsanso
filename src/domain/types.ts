@@ -30,7 +30,7 @@ export const ADMIN_GROUP_LABEL: Record<AdminSubGroup, string> = {
   quality: 'Chất lượng',
   cskh: 'CSKH',
   finance: 'Tài chính',
-  root: 'Quản trị gốc',
+  root: 'Quản trị tổng hợp',
 };
 
 /** Ai thực hiện một thao tác: người dùng (theo vai trò) hoặc hệ thống. */

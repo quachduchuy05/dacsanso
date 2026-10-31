@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Đánh giá (FR-CSKH-04, 06, 08; mục 5.8).
  * - Chỉ đơn Đã giao, sản phẩm thuộc đơn của khách; mỗi sản phẩm trong một đơn đánh giá 1 lần.
@@ -72,7 +73,7 @@ export function coopReplyReview(state: DemoState, actor: Actor, reviewId: string
 }
 
 export function cskhSetReviewVisibility(state: DemoState, actor: Actor, reviewId: string, hide: boolean, reason: string, at: Date): Result<DemoState> {
-  if (actor.kind !== 'admin' || actor.adminGroup !== 'cskh') return fail('Chỉ Admin – CSKH được kiểm duyệt đánh giá.');
+  if (actor.kind !== 'admin' || !adminGroupCan(actor.adminGroup,'cskh')) return fail('Chỉ Admin – CSKH được kiểm duyệt đánh giá.');
   const review = state.reviews.find((r) => r.id === reviewId);
   if (!review) return fail('Không tìm thấy đánh giá.');
   if (hide && !(REVIEW_HIDE_REASONS as readonly string[]).includes(reason)) {

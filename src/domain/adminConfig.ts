@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Cấu hình của Admin.
  * - Tham số hệ thống (FR-HT-02): Admin – Vận hành sửa, bắt buộc lý do, lưu lịch sử; chỉ áp cho đơn tạo sau đó.
@@ -11,7 +12,7 @@ import { fail, ok, type Actor, type Category, type DemoState, type GiftBoxType, 
 import type { Voucher } from './voucher';
 
 const requireOps = (actor: Actor): string | null =>
-  actor.kind === 'admin' && actor.adminGroup === 'operations' ? null : 'Chỉ Admin – Vận hành được thực hiện thao tác này.';
+  actor.kind === 'admin' && adminGroupCan(actor.adminGroup,'operations') ? null : 'Chỉ Admin – Vận hành được thực hiện thao tác này.';
 
 export function opsUpdateParam<K extends ParamKey>(state: DemoState, actor: Actor, key: K, value: Params[K], reason: string, at: Date): Result<DemoState> {
   const denied = requireOps(actor);

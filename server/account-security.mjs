@@ -12,7 +12,7 @@ export async function issueAccountLink(db,user,options){
 }
 export async function issueBootstrapLink(db,options){
   return db.transaction(async()=>{
-    const user=(await db.read()).state.users.find(u=>u.id==='bootstrap-root'&&u.role==='admin'&&u.adminGroup==='root'&&u.status==='active');
+    const user=(await db.read()).state.users.find(u=>['u-ad-root','bootstrap-root'].includes(u.id)&&u.role==='admin'&&u.adminGroup==='root'&&u.status==='active');
     assert(user,404,'Không tìm thấy Quản trị gốc khởi tạo. Kiểm tra BOOTSTRAP_ADMIN_PHONE và cơ sở dữ liệu.');
     assert(!await db.sql.prepare('SELECT user_id FROM password_credentials WHERE user_id=?').get(user.id),409,'Quản trị gốc đã có mật khẩu. Sử dụng quy trình khôi phục tài khoản.');
     const issued=await issueAccountLink(db,user,options);
@@ -70,9 +70,8 @@ export async function accountSecurityRoute(path,req,body,{db,options,ip}){
   }
   if(path.endsWith('/activation')){
     const {user:admin}=await authenticate(db,req,true,options);assert(admin.role==='admin'&&['root','operations'].includes(admin.adminGroup),403,'Chỉ quản trị được cấp liên kết kích hoạt.');
-    const user=(await db.read()).state.users.find(u=>u.id===body.userId&&u.status==='active');assert(user,404,'Không tìm thấy tài khoản.');
+    const user=(await db.read()).state.users.find(u=>u.id===body.userId&&  u.status==='active');assert(user,404,'Không tìm thấy tài khoản.');
     assert(user.adminGroup!=='root'||admin.adminGroup==='root',403,'Chỉ Quản trị gốc được cấp liên kết cho tài khoản Quản trị gốc.');
-    assert(admin.adminGroup!=='root'||user.role==='admin',403,'Root chỉ cấp liên kết cho tài khoản Admin.');
     assert(admin.adminGroup!=='operations'||user.role!=='admin',403,'Vận hành không được cấp liên kết đặt mật khẩu cho Admin.');
     const issued=await db.transaction(()=>issueAccountLink(db,user,options));await db.audit(admin.id,'account-activation-link',user.id);
     return {status:200,body:{setupLink:issued.link,expiresAt:issued.expiresAt}};

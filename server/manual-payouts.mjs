@@ -1,3 +1,4 @@
+import {adminGroupCan} from '../src/domain/adminPermissions.ts';
 import {assert} from './security.mjs';
 import {recordPayout} from '../src/domain/settlement.ts';
 import {audit,addLedger} from '../src/domain/state.ts';
@@ -5,7 +6,7 @@ import {payoutSchedule} from '../src/domain/payoutSchedule.ts';
 import {isTicketOpen} from '../src/domain/complaint.ts';
 
 export async function recordManualPayout(id,body,{db,auth}){
-  assert(auth.user.role==='admin'&&auth.user.adminGroup==='finance',403,'Chỉ Tài chính ghi nhận kết quả chi trả ngoài hệ thống.');
+  assert(auth.user.role==='admin'&&adminGroupCan(auth.user.adminGroup,'finance'),403,'Chỉ Tài chính ghi nhận kết quả chi trả ngoài hệ thống.');
   assert(typeof body.reference==='string'&&body.reference.trim().length>=3&&body.reference.length<=100&&!/[\r\n\x00-\x1f]/.test(body.reference),400,'Nhập mã chuyển khoản/chứng từ từ 3–100 ký tự.');
   assert(typeof body.note==='string'&&body.note.trim().length>=10&&body.note.length<=2000,400,'Ghi căn cứ xác nhận từ 10–2.000 ký tự.');
   assert(body.confirmed===true,400,'Cần xác nhận đã kiểm tra chứng từ chuyển tiền.');

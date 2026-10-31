@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Tài khoản (FR-TK-03, FR-TK-10..12).
  * - Khách sửa thông tin cá nhân và liên kết tài khoản ngân hàng nhận hoàn tiền (TK-03, liên kết là mô phỏng).
@@ -92,7 +93,6 @@ export interface NewAccountInput {
 export function opsCreateAccount(state: DemoState, actor: Actor, input: NewAccountInput, at: Date): Result<{ state: DemoState; user: UserAccount }> {
   if (actor.kind !== 'admin' || !['operations','root'].includes(actor.adminGroup??'')) return fail('Chỉ Root hoặc Admin – Vận hành được cấp tài khoản.');
   if(input.role==='admin'&&actor.adminGroup!=='root')return fail('Chỉ Quản trị gốc được tạo tài khoản Admin.');
-  if(actor.adminGroup==='root'&&input.role!=='admin')return fail('Root chỉ tạo tài khoản Admin; Vận hành cấp tài khoản HTX, QLNN và Shipper.');
   const phone = normalizePhone(input.phone);
   if (!input.name.trim()) return fail('Vui lòng nhập tên tài khoản.');
   if (!isValidPhone(phone)) return fail(`Số điện thoại không hợp lệ. ${PHONE_RULE}`);
@@ -118,7 +118,7 @@ export function opsCreateAccount(state: DemoState, actor: Actor, input: NewAccou
 
 /** Khoá / mở khoá tài khoản (FR-TK-12). Tài khoản bị khoá không đăng nhập được, phiên đang mở bị đăng xuất. */
 export function opsSetAccountLocked(state: DemoState, actor: Actor, userId: string, locked: boolean, reason: string, at: Date): Result<DemoState> {
-  if (actor.kind !== 'admin' || actor.adminGroup !== 'operations') return fail('Chỉ Admin – Vận hành được khoá tài khoản.');
+  if (actor.kind !== 'admin' || !adminGroupCan(actor.adminGroup,'operations')) return fail('Chỉ Admin – Vận hành được khoá tài khoản.');
   if (actor.userId === userId) return fail('Không thể tự khoá tài khoản của chính mình.');
   const user = state.users.find((u) => u.id === userId);
   if (!user) return fail('Không tìm thấy tài khoản.');

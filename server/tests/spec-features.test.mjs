@@ -249,7 +249,7 @@ test('production SMS adapter sends a generated OTP privately and provider failur
 test('unified SRS: only Quality publishes products and content cannot inject price, ownership or stock',async t=>{
   const f=await fixture(t),quality=f.user('admin','quality'),state=(await f.db.read()).state,coop=state.coops.find(c=>c.status==='active'&&c.profileStatus==='approved');
   const input={name:'Sản phẩm theo SRS mới',description:'Mô tả sản phẩm theo SRS hợp nhất, có thông tin nguồn gốc.',unit:'gói 100 g',category:'dry',region:coop.region,kind:'ready',price:80000,stockOnHand:10,images:['data:image/png;base64,aGVsbG8='],traceUrl:'https://trace.example.com/lot-1'};
-  for(const as of [f.user('coop'),f.user('admin','root'),f.user('admin','finance')])assert.equal((await f.request('/api/v1/catalog/products',{as,body:{coopId:coop.id,input}})).status,403);
+  for(const as of [f.user('coop'),f.user('admin','cskh'),f.user('admin','finance')])assert.equal((await f.request('/api/v1/catalog/products',{as,body:{coopId:coop.id,input}})).status,403);
   const created=await f.request('/api/v1/catalog/products',{as:quality,body:{coopId:coop.id,input}});assert.equal(created.status,200,JSON.stringify(created.data));
   const product=created.data.product;assert.equal(product.status,'active');
   const path='/api/v1/catalog/products/'+product.id;
@@ -261,14 +261,14 @@ test('unified SRS: only Quality publishes products and content cannot inject pri
   assert.equal((await f.request(path,{as:quality,body:{action:'visibility',hidden:true}})).data.product.status,'hidden');
 });
 
-test('unified SRS: Root creates admins, operations cannot create admins and Root cannot do business',async t=>{
+test('unified SRS: unified Admin creates admins and can access business reports; operations remain scoped',async t=>{
   const f=await fixture(t),root=f.user('admin','root'),ops=f.user('admin','operations');
   const command={name:'opsCreateAccount',args:[null,{name:'Nhân viên Chất lượng mới',phone:'0919999888',role:'admin',adminGroup:'quality'},null]};
   assert.equal((await f.request('/api/v1/commands',{as:ops,key:crypto.randomUUID(),body:{commands:[command]}})).status,403);
   const created=await f.request('/api/v1/commands',{as:root,key:crypto.randomUUID(),body:{commands:[command]}});assert.equal(created.status,200,JSON.stringify(created.data));
   assert.equal((await f.db.read()).state.users.find(u=>u.phone==='0919999888').adminGroup,'quality');
-  assert.equal((await f.request('/api/v1/reconciliations',{as:root,body:{}})).status,403);
-  assert.equal((await f.request('/api/v1/exports',{as:root,body:{kind:'summary'}})).status,403);
+  assert.equal((await f.request('/api/v1/reconciliations',{as:root,body:{}})).status,400);
+  assert.equal((await f.request('/api/v1/exports',{as:root,body:{kind:'summary'}})).status,201);
   assert.equal((await f.request('/api/v1/exports',{as:root,body:{kind:'audit'}})).status,201);
 });
 
@@ -296,7 +296,7 @@ test('unified SRS: manual external payout requires evidence and cannot post twic
   const f=await fixture(t),as=f.user('admin','finance'),state=(await f.db.read()).state;
   state.payoutPeriods.push({id:'PERIOD-MANUAL',coopId:state.coops[0].id,start:'2026-10-01T00:00:00Z',end:'2026-10-08T00:00:00Z',status:'closed',lines:[],retained:100000,commission:5000,payout:95000,closedAt:'2026-10-08T00:00:00Z',closedBy:'Tài chính'});await f.db.save(state);
   const path='/api/v1/payouts/PERIOD-MANUAL/record',body={amount:95000,reference:'BANK-TRANSFER-001',note:'Đã đối chiếu chứng từ chuyển khoản ngoài hệ thống.',confirmed:true};
-  assert.equal((await f.request(path,{as:f.user('admin','root'),body})).status,403);
+  assert.equal((await f.request(path,{as:f.user('admin','quality'),body})).status,403);
   assert.equal((await f.request(path,{as,body:{...body,amount:1}})).status,400);
   const before=(await f.db.read()).state.ledgerEntries.length;
   const paid=await f.request(path,{as,body});assert.equal(paid.status,200,JSON.stringify(paid.data));assert.equal(paid.data.period.paidRef,body.reference);
@@ -306,7 +306,7 @@ test('unified SRS: manual external payout requires evidence and cannot post twic
 test('unified SRS: only operations edits homepage and dictionaries, public content is projected',async t=>{
   const f=await fixture(t),ops=f.user('admin','operations'),state=(await f.db.read()).state,product=state.products.find(p=>p.status==='active');
   const body={title:'Đặc sản Lào Cai',subtitle:'Từ HTX đến Hà Nội',description:'Sản phẩm theo mùa được Admin chọn.',collectionTitle:'Mùa thu',featuredProductIds:[product.id],image:''};
-  assert.equal((await f.request('/api/v1/homepage',{as:f.user('admin','root'),body})).status,403);
+  assert.equal((await f.request('/api/v1/homepage',{as:f.user('admin','quality'),body})).status,403);
   assert.equal((await f.request('/api/v1/homepage',{as:ops,body})).status,200);
   const publicState=await f.request('/api/v1/state');assert.equal(publicState.data.state.homepage.title,body.title);
   const item=await f.request('/api/v1/catalog-dictionaries',{as:ops,body:{kind:'unit',name:product.unit,active:true}});assert.equal(item.status,200);
@@ -367,7 +367,7 @@ test('SRS coop review requires a delivered owned order, cannot repeat, and publi
   assert.equal((await f.request(endpoint,{as:cskh,body:{action:'moderate',id:item.id,status:'hidden',reason:'Sao thấp'}})).status,400);
   assert.equal((await f.request(endpoint,{as:cskh,body:{action:'moderate',id:item.id,status:'hidden',reason:'Chứa thông tin cá nhân (SĐT, địa chỉ…)'}})).status,200);
   const hidden=await f.request(endpoint+'?coopId='+order.coopId);assert.equal(hidden.data.items.length,0);assert.equal(hidden.data.rating.average,null);
-  assert.equal((await f.request(endpoint,{as:f.user('admin','root'),body:{action:'moderate',id:item.id,status:'visible'}})).status,403);
+  assert.equal((await f.request(endpoint,{as:f.user('admin','quality'),body:{action:'moderate',id:item.id,status:'visible'}})).status,403);
 });
 
 test('SRS coop moderation policy and review window apply separately from product reviews',async t=>{
@@ -479,7 +479,7 @@ test('SRS pickup points are operations-only, scoped to seller/assigned shipper a
   const f=await fixture(t),state=(await f.db.read()).state,order=state.orders[0],ops=f.user('admin','operations'),shipper=f.user('shipper');
   order.status='preparing';order.shipment={shipperId:shipper.id,shipperName:shipper.name,assignedAt:new Date().toISOString(),assignedBy:ops.name};await f.db.save(state);
   const path='/api/v1/orders/'+order.id+'/pickup-point',body={name:'Điểm nhận kiểm thử',address:'Địa chỉ điểm trung chuyển thử nghiệm Hà Nội',contactName:'Nhân viên bàn giao mẫu',contactPhone:'0901234567',note:'Kiểm đếm và kiểm tra bao gói trước khi nhận.',reason:'Cập nhật điểm nhận theo lịch bàn giao đã thống nhất.'};
-  assert.equal((await f.request(path,{as:f.user('admin','root'),body})).status,403);
+  assert.equal((await f.request(path,{as:f.user('admin','quality'),body})).status,403);
   assert.equal((await f.request(path,{as:shipper,body})).status,403);
   assert.equal((await f.request(path,{as:ops,body:{...body,contactPhone:'bad'}})).status,400);
   assert.equal((await f.request(path,{as:ops,body})).status,200);
@@ -549,7 +549,7 @@ test('SRS closing requested account access revokes sessions without deleting ret
   const registration=await f.request('/api/v1/auth/password/register',{body:{...credentials,challengeId:otp.data.challengeId,otp:'123456'}});assert.equal(registration.status,200);const customer=registration.data.user;
   const path='/api/v1/account-deletion-requests',submitted=await f.request(path,{as:customer,body:{action:'submit',currentPassword:credentials.password,reason:'Tôi muốn đóng tài khoản không còn sử dụng.',confirm:true}});assert.equal(submitted.status,200);
   const session=await issueSession(f.db,customer.id),before=(await f.db.read()).state,body={action:'close_access',id:submitted.data.id,note:'Đã xác minh yêu cầu chủ tài khoản và kiểm tra nghiệp vụ.',confirmed:true},ops=f.user('admin','operations');
-  assert.equal((await f.request(path,{as:customer,body})).status,403);assert.equal((await f.request(path,{as:f.user('admin','root'),body})).status,403);
+  assert.equal((await f.request(path,{as:customer,body})).status,403);assert.equal((await f.request(path,{as:f.user('admin','quality'),body})).status,403);
   assert.equal((await f.request(path,{as:ops,body:{...body,confirmed:false}})).status,400);
   assert.equal((await f.request(path,{as:ops,body})).status,200);assert.equal((await f.request(path,{as:ops,body})).data.duplicate,true);
   const after=(await f.db.read()).state,user=after.users.find(u=>u.id===customer.id);assert.equal(user.status,'locked');assert.ok(user.accessClosedAt);

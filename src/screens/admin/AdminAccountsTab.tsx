@@ -12,7 +12,7 @@ export function AdminAccountsTab() {
   return (
     <div className="space-y-2">
       <OpsAccountsTab createOnly/>
-      <p className="text-sm text-stone-600">Root tạo tài khoản Admin và phân quyền. Vận hành cấp tài khoản HTX, QLNN, Shipper và xử lý khóa tài khoản.</p>
+      <p className="text-sm text-stone-600">Admin tổng hợp quản lý tài khoản và phân quyền. Các tài khoản nhân viên theo nhóm vẫn có phạm vi quyền riêng.</p>
       <div className="overflow-x-auto rounded-2xl border border-stone-200 bg-white">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="bg-stone-50 text-xs text-muted">

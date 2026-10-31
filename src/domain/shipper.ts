@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Giao hàng bằng shipper (chủ repo yêu cầu ngày 18/10/2026; chọn cho OI-01: Admin – Vận hành phân công shipper).
  *
@@ -24,7 +25,7 @@ export type DeliveryFailReason = (typeof DELIVERY_FAIL_REASONS)[number];
 
 export const listShippers = (state: DemoState): UserAccount[] => state.users.filter((u) => u.role === 'shipper');
 
-const isOps = (actor: Actor) => actor.kind === 'admin' && actor.adminGroup === 'operations';
+const isOps = (actor: Actor) => actor.kind === 'admin' && adminGroupCan(actor.adminGroup,'operations');
 
 /** Admin – Vận hành giao đơn cho shipper, hoặc đổi shipper khi shipper cũ chưa lấy hàng. */
 export function opsAssignShipper(state: DemoState, actor: Actor, orderId: string, shipperId: string, pickupNote: string, at: Date): Result<DemoState> {
@@ -138,7 +139,7 @@ export function shipperRemitCod(state: DemoState, actor: Actor, at: Date): Resul
 }
 
 export function financeConfirmRemittance(state: DemoState, actor: Actor, remittanceId: string, at: Date): Result<DemoState> {
-  if (actor.kind !== 'admin' || actor.adminGroup !== 'finance') return fail('Chỉ Admin – Tài chính xác nhận tiền thu hộ.');
+  if (actor.kind !== 'admin' || !adminGroupCan(actor.adminGroup,'finance')) return fail('Chỉ Admin – Tài chính xác nhận tiền thu hộ.');
   const remittance = (state.codRemittances ?? []).find((r) => r.id === remittanceId);
   if (!remittance) return fail('Không tìm thấy phiếu nộp tiền.');
   if (remittance.status === 'confirmed') return fail('Phiếu nộp tiền đã được xác nhận.');

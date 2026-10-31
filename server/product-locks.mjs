@@ -1,10 +1,11 @@
+import {adminGroupCan} from '../src/domain/adminPermissions.ts';
 import {randomBytes} from 'node:crypto';
 import {assert,hash} from './security.mjs';
 
 const keyFor=product=>'product-edit-'+(product.variantOf??product.id);
 export async function productLockRoute(productId,method,body,{db,auth}){
   const {state}=await db.read(),product=state.products.find(p=>p.id===productId);
-  assert(product&&auth.user.role==='admin'&&auth.user.adminGroup==='quality',403,'Chỉ Admin – Chất lượng được khóa biên tập sản phẩm.');
+  assert(product&&auth.user.role==='admin'&&adminGroupCan(auth.user.adminGroup,'quality'),403,'Chỉ Admin – Chất lượng được khóa biên tập sản phẩm.');
   assert(['POST','DELETE'].includes(method),405,'Thao tác khóa không hỗ trợ.');
   const id=keyFor(product),record=await db.sql.prepare("SELECT * FROM feature_records WHERE id=? AND kind='product-edit-lock'").get(id);
   const active=record&&record.expires_at>Date.now(),lease=active?db.decodeJSON(record.data):null;

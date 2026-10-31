@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Sản phẩm phía HTX (mục 5.6, FR-SP-04, FR-SP-07, FR-SP-09).
  * - HTX sửa tồn kho có hiệu lực ngay, nhưng không nhỏ hơn số đang giữ.
@@ -209,7 +210,7 @@ export function coopRequestPreorder(state: DemoState, productId: string, actor: 
 
 /** Admin – Chất lượng duyệt hoặc từ chối (bắt buộc lý do) yêu cầu của HTX (FR-SP-04). */
 export function decideProductChange(state: DemoState, requestId: string, actor: Actor, approve: boolean, reason: string, at: Date): Result<DemoState> {
-  if (actor.kind !== 'admin' || actor.adminGroup !== 'quality') return fail('Chỉ Admin – Chất lượng được duyệt thay đổi sản phẩm.');
+  if (actor.kind !== 'admin' || !adminGroupCan(actor.adminGroup,'quality')) return fail('Chỉ Admin – Chất lượng được duyệt thay đổi sản phẩm.');
   const req = state.productChanges.find((c) => c.id === requestId);
   if (!req) return fail('Không tìm thấy yêu cầu.');
   if (req.status !== 'pending') return fail('Yêu cầu đã được xử lý.');

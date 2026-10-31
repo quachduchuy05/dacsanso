@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Khiếu nại (ticket) và yêu cầu trả hàng (mục 5.7, 5.8).
  *
@@ -160,7 +161,7 @@ export function cskhUpdateTicket(
   at: Date,
   refundApproved = false,
 ): Result<DemoState> {
-  if (actor.kind !== 'admin' || actor.adminGroup !== 'cskh') return fail('Chỉ Admin – CSKH được đổi trạng thái ticket.');
+  if (actor.kind !== 'admin' || !adminGroupCan(actor.adminGroup,'cskh')) return fail('Chỉ Admin – CSKH được đổi trạng thái ticket.');
   const ticket = state.tickets.find((t) => t.id === ticketId);
   if (!ticket) return fail('Không tìm thấy ticket.');
   if (ticket.status === 'closed') return fail('Ticket đã đóng.');
@@ -205,7 +206,7 @@ export function cskhUpdateTicket(
 
 /** CSKH đề nghị HTX kiểm tra lô hàng và phản hồi (bước 3 của quy trình); HTX nhận thông báo. */
 export function cskhRequestCoopReply(state: DemoState, ticketId: string, actor: Actor, note: string, at: Date): Result<DemoState> {
-  if (actor.kind !== 'admin' || actor.adminGroup !== 'cskh') return fail('Chỉ Admin – CSKH được đề nghị HTX phản hồi.');
+  if (actor.kind !== 'admin' || !adminGroupCan(actor.adminGroup,'cskh')) return fail('Chỉ Admin – CSKH được đề nghị HTX phản hồi.');
   const ticket = state.tickets.find((t) => t.id === ticketId);
   if (!ticket) return fail('Không tìm thấy ticket.');
   if (ticket.status !== 'processing') return fail(ticket.status === 'open' ? 'Cần tiếp nhận ticket trước.' : 'Ticket đã kết luận.');

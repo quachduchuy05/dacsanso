@@ -9,7 +9,6 @@ export const registry = JSON.parse(readFileSync(new URL('./commands.json', impor
 const modules = Object.fromEntries(await Promise.all([...new Set(Object.values(registry).map(c => c.module))].map(async (m) => [m, await import(`../src/domain/${m}.ts`)])));
 const customerModules = new Set(['cart', 'address', 'marketplace', 'seasonWatch', 'invoice', 'checkout', 'orderEdits', 'orderTabs']);
 const publicNames = new Set(['submitCoopApplication', 'resubmitCoopApplication']);
-const groups = { ops: 'operations', quality: 'quality', cskh: 'cskh', finance: 'finance', root: 'root' };
 function authorize(name, user, options) {
     const module = registry[name]?.module;
     assert(module, 400, 'Thao tác không được hỗ trợ.');
@@ -18,7 +17,6 @@ function authorize(name, user, options) {
     }
     assert(user, 401, 'Vui lòng đăng nhập.');
     assert(name!=='carrierSimulate',403,'Theo quyết định vận hành, chỉ shipper được phân công tự cập nhật giao hàng. Admin không cập nhật thay.');
-    if(user.role==='admin'&&user.adminGroup==='root')assert(['opsCreateAccount','rootSetAdminGroup','rootSetDemoCode','rootClearDemoCode','markNotificationsRead'].includes(name),403,'Quản trị gốc chỉ quản lý tài khoản Admin, phân quyền và nhật ký.');
     assert(!['coopCreateProduct','coopRequestContentChange','coopSetProductHidden','coopRequestExpress','coopRequestCertification','coopRequestPriceChange','coopRequestPreorder','coopAddVariant'].includes(name),403,'Quản lý sản phẩm đã chuyển sang Admin – Chất lượng theo SRS 29/10.');
     let allowed;
     if (customerModules.has(module) || /^customer|^submitComplaint$|^submitReview$/.test(name))
@@ -47,7 +45,7 @@ function authorize(name, user, options) {
             group = 'root';
         if (name === 'demoGatewaySuccess')
             group = 'operations';
-        allowed = user.role === 'admin' && group && (user.adminGroup === group || (user.adminGroup === 'root'&&name==='opsCreateAccount'));
+        allowed = user.role === 'admin' && group && (user.adminGroup === group || user.adminGroup === 'root');
     }
     assert(allowed, 403, 'Bạn không có quyền thực hiện thao tác này.');
     if (['applyGatewayResult', 'carrierSimulate', 'confirmRefundBySimBank', 'recordPayout', 'linkRefundAccount', 'demoGatewaySuccess', 'rootSetDemoCode', 'rootClearDemoCode'].includes(name))
@@ -123,7 +121,6 @@ function validateObject(name, args, state, user) {
     if (name === 'opsCreateAccount'){
         assert(input && ['coop', 'admin', 'regulator', 'shipper'].includes(input.role) && (!input.adminGroup || ['operations', 'quality', 'cskh', 'finance'].includes(input.adminGroup)), 400, 'Vai trò hoặc nhóm quyền không hợp lệ.');
         assert(input.role!=='admin'||user.adminGroup==='root',403,'Chỉ Root được tạo tài khoản Admin.');
-        assert(user.adminGroup!=='root'||input.role==='admin',403,'Root chỉ tạo tài khoản Admin.');
     }
     if (name === 'rootSetAdminGroup')
         assert(['operations', 'quality', 'cskh', 'finance'].includes(args[3]), 400, 'Nhóm quyền không hợp lệ.');
@@ -178,22 +175,7 @@ export async function executeBatch(db, commands, user, actor, options) {
         const args = descriptor.params.map((p, i) => {
             if (i === 0)
                 return state;
-            if (p.type === 'Actor') {
-                // Root can perform each administrative function, without changing its stored role.
-                let effective = actor;
-                if (user?.adminGroup === 'root' && !name.startsWith('root')&&name!=='opsCreateAccount') {
-                    let group = Object.entries(groups).find(([prefix]) => name.startsWith(prefix))?.[1];
-                    if (name === 'decideProductChange')
-                        group = 'quality';
-                    if (['closePeriod', 'recordPayout', 'startRefundProcessing', 'confirmRefundBySimBank'].includes(name))
-                        group = 'finance';
-                    if (['adminCreateVoucher', 'adminSetVoucherActive', 'carrierSimulate', 'demoGatewaySuccess'].includes(name))
-                        group = 'operations';
-                    if (group)
-                        effective = { ...actor, adminGroup: group };
-                }
-                return effective;
-            }
+            if (p.type === 'Actor') return actor;
             if (p.type === 'Date') {
                 if (p.name === 'cutoff') {
                     const cutoff = new Date(command.args[i - 1]);

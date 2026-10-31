@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Đối soát HTX (mục 5.10, FR-DT-01..04).
  * - Hoa hồng COM-01 tính trên tiền hàng thực giữ lại, không tính trên phí giao. Phí giao không phải doanh thu HTX.
@@ -61,7 +62,7 @@ export function summarize(lines: SettlementLine[]) {
 
 /** Admin – Tài chính chốt kỳ tuần kết thúc tại `cutoff` (thứ Hai 00:00). */
 export function closePeriod(state: DemoState, coopId: string, actor: Actor, cutoff: Date, at: Date): Result<DemoState> {
-  if (actor.kind !== 'admin' || actor.adminGroup !== 'finance') return fail('Chỉ Admin – Tài chính được chốt kỳ.');
+  if (actor.kind !== 'admin' || !adminGroupCan(actor.adminGroup,'finance')) return fail('Chỉ Admin – Tài chính được chốt kỳ.');
   if (cutoff.getTime() > at.getTime()) return fail('Chưa đến giờ cắt kỳ.');
   const lines = eligibleLines(state, coopId, cutoff);
   if (lines.length === 0) return fail('Kỳ này không có đơn đủ điều kiện đối soát.');
@@ -89,7 +90,7 @@ export function closePeriod(state: DemoState, coopId: string, actor: Actor, cuto
 
 /** Ghi nhận chi trả (mô phỏng) vào tài khoản của HTX (FR-DT-04). */
 export function recordPayout(state: DemoState, periodId: string, actor: Actor, at: Date): Result<DemoState> {
-  if (actor.kind !== 'admin' || actor.adminGroup !== 'finance') return fail('Chỉ Admin – Tài chính được ghi nhận chi trả.');
+  if (actor.kind !== 'admin' || !adminGroupCan(actor.adminGroup,'finance')) return fail('Chỉ Admin – Tài chính được ghi nhận chi trả.');
   const period = state.payoutPeriods.find((p) => p.id === periodId);
   if (!period) return fail('Không tìm thấy kỳ đối soát.');
   if (period.status === 'paid') return fail('Kỳ này đã ghi nhận chi trả.');

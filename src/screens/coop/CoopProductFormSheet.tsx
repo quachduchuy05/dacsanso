@@ -1,3 +1,4 @@
+import {adminGroupCan} from '../../domain/adminPermissions';
 import {useEffect,useState} from 'react';
 import {useProductEditLock} from './useProductEditLock';
 import {PhotoPicker} from '../../components/PhotoPicker';
@@ -62,7 +63,7 @@ export function CoopProductFormSheet({ productId, onClose }: { productId?: strin
       }
     >
       {editLock.error&&<p role="alert" className="rounded border border-champagne-300 p-3 text-sm">{editLock.error} Hệ thống tự thử lại sau một phút.</p>}
-      {user?.role==='admin'&&user.adminGroup==='quality'&&!existing&&<Field label="HTX bán sản phẩm"><Select value={form.coopId} onChange={e=>set({coopId:e.target.value,region:state.coops.find(c=>c.id===e.target.value)?.region??''})}>{state.coops.filter(c=>c.status==='active'&&c.profileStatus==='approved').map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</Select></Field>}
+      {user?.role==='admin'&&adminGroupCan(user.adminGroup,'quality')&&!existing&&<Field label="HTX bán sản phẩm"><Select value={form.coopId} onChange={e=>set({coopId:e.target.value,region:state.coops.find(c=>c.id===e.target.value)?.region??''})}>{state.coops.filter(c=>c.status==='active'&&c.profileStatus==='approved').map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</Select></Field>}
       {!existing&&drafts.length>0&&<Field label="Tiếp tục bản nháp đã lưu"><Select value={draftId} onChange={e=>{setDraftId(e.target.value);const draft=drafts.find(d=>d.id===e.target.value);if(draft){setForm(f=>({...f,...draft.form}));setImages(draft.images??[]);setHarvestMonths(draft.harvestMonths??[]);}}}><option value="">Tạo mới</option>{drafts.map(d=><option key={d.id} value={d.id}>{d.form.name||'Chưa đặt tên'} · đến {new Date(d.expiresAt).toLocaleDateString('vi-VN')}</option>)}</Select></Field>}
       <Field label="Tên sản phẩm">
         <Input value={form.name} onChange={(e) => set({ name: e.target.value })} />

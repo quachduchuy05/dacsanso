@@ -1,8 +1,9 @@
+import {adminGroupCan} from '../src/domain/adminPermissions.ts';
 import {assert} from './security.mjs';
 import {audit} from '../src/domain/state.ts';
 
 export async function saveSettlementPolicy(body,{db,auth}){
-  assert(auth.user.role==='admin'&&auth.user.adminGroup==='operations',403,'Chỉ Vận hành lưu chính sách chi trả đã được phê duyệt.');
+  assert(auth.user.role==='admin'&&adminGroupCan(auth.user.adminGroup,'operations'),403,'Chỉ Vận hành lưu chính sách chi trả đã được phê duyệt.');
   assert(body.confirmed===true,400,'Xác nhận chính sách đã được đơn vị vận hành phê duyệt.');
   for(const [key,max]of [['reservePercent',100],['reserveDays',365],['minimumPayout',1000000000],['payoutFee',10000000]])assert(Number.isSafeInteger(body[key])&&body[key]>=0&&body[key]<=max,400,'Tham số chi trả phải là số nguyên trong giới hạn.');
   assert(body.reservePercent===0||body.reserveDays>=1,400,'Giữ lại tiền phải có thời gian giữ ít nhất 1 ngày.');

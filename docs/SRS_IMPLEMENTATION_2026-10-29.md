@@ -1,5 +1,7 @@
 # Triển khai theo SRS hợp nhất — 29/10/2026
 
+**Cập nhật 31/10:** người dùng đã chốt gộp toàn bộ chức năng Admin vào tài khoản Root. Những hạn chế Root chỉ xem/phân quyền trong nội dung lịch sử dưới đây được thay bằng [quyết định Admin tổng hợp](UNIFIED_ADMIN_2026-10-31.md). Không thay quyền cập nhật giao hàng của shipper.
+
 Nguồn người dùng cung cấp đã lưu nguyên văn tại [SRS_UNIFIED_2026-10-29.md](SRS_UNIFIED_2026-10-29.md). [Bảng đối chiếu 82 FR](SRS_UNIFIED_COVERAGE_2026-10-29.md) ghi mã, ưu tiên, bằng chứng và giới hạn từng mục; ba FR Shipper đề xuất ở mục 11.3 được ghi riêng. Không dùng số lượng UC “chưa có” trong SRS để kết luận code chưa có tương ứng.
 
 ## Thay đổi quyền và luồng sản phẩm

@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Hoàn tiền phía Admin – Tài chính (FR-DH-12).
  * Trạng thái hoàn đi Chờ hoàn tiền → Đang hoàn tiền → Đã hoàn tiền; chỉ sang Đã hoàn tiền khi ngân hàng mô phỏng xác nhận.
@@ -9,7 +10,7 @@ import { addLedger, audit, findOrder, iso, replaceOrder } from './state';
 import { fail, ok, type Actor, type DemoState, type RefundRecord, type Result } from './types';
 
 function requireFinance(actor: Actor): string | null {
-  return actor.kind === 'admin' && actor.adminGroup === 'finance' ? null : 'Chỉ Admin – Tài chính được thực hiện hoàn tiền.';
+  return actor.kind === 'admin' && adminGroupCan(actor.adminGroup,'finance') ? null : 'Chỉ Admin – Tài chính được thực hiện hoàn tiền.';
 }
 
 function syncOrderPayment(state: DemoState, refund: RefundRecord): DemoState {

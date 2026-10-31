@@ -1,3 +1,4 @@
+import {adminGroupCan} from '../src/domain/adminPermissions.ts';
 import {assert} from './security.mjs';
 import {exportReport} from '../src/domain/reports.ts';
 import {reportBounds} from './report-filters.mjs';
@@ -8,10 +9,10 @@ export function canExportKind(user,kind){
   if(user.role==='coop')return ['summary','orders','settlements'].includes(kind);
   if(user.role==='regulator')return general.includes(kind);
   if(user.role!=='admin')return false;
-  if(user.adminGroup==='root')return kind==='audit';
-  if(user.adminGroup==='finance')return [...general,'ledger','settlements'].includes(kind);
-  if(user.adminGroup==='operations')return general.includes(kind);
-  return user.adminGroup==='cskh'&&['tickets','reviews'].includes(kind);
+  if(user.adminGroup==='root')return [...general,'audit','ledger','settlements','tickets','reviews'].includes(kind);
+  if(adminGroupCan(user.adminGroup,'finance'))return [...general,'ledger','settlements'].includes(kind);
+  if(adminGroupCan(user.adminGroup,'operations'))return general.includes(kind);
+  return adminGroupCan(user.adminGroup,'cskh')&&['tickets','reviews'].includes(kind);
 }
 export const csvRows=rows=>'\uFEFF'+rows.map(row=>row.map(value=>{let s=String(value??'');if(/^[\s\x00-\x1f]*[=+\-@]/.test(s))s="'"+s;return '"'+s.replaceAll('"','""')+'"';}).join(',')).join('\n');
 export async function filteredReport(db,auth,body,now,frozenSource){
@@ -40,7 +41,7 @@ export async function filteredReport(db,auth,body,now,frozenSource){
   }
   if(['summary','orders'].includes(body.kind)){const r=exportReport(state,seller?{kind:'regulator'}:auth.actor,body.kind,now);assert(r.ok,403,r.error);return {...r.value,filters,version:source.version,...(source.dataAsOf?{dataAsOf:source.dataAsOf}:{} )};}
   if(body.kind==='settlements'){
-    assert(seller||(auth.user.role==='admin'&&auth.user.adminGroup==='finance'),403,'Chỉ HTX xem của mình hoặc Tài chính xuất đối soát.');
+    assert(seller||(auth.user.role==='admin'&&adminGroupCan(auth.user.adminGroup,'finance')),403,'Chỉ HTX xem của mình hoặc Tài chính xuất đối soát.');
     const periods=state.payoutPeriods.filter(p=>ids.has(p.coopId)&&time(p.closedAt));
     rows=[['Kỳ','HTX','Đơn','Tiền hàng','Đã hoàn','Thực giữ','Hoa hồng','Phí giao (không thuộc HTX)','Chi trả','Trạng thái'],...periods.flatMap(p=>p.lines.map(l=>[p.id,p.coopId,l.orderId,l.goods,l.refunded,l.retained,l.commission,l.shippingFee??'',l.payout,p.status]))];
     return {filename,content:csvRows(rows),filters,version:source.version};

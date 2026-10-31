@@ -1,3 +1,4 @@
+import {adminGroupCan} from '../domain/adminPermissions';
 import { lazy, Suspense } from 'react';
 import { BottomSheet } from '../components/BottomSheet';
 import { DemoPanel } from '../components/DemoPanel';
@@ -96,7 +97,7 @@ function ModalContent() {
     case 'review':
       return <ReviewSheet key={`${modal.orderId}-${modal.productId}`} orderId={modal.orderId} productId={modal.productId} onClose={closeModal} />;
     case 'coop_product_form':
-      return user?.role==='admin'&&user.adminGroup==='quality'?<CoopProductFormSheet key={modal.productId ?? 'new'} productId={modal.productId} onClose={closeModal} />:null;
+      return user?.role==='admin'&&adminGroupCan(user.adminGroup,'quality')?<CoopProductFormSheet key={modal.productId ?? 'new'} productId={modal.productId} onClose={closeModal} />:null;
     case 'coop_variant_form':
       return <CoopVariantFormSheet key={modal.productId} productId={modal.productId} onClose={closeModal} />;
     case 'notifications':

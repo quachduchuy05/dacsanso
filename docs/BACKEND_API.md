@@ -1,5 +1,7 @@
 # API backend
 
+Quyền Admin cập nhật ngày 31/10/2026: tài khoản Root là **Admin tổng hợp**, có đủ quyền vận hành, sản phẩm, CSKH, tài chính và quản lý tài khoản. Quyền shipper được phân công vẫn riêng biệt. [Quyết định và cách dùng](UNIFIED_ADMIN_2026-10-31.md).
+
 Thông báo thiết bị: `GET/POST /api/v1/me/push` (đăng ký/xóa thiết bị của chính mình). Tạo phiên thanh toán: `POST /api/v1/transactions/:id/session` (chỉ khách sở hữu giao dịch còn hạn). [Hợp đồng adapter và cấu hình](SRS_PUSH_PAYMENT_2026-10-29.md). Tạo phiên hoặc redirect không xác nhận tiền đã thu.
 
 Quyết định hiện hành: **chỉ shipper được phân công tự cập nhật giao hàng**. RPC `carrierSimulate` và webhook `/api/v1/webhooks/carrier` bị chặn cả trong demo. Vận hành chỉ phân công/quản lý điểm nhận. API yêu cầu xóa có thêm bước đóng truy cập và kiểm tra nghĩa vụ, chưa xóa dữ liệu lịch sử. [Quyết định và giới hạn](SRS_ACCESS_DECISION_2026-10-29.md).

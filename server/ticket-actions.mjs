@@ -1,3 +1,4 @@
+import {adminGroupCan} from '../src/domain/adminPermissions.ts';
 import {assert} from './security.mjs';
 import {validateMediaReferences} from './media.mjs';
 export async function ticketAction(path,body,{db,auth}){
@@ -11,7 +12,7 @@ export async function ticketAction(path,body,{db,auth}){
     const photos=body.photos??[];assert(Array.isArray(photos)&&photos.length<=5&&photos.every(s=>typeof s==='string'&&(/^(data:image\/(jpeg|png|webp);base64,|sb:\/\/)/.test(s))&&s.length<=1000000),400,'Tối đa 5 ảnh hợp lệ.');validateMediaReferences(photos,state,user);
     ticket.photos=[...ticket.photos,...photos];ticket.history.push({at,actor,action:'Bổ sung thông tin',note:body.note.trim()});
   }else if(action==='assign'){
-    assert(staff,403,'Chỉ CSKH được phân công.');const assignee=state.users.find(u=>u.id===body.userId&&u.status==='active'&&u.role==='admin'&&u.adminGroup==='cskh');assert(assignee,400,'Chọn nhân viên CSKH đang hoạt động.');ticket.assignedUserId=assignee.id;ticket.history.push({at,actor,action:'Phân công người xử lý',note:assignee.name});
+    assert(staff,403,'Chỉ CSKH được phân công.');const assignee=state.users.find(u=>u.id===body.userId&&u.status==='active'&&u.role==='admin'&&adminGroupCan(u.adminGroup,'cskh'));assert(assignee,400,'Chọn nhân viên CSKH đang hoạt động.');ticket.assignedUserId=assignee.id;ticket.history.push({at,actor,action:'Phân công người xử lý',note:assignee.name});
   }else{
     assert(ticket.fulfillment,400,'Ticket chưa yêu cầu đổi hoặc giao bù.');const current=ticket.fulfillment.status,next=body.status;
     assert((staff&&current==='requested'&&['approved','rejected'].includes(next))||((staff||coop)&&current==='approved'&&next==='shipped')||(customer&&current==='shipped'&&next==='completed'),409,'Không có quyền chuyển bước đổi/giao bù này.');
@@ -19,7 +20,7 @@ export async function ticketAction(path,body,{db,auth}){
     if(next==='shipped')assert(typeof body.tracking==='string'&&body.tracking.trim().length>=3&&body.tracking.length<=100,400,'Nhập mã vận đơn đổi/giao bù.');
     ticket.fulfillment={...ticket.fulfillment,status:next,updatedAt:at,...(next==='shipped'?{tracking:body.tracking.trim()}:{})};ticket.history.push({at,actor,action:`Đổi/giao bù: ${{approved:'Đã duyệt',rejected:'Từ chối',shipped:'Đã gửi hàng',completed:'Đã nhận hàng'}[next]}`,note:next==='shipped'?body.tracking:undefined});
   }
-  const recipients=state.users.filter(u=>u.customerId===ticket.customerId||(u.role==='admin'&&u.adminGroup==='cskh')||u.coopId===ticket.coopId);
+  const recipients=state.users.filter(u=>u.customerId===ticket.customerId||(u.role==='admin'&&adminGroupCan(u.adminGroup,'cskh'))||u.coopId===ticket.coopId);
   for(const recipient of recipients)if(recipient.id!==user.id)state.notifications.unshift({id:crypto.randomUUID(),userId:recipient.id,title:'Ticket có cập nhật',body:`Yêu cầu ${ticket.id} có thông tin mới.`,read:false,at,link:{type:'ticket',id:ticket.id}});
   await db.save(state);await db.audit(user.id,'ticket-'+action,ticket.id);return {ticket};
 }

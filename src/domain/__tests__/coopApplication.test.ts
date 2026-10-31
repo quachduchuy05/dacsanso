@@ -126,6 +126,7 @@ describe('Quy trình phê duyệt HTX mới', () => {
     const s0 = makeState();
     const s = must(submitCoopApplication(s0, INPUT, '123456', T0)).state;
     const added = deriveNotifications(s0, s, T0).notifications;
-    expect(added).toEqual([expect.objectContaining({ userId: 'u-qa', title: expect.stringMatching(/^Hồ sơ đăng ký HTX mới HS-/) })]);
+    expect(added).toHaveLength(2);
+    expect(added).toEqual(expect.arrayContaining(['u-qa','u-root'].map(userId=>expect.objectContaining({userId,title:expect.stringMatching(/^Hồ sơ đăng ký HTX mới HS-/)}))));
   });
 });

@@ -1,3 +1,4 @@
+import {adminGroupCan} from '../domain/adminPermissions';
 import {useCallback,useEffect,useState} from 'react';
 import {api} from '../store/backend';
 import {useUi} from '../app/UiContext';
@@ -13,7 +14,7 @@ export function CoopReviewsPanel({coopId}:{coopId?:string}){
   const load=useCallback(async()=>{try{setData(await api('/api/v1/coop-reviews'+(coopId?'?coopId='+encodeURIComponent(coopId):'')));}catch(e){setMessage(e instanceof Error?e.message:'Không tải được đánh giá.');}},[coopId,user?.id]);
   useEffect(()=>{void load();},[load]);
   const act=async(body:unknown)=>{setBusy(true);setMessage('');try{await api('/api/v1/coop-reviews',body);setComment('');setOrder('');await load();setMessage('Đã lưu đánh giá HTX.');}catch(e){setMessage(e instanceof Error?e.message:'Không lưu được.');}finally{setBusy(false);}};
-  const moderation=user?.role==='admin'&&user.adminGroup==='cskh';
+  const moderation=user?.role==='admin'&&adminGroupCan(user.adminGroup,'cskh');
   return <section className="space-y-3 rounded-2xl border border-stone-200 bg-white p-4"><h3 className="text-lg font-bold">Đánh giá HTX</h3>
     <p className="text-sm">{data.rating.average===null?'Chưa có đánh giá HTX':`${data.rating.average}/5 · ${data.rating.count} đánh giá HTX`}. Điểm này được tính riêng với đánh giá sản phẩm.</p>
     {user?.role==='customer'&&!!coopId&&(data.eligibleOrders.length?<form className="space-y-3" onSubmit={e=>{e.preventDefault();void act({action:'submit',orderId,stars:Number(stars),comment});}}><Field label="Đơn đã mua tại HTX"><Select required value={orderId} onChange={e=>setOrder(e.target.value)}><option value="">Chọn đơn Đã giao</option>{data.eligibleOrders.map(o=><option key={o.id} value={o.id}>{o.id}</option>)}</Select></Field><Field label="Số sao đánh giá HTX"><Select value={stars} onChange={e=>setStars(e.target.value)}>{[5,4,3,2,1].map(n=><option key={n} value={n}>{n} sao</option>)}</Select></Field><Field label="Nhận xét về HTX"><Textarea maxLength={500} minLength={Number(stars)<=2?20:0} value={comment} onChange={e=>setComment(e.target.value)}/></Field><PrimaryButton disabled={busy}>Gửi đánh giá HTX</PrimaryButton></form>:<p className="text-sm">Đánh giá khi có đơn Đã giao còn trong thời hạn và chưa đánh giá HTX.</p>)}

@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Kiểm quyền đọc dữ liệu (mục 5.9). Kiểm trong hàm domain, không chỉ ẩn nút trên giao diện.
  * - HTX chỉ thấy dữ liệu của HTX mình.
@@ -68,10 +69,10 @@ export function readAuditLogs(state: DemoState, actor: Actor): Result<AuditLog[]
 export function viewRefundAccount(state: DemoState, actor: Actor, customerId: string): Result<BankAccount | null> {
   const customer = state.customers.find((c) => c.id === customerId);
   if (!customer) return fail('Không tìm thấy khách hàng.');
-  const ownerOrFinance = (actor.kind === 'customer' && actor.id === customerId) || (actor.kind === 'admin' && actor.adminGroup === 'finance');
+  const ownerOrFinance = (actor.kind === 'customer' && actor.id === customerId) || (actor.kind === 'admin' && adminGroupCan(actor.adminGroup,'finance'));
   if (!ownerOrFinance) return fail('Bạn không có quyền xem tài khoản của khách.');
   const acc = customer.refundAccount;
   if (!acc) return ok(null);
-  const full = actor.kind === 'admin' && actor.adminGroup === 'finance';
+  const full = actor.kind === 'admin' && adminGroupCan(actor.adminGroup,'finance');
   return ok(full ? acc : { ...acc, accountNumber: maskAccount(acc.accountNumber) });
 }

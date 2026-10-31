@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Hồ sơ HTX và quyền bán (FR-TK-06..09, FR-TK-13).
  * - HTX sửa hồ sơ và gửi duyệt; trong lúc chờ duyệt vẫn hiện hồ sơ cũ.
@@ -25,7 +26,7 @@ export function coopSubmitProfile(state: DemoState, actor: Actor, profile: CoopP
 }
 
 export function qualityDecideCoopProfile(state: DemoState, actor: Actor, coopId: string, approve: boolean, reason: string, at: Date): Result<DemoState> {
-  if (actor.kind !== 'admin' || actor.adminGroup !== 'quality') return fail('Chỉ Admin – Chất lượng được duyệt hồ sơ HTX.');
+  if (actor.kind !== 'admin' || !adminGroupCan(actor.adminGroup,'quality')) return fail('Chỉ Admin – Chất lượng được duyệt hồ sơ HTX.');
   const coop = state.coops.find((c) => c.id === coopId);
   if (!coop || coop.profileStatus !== 'pending' || !coop.pendingProfile) return fail('HTX không có hồ sơ chờ duyệt.');
   if (!approve && !reason.trim()) return fail('Từ chối hồ sơ phải ghi lý do.');
@@ -44,7 +45,7 @@ export function qualityDecideCoopProfile(state: DemoState, actor: Actor, coopId:
 }
 
 export function qualitySetSellingRights(state: DemoState, actor: Actor, coopId: string, active: boolean, reason: string, at: Date): Result<DemoState> {
-  if (actor.kind !== 'admin' || actor.adminGroup !== 'quality') return fail('Chỉ Admin – Chất lượng được kích hoạt hoặc tạm khoá quyền bán.');
+  if (actor.kind !== 'admin' || !adminGroupCan(actor.adminGroup,'quality')) return fail('Chỉ Admin – Chất lượng được kích hoạt hoặc tạm khoá quyền bán.');
   const coop = state.coops.find((c) => c.id === coopId);
   if (!coop) return fail('Không tìm thấy HTX.');
   if(active&&state.users.some(u=>u.coopId===coopId&&u.accessClosedAt)&&!state.users.some(u=>u.coopId===coopId&&u.status==='active'&&!u.accessClosedAt))return fail('Đại diện HTX đã đóng quyền truy cập theo yêu cầu; cần giải quyết tài khoản đại diện trước khi mở lại bán hàng.');

@@ -1,10 +1,11 @@
+import {adminGroupCan} from '../src/domain/adminPermissions.ts';
 import {randomUUID} from 'node:crypto';
 import {assert} from './security.mjs';
 import {REVIEW_HIDE_REASONS} from '../src/domain/reviews.ts';
 
 // Separate from product ratings: a review is backed by one delivered purchase.
 export async function coopReviewsRoute(method,body,query,{db,auth}){
-  const user=auth?.user,{state}=await db.read(),moderator=user?.role==='admin'&&user.adminGroup==='cskh';
+  const user=auth?.user,{state}=await db.read(),moderator=user?.role==='admin'&&adminGroupCan(user.adminGroup,'cskh');
   const records=await db.sql.prepare("SELECT id,owner_id,data FROM feature_records WHERE kind='coop-review'").all();
   const reviews=records.map(r=>({id:r.id,...db.decodeJSON(r.data)}));
   const ownSeller=user?.role==='coop'?user.coopId:null;

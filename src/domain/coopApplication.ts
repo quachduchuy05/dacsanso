@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Quy trình phê duyệt HTX mới (góp ý kiểm thử: "Thiếu quy trình phê duyệt HTX").
  *
@@ -183,7 +184,7 @@ export function resubmitCoopApplication(state: DemoState, id: string, input: App
 const replace = (state: DemoState, app: CoopApplication): DemoState => ({ ...state, coopApplications: applicationsOf(state).map((a) => (a.id === app.id ? app : a)) });
 
 function forQuality(state: DemoState, actor: Actor, id: string): Result<CoopApplication> {
-  if (actor.kind !== 'admin' || actor.adminGroup !== 'quality') return fail('Chỉ Admin – Chất lượng xử lý hồ sơ đăng ký HTX.');
+  if (actor.kind !== 'admin' || !adminGroupCan(actor.adminGroup,'quality')) return fail('Chỉ Admin – Chất lượng xử lý hồ sơ đăng ký HTX.');
   const app = applicationsOf(state).find((a) => a.id === id);
   if (!app) return fail('Không tìm thấy hồ sơ.');
   return ok(app);

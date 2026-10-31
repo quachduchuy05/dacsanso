@@ -67,12 +67,15 @@ const TABS: Record<AdminSubGroup, TabDef[]> = {
     { key: 'invoices', label: 'Hoá đơn công ty', render: () => <FinanceInvoicesTab /> },
     COOP_LIST,
   ],
-  root: [
-    { key: 'accounts', label: 'Phân quyền', render: () => <AdminAccountsTab /> },
-    { key: 'audit', label: 'Nhật ký', render: () => <AdminAuditTab /> },
-    { key:'params',label:'Tham số (chỉ xem)',render:()=> <AdminParamsTab/> },
-  ],
+  root: [], // Filled with the combined administrative workspace below.
 };
+
+const UNIFIED_TABS:TabDef[]=[
+  ...new Map([...TABS.operations,...TABS.quality,...TABS.cskh,...TABS.finance].map(tab=>[tab.key,tab])).values(),
+  {key:'permissions',label:'Phân quyền Admin',render:()=> <AdminAccountsTab/>},
+  {key:'audit',label:'Nhật ký',render:()=> <AdminAuditTab/>},
+];
+TABS.root=UNIFIED_TABS;
 
 /** Admin theo nhóm quyền (mục 8). Giao diện rộng cho máy tính. */
 export function AdminScreen() {

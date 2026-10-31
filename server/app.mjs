@@ -270,10 +270,6 @@ export async function createApplication(config = {}) {
             }
             if(['/api/v1/me/profile','/api/v1/me/phone/start','/api/v1/me/phone/confirm'].includes(path)&&req.method==='POST')return json(res,200,await manageProfile(path,body,{db,auth,options,ip}));
             if(['/api/v1/homepage','/api/v1/catalog-dictionaries'].includes(path)&&req.method==='POST')return await transactionReply(res,db,async()=>({status:200,body:await saveContent(path.endsWith('/homepage')?'homepage':'dictionary',body,{db,auth})}));
-            if(auth?.user.adminGroup==='root'&&['POST','PUT','PATCH','DELETE'].includes(req.method)){
-                const allowed=['/api/v1/commands','/api/v1/auth/logout','/api/v1/demo/tools','/api/v1/media/sign'].includes(path)||(path==='/api/v1/exports'&&body.kind==='audit')||/^\/api\/v1\/exports\/[\w-]+\/retry$/.test(path);
-                assert(allowed,403,'Quản trị gốc không thao tác nghiệp vụ.');
-            }
             const catalogProduct=path.match(/^\/api\/v1\/catalog\/products(?:\/([\w-]+))?$/);
             const pickupPoint=path.match(/^\/api\/v1\/orders\/([\w-]+)\/pickup-point$/);
             if(pickupPoint&&req.method==='POST')return await transactionReply(res,db,async()=>({status:200,body:await savePickupPoint(pickupPoint[1],body,{db,auth})}));
@@ -463,7 +459,6 @@ export async function createApplication(config = {}) {
                 const job = await db.sql.prepare('SELECT * FROM export_jobs WHERE id=? AND user_id=?').get(download[1], auth.user.id);
                 assert(job, 404, 'Không tìm thấy báo cáo.');
                 assert(canExportKind(auth.user,job.kind),403,'Quyền xuất loại báo cáo này đã bị thu hồi.');
-                if(auth.user.adminGroup==='root')assert(job.kind==='audit',403,'Root chỉ xuất nhật ký.');
                 if(auth.user.role==='coop')assert(['summary','orders','settlements'].includes(job.kind)&&JSON.parse(job.filters).coopId===auth.user.coopId,403,'Phạm vi báo cáo không còn thuộc HTX này.');
                 if(job.kind==='audit')assert(auth.user.adminGroup==='root',403,'Quyền xuất nhật ký đã bị thu hồi.');
                 if(job.kind==='ledger')assert(['root','finance'].includes(auth.user.adminGroup),403,'Quyền Tài chính đã bị thu hồi.');

@@ -27,7 +27,7 @@ export function OpsAccountsTab({createOnly=false}:{createOnly?:boolean}={}) {
           </Field>
           <Field label="Vai trò">
             <Select value={form.role} onChange={(e) => set({ role: e.target.value as NewAccountInput['role'] })}>
-              {isRoot?<option value="admin">Admin</option>:<><option value="coop">HTX</option><option value="regulator">Cơ quan QLNN</option><option value="shipper">Shipper (giao vận)</option></>}
+              {isRoot&&<option value="admin">Admin theo nhóm</option>}<option value="coop">HTX</option><option value="regulator">Cơ quan QLNN</option><option value="shipper">Shipper (giao vận)</option>
             </Select>
           </Field>
           {form.role === 'coop' && (

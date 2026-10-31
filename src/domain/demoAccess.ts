@@ -1,3 +1,4 @@
+import {adminGroupCan} from './adminPermissions';
 /**
  * Chế độ trình diễn an toàn (Giai đoạn 7, đề bài bản 2 – chưa có trong SRS).
  *
@@ -84,7 +85,7 @@ export function rootClearDemoCode(state: DemoState, actor: Actor, at: Date): Res
 
 export const DEMO_TOOLS_ROLES = 'Quản trị gốc và Admin – Vận hành';
 
-export const canUseDemoTools = (actor: Actor): boolean => actor.kind === 'admin' && (actor.adminGroup === 'root' || actor.adminGroup === 'operations');
+export const canUseDemoTools = (actor: Actor): boolean => actor.kind === 'admin' && (actor.adminGroup === 'root' || adminGroupCan(actor.adminGroup,'operations'));
 
 const requireDemoTools = (actor: Actor): string | null => (canUseDemoTools(actor) ? null : `Chỉ ${DEMO_TOOLS_ROLES} dùng được công cụ này, vì nó thay đổi dữ liệu của mọi máy đang xem demo.`);
 

@@ -8,6 +8,7 @@
  * HTX khách theo dõi có sản phẩm mới, sản phẩm khách theo dõi "Báo tôi khi vào mùa" mở đợt đặt trước.
  */
 import { messagePreview } from './coopChat';
+import {adminGroupCan} from './adminPermissions';
 import { generateId } from './ids';
 import { followerIdsOf } from './marketplace';
 import { formatMoney } from './pricing';
@@ -35,7 +36,7 @@ export const usersOfCustomer = (s: DemoState, customerId: string): string[] =>
   s.users.filter((u) => u.role === 'customer' && u.customerId === customerId).map((u) => u.id);
 
 export const adminsOf = (s: DemoState, group: AdminSubGroup): string[] =>
-  s.users.filter((u) => u.role === 'admin' && u.adminGroup === group && u.status === 'active').map((u) => u.id);
+  s.users.filter((u) => u.role === 'admin' && adminGroupCan(u.adminGroup,group) && u.status === 'active').map((u) => u.id);
 
 function orderDrafts(prev: DemoState, next: DemoState, o: Order): Draft[] {
   const before = prev.orders.find((x) => x.id === o.id);
