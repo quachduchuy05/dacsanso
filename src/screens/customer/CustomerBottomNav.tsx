@@ -16,7 +16,7 @@ export function CustomerBottomNav() {
   return (
     <nav
       aria-label="Điều hướng khách hàng"
-      className="lg:hidden fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-[640px] items-center justify-around border-t border-champagne-400/40 bg-forest-950/95 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgb(14,37,27,0.18)] backdrop-blur-md md:bottom-4 md:max-w-md md:rounded-full md:border md:px-3 md:pb-1.5"
+      className="signature-bottom-nav lg:hidden fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-[640px] items-center justify-around border-t border-champagne-400/40 bg-forest-950/95 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgb(14,37,27,0.18)] backdrop-blur-md md:bottom-4 md:max-w-md md:rounded-full md:border md:px-3 md:pb-1.5"
     >
       {TABS.map(({ key, label, Icon }) => {
         const active = customerTab === key;

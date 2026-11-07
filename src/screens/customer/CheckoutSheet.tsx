@@ -1,14 +1,14 @@
+import {trackExperience} from '../../store/experienceEvents';
+import {DeliveryInterest} from '../../components/DeliveryInterest';
+import {api} from '../../store/backend';
 /**
- * Đặt hàng 3 bước (MHTT-02..05, mục 5.1–5.4).
- * 1. Giao hàng: địa chỉ, ngày giao (đặt trước), cách giao, hộp quà, ghi chú.
- * 2. Ưu đãi & thanh toán: panel chọn 1 mã nằm ngay trong màn này (L7), COD/online theo từng đơn, điều kiện huỷ đặt trước,
- *    yêu cầu xuất hoá đơn công ty (Giai đoạn 8, mô phỏng).
- * 3. Xác nhận: từng đơn, từng món, từng khoản phí; nút ghi đúng số tiền trả ngay (L1).
+ * Checkout Phase 2 trên một màn, các phần chỉnh sửa mở tại chỗ.
+ * Giữ kiểm tra giá/tồn từ máy chủ, hóa đơn, điều kiện đặt trước và khóa chống tạo trùng.
  * Mọi phép tính tiền nằm ở src/domain (planCheckout / placeCheckout).
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { AlertTriangle, Check, ChevronLeft, Gift, Plus, Ticket } from 'lucide-react';
-import { useUi, type CheckoutSource } from '../../app/UiContext';
+import { useEffect, useId,useMemo, useRef, useState,type ReactNode } from 'react';
+import { AlertTriangle, Check, Gift, Plus, Ticket } from 'lucide-react';
+import { useUi, type CheckoutSource,type CheckoutDraft } from '../../app/UiContext';
 import { BottomSheet } from '../../components/BottomSheet';
 import { Field, Input, PrimaryButton, SecondaryButton, Select, Textarea } from '../../components/form';
 import { InvoiceFields, InvoiceSummary } from '../../components/InvoiceFields';
@@ -24,15 +24,13 @@ import { PHONE_RULE } from '../../domain/phone';
 import { ORDER_KIND_LABEL, type CartLine, type CompanyInvoice } from '../../domain/types';
 import { useStore } from '../../store/AppDataContext';
 
-type Step = 1 | 2 | 3;
-const STEP_LABEL: Record<Step, string> = { 1: 'Giao hàng', 2: 'Ưu đãi & thanh toán', 3: 'Xác nhận' };
 
 function noticeText(n: RevalidationNotice): string {
   switch (n.type) {
     case 'price_down':
       return `${n.name}: giá giảm từ ${formatMoney(n.oldPrice)} còn ${formatMoney(n.newPrice)}, đã áp giá mới.`;
     case 'price_up':
-      return `${n.name}: giá tăng từ ${formatMoney(n.oldPrice)} lên ${formatMoney(n.newPrice)}. Vui lòng xác nhận lại ở bước cuối.`;
+      return `${n.name}: giá tăng từ ${formatMoney(n.oldPrice)} lên ${formatMoney(n.newPrice)}. Vui lòng xác nhận giá mới trước khi đặt.`;
     case 'reduced':
       return `${n.name}: chỉ còn ${n.to}, đã giảm số lượng từ ${n.from} xuống ${n.to}.`;
     case 'removed':
@@ -40,7 +38,7 @@ function noticeText(n: RevalidationNotice): string {
   }
 }
 
-export function CheckoutSheet({ source, preferredAddressId, onClose }: { source: CheckoutSource; preferredAddressId?: string; onClose: () => void }) {
+export function CheckoutSheet({ source, preferredAddressId, draft,skipAddressPrompt,onClose }: { source: CheckoutSource; preferredAddressId?: string;draft?:CheckoutDraft;skipAddressPrompt?:boolean; onClose: () => void }) {
   const { state, now, run } = useStore();
   const { customerActor, openModal, showToast, openOrders } = useUi();
   const customerId = customerActor.id!;
@@ -50,8 +48,8 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
     source.type === 'cart'
       ? (state.carts[customerId] ?? []).filter((l) => !source.productIds || source.productIds.includes(l.productId))
       : [source.line];
-  const [step, setStep] = useState<Step>(1);
-  const [lines, setLines] = useState<CartLine[]>(initialLines);
+  const [lines, setLines] = useState<CartLine[]>(draft?.lines??initialLines);
+  const linesRef=useRef(lines);linesRef.current=lines;
   const [notices, setNotices] = useState<RevalidationNotice[]>([]);
   // Địa chỉ chọn sẵn: địa chỉ vừa thêm từ bước này (nếu có), không thì địa chỉ mặc định.
   const [addressId, setAddressId] = useState(
@@ -59,18 +57,21 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
       defaultAddressOf(state, customerId)?.id ??
       '',
   );
-  const [options, setOptions] = useState<Record<string, GroupOptions>>({});
-  const [voucherId, setVoucherId] = useState<string | undefined>();
+  const [options, setOptions] = useState<Record<string, GroupOptions>>(draft?.options??{});
+  const [paymentsChosen,setPaymentsChosen]=useState<Record<string,boolean>>(draft?.paymentsChosen??{});
+  const savedPreferences=state.customers.find(c=>c.id===customerId)?.checkoutPreferences;
+  const [voucherId, setVoucherId] = useState<string | undefined>(draft?.voucherId);
   const [voucherCode, setVoucherCode] = useState('');
-  const [note, setNote] = useState('');
-  const [acceptedPolicy, setAcceptedPolicy] = useState(false);
-  const [confirmedPriceUp, setConfirmedPriceUp] = useState(false);
+  const [note, setNote] = useState(draft?.note??'');
+  const [acceptedPolicy, setAcceptedPolicy] = useState(draft?.acceptedPolicy??false);
+  const [confirmedPriceUp, setConfirmedPriceUp] = useState(draft?.confirmedPriceUp??false);
   const [placing, setPlacing] = useState(false);
+  const [validating,setValidating]=useState(true),[validationError,setValidationError]=useState(''),[validationAttempt,setValidationAttempt]=useState(0);
   // Hoá đơn công ty: điền sẵn thông tin mặc định khách đã lưu.
   const savedInvoice = state.customers.find((c) => c.id === customerId)?.invoiceDefault;
-  const [wantInvoice, setWantInvoice] = useState(false);
-  const [invoice, setInvoice] = useState<CompanyInvoice>(savedInvoice ?? emptyInvoice());
-  const [saveInvoice, setSaveInvoice] = useState(false);
+  const [wantInvoice, setWantInvoice] = useState(draft?.wantInvoice??false);
+  const [invoice, setInvoice] = useState<CompanyInvoice>(draft?.invoice??savedInvoice ?? emptyInvoice());
+  const [saveInvoice, setSaveInvoice] = useState(draft?.saveInvoice??false);
   const allInvoiceErrors = wantInvoice ? invoiceErrors(invoice) : {};
   // Chỉ báo lỗi ô đã nhập; ô còn trống báo ở chân màn.
   const invoiceFieldErrors = Object.fromEntries(Object.entries(allInvoiceErrors).filter(([k]) => invoice[k as keyof CompanyInvoice].trim() !== ''));
@@ -79,16 +80,17 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
 
   // BR-DAT-03: kiểm tra lại giá và tồn khi mở màn Đặt hàng.
   useEffect(() => {
-    const re = revalidateLines(state, initialLines);
-    setLines(re.lines);
-    setNotices(re.notices);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    let active=true;setValidating(true);setValidationError('');
+    void api<{state:typeof state;version:number}>('/api/v1/state').then(snapshot=>{if(!active)return;const re=revalidateLines(snapshot.state,linesRef.current);setLines(re.lines);setNotices(re.notices);if(re.needsConfirmation)setConfirmedPriceUp(false);setAddressId(previous=>previous||defaultAddressOf(snapshot.state,customerId)?.id||'');window.dispatchEvent(new CustomEvent('backend-state',{detail:snapshot}));}).catch(e=>{if(active)setValidationError(e instanceof Error?e.message:'Chưa kiểm tra được giá và tồn.');}).finally(()=>{if(active)setValidating(false);});
+    return()=>{active=false;};
+  }, [validationAttempt]);
 
   const at = now();
-  const input = { customerId, lines, addressId, voucherId, note, groupOptions: options };
-  const plan = useMemo(() => planCheckout(state, input, at), [state, lines, addressId, voucherId, note, options, step]); // eslint-disable-line react-hooks/exhaustive-deps
+  const input = { customerId, lines, addressId, voucherId, note, groupOptions: options, experience: 'phase2' as const };
+  const plan = useMemo(() => planCheckout(state, input, at), [state, lines, addressId, voucherId, note, options]); // eslint-disable-line react-hooks/exhaustive-deps
   const addresses = state.addresses.filter((a) => a.customerId === customerId);
+  const editAddress=()=>openModal({type:'address_form',returnTo:{type:'checkout',source,skipAddressPrompt:true,draft:{lines,options,paymentsChosen,voucherId,note,acceptedPolicy,confirmedPriceUp,wantInvoice,invoice,saveInvoice}}});
+  useEffect(()=>{if(!validating&&!validationError&&!addresses.length&&!skipAddressPrompt)editAddress();},[validating,validationError]);
 
   /**
    * Chọn hoặc bỏ mã ưu đãi (BR-KM-01..08). Mã chưa đủ điều kiện thì không chọn được và báo lý do.
@@ -129,11 +131,13 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
     const newKey = groupKey(product.coopId, 'preorder', date);
     setLines((prev) => prev.map((l) => (l.productId === productId ? { ...l, deliveryDate: date } : l)));
     if (options[oldKey]) setOptions((prev) => ({ ...prev, [newKey]: prev[oldKey] }));
+    setPaymentsChosen(prev=>prev[oldKey]?{...prev,[newKey]:true}:prev);
   };
 
-  const stepErrors = (s: Step): string[] => {
+  const stepErrors = (s: number): string[] => {
     if (s === 1) return plan.errors;
     if (s === 2) {
+      if(!savedPreferences&&plan.orders.some(o=>!paymentsChosen[o.key]))return ['Vui lòng chọn cách thanh toán cho các đơn của lần đặt.'];
       const invoiceError = Object.values(allInvoiceErrors)[0];
       if (invoiceError) return [`Thông tin hoá đơn: ${invoiceError}`];
       return plan.hasPreorder && !acceptedPolicy ? ['Vui lòng đọc và tick đồng ý điều kiện huỷ đơn đặt trước.'] : [];
@@ -167,7 +171,7 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
       },
     );
     setPlacing(false);
-    if (!saved.ok) { showToast(saved.error); return; }
+    if (!saved.ok) { showToast(saved.error);setValidationAttempt(attempt=>attempt+1);return; }
     if (!outcome) return;
     if (!outcome.ok) {
       if (outcome.lines) setLines(outcome.lines);
@@ -176,56 +180,42 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
       showToast(outcome.error);
       return;
     }
+    trackExperience('checkout_placed');
     if (outcome.transaction && outcome.transaction.status === 'pending') {
       openModal({ type: 'payment', txId: outcome.transaction.id });
     } else {
-      onClose();
-      openOrders('all');
-      showToast(outcome.reused ? 'Lần đặt này đã được tạo trước đó.' : `Đã tạo ${outcome.checkout.orderIds.length} đơn. Đơn thanh toán khi nhận hàng đang chờ HTX xác nhận.`);
+      openModal({type:'checkout_complete',checkoutId:outcome.checkout.id});
     }
   };
 
   const payNow = plan.totals.payNowOnline;
-  const errors = stepErrors(step);
+  const errors = [...plan.errors,...stepErrors(2),...stepErrors(3)];
 
   return (
     <BottomSheet
+      className="signature-detail"
       title={
         <div className="space-y-2">
           <span className="block">Đặt hàng</span>
-          <ol className="flex gap-1 font-sans text-xs font-semibold" aria-label="Các bước đặt hàng">
-            {([1, 2, 3] as Step[]).map((s) => (
-              <li key={s} aria-current={step === s ? 'step' : undefined} className={`flex-1 rounded-lg px-2 py-1 text-center ${step === s ? 'bg-forest-800 text-white' : s < step ? 'bg-forest-100 text-forest-800' : 'bg-stone-100 text-muted'}`}>
-                {s}. {STEP_LABEL[s]}
-              </li>
-            ))}
-          </ol>
+          <span className="block text-xs font-normal text-muted">Một lần đặt · {plan.orders.length} đơn · tổng {formatMoney(plan.totals.grandTotal)}</span>
+
         </div>
       }
       onClose={onClose}
       footer={
         <div className="space-y-2">
-          {errors.length > 0 && step !== 1 && <p className="text-sm font-semibold text-rose-700">{errors[0]}</p>}
-          <div className="flex gap-2">
-            {step > 1 && (
-              <SecondaryButton onClick={() => setStep((s) => (s - 1) as Step)} aria-label="Quay lại bước trước" className="flex items-center gap-1">
-                <ChevronLeft size={16} />
-                Quay lại
-              </SecondaryButton>
-            )}
-            {step < 3 ? (
-              <PrimaryButton className="flex-1" disabled={errors.length > 0 || lines.length === 0} onClick={() => setStep((s) => (s + 1) as Step)}>
-                Tiếp tục
-              </PrimaryButton>
-            ) : (
-              <PrimaryButton className="flex-1" disabled={placing || errors.length > 0 || plan.errors.length > 0 || lines.length === 0} onClick={place}>
-                {placing ? 'Đang đặt…' : payNow > 0 ? `Đặt hàng – trả ngay ${formatMoney(payNow)}` : 'Đặt hàng – thanh toán khi nhận'}
-              </PrimaryButton>
-            )}
-          </div>
+          {errors.length > 0 && <p className="text-sm font-semibold text-rose-700">{errors[0]}</p>}
+          {validating&&<p role="status" className="text-sm">Đang kiểm tra giá và tồn tại máy chủ…</p>}
+          {validationError&&<p role="alert" className="text-sm text-rose-800">{validationError} <button className="min-h-11 px-2 underline" onClick={()=>setValidationAttempt(attempt=>attempt+1)}>Kiểm tra lại</button></p>}
+          <PrimaryButton className="w-full" disabled={placing || validating || !!validationError || errors.length > 0 || lines.length === 0} onClick={place}>
+            {placing ? 'Đang đặt…' : 'Trả ngay '+formatMoney(payNow)}
+          </PrimaryButton>
+          {plan.totals.payOnDelivery>0&&<p className="text-center text-sm">Trả khi nhận {formatMoney(plan.totals.payOnDelivery)}</p>}
+
         </div>
       }
     >
+      <DeliveryInterest/>
       {notices.length > 0 && (
         <div className="space-y-1 rounded-2xl border border-champagne-300 bg-champagne-50 p-3 text-sm text-champagne-950" role="alert">
           <p className="flex items-center gap-1.5 font-bold">
@@ -239,14 +229,15 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
 
       {lines.length === 0 && <p className="rounded-2xl border border-dashed border-stone-300 p-4 text-center text-sm text-stone-600">Không còn sản phẩm nào để đặt.</p>}
 
-      {step === 1 && (
+      {(
+        <CheckoutEditor title="Địa chỉ & cách giao" summary={(addresses.find(a=>a.id===addressId)?.label??'Chọn địa chỉ')+' · '+[...new Set(plan.orders.map(o=>o.shipping==='express'?'Hoả tốc':'Tiêu chuẩn'))].join(', ')}>
         <StepDelivery
           plan={plan.orders}
           lines={lines}
           addresses={addresses.map((a) => ({ id: a.id, label: `${a.label}: ${snapshotAddress(state, a).text}` }))}
           addressId={addressId}
           setAddressId={setAddressId}
-          onAddAddress={() => openModal({ type: 'address_form', returnTo: { type: 'checkout', source } })}
+          onAddAddress={editAddress}
           setLineDate={setLineDate}
           setOpt={setOpt}
           options={options}
@@ -254,13 +245,15 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
           setNote={setNote}
           errors={plan.errors}
         />
+        </CheckoutEditor>
       )}
 
-      {step === 2 && (
+      {(
         <>
+          <CheckoutEditor title="Mã ưu đãi" summary={plan.voucher?.code??'Chọn hoặc nhập mã'}>
           <section className="space-y-2 rounded-2xl border border-stone-200 p-3" aria-label="Mã ưu đãi">
             <h4 className="flex items-center gap-1.5 text-sm font-bold text-ink">
-              <Ticket size={16} /> Mã ưu đãi <span className="font-normal text-muted">(mỗi lần đặt dùng tối đa {state.params.vouchersPerCheckout} mã)</span>
+              <Ticket size={16} /> Mã ưu đãi <span className="font-normal text-muted">(mỗi lần đặt dùng tối đa 1 mã)</span>
             </h4>
             {plan.voucher && (
               <div
@@ -337,7 +330,9 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
             </ul>
             <p className="text-sm text-stone-600">Mã chỉ giảm tiền hàng của sản phẩm hợp lệ, không giảm phí giao, phụ phí hoả tốc hay phí hộp quà.</p>
           </section>
+          </CheckoutEditor>
 
+          <CheckoutEditor title="Thanh toán" summary={plan.orders.every(o=>savedPreferences||paymentsChosen[o.key])?[...new Set(plan.orders.map(o=>o.paymentMethod==='cod'?'Trả khi nhận':'Online'))].join(', '):'Chọn phương thức thanh toán'}>
           {plan.orders.map((o) => (
             <section key={o.key} className="space-y-2 rounded-2xl border border-stone-200 p-3">
               <h4 className="text-sm font-bold text-ink">
@@ -349,9 +344,26 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
                   Cọc {formatMoney(o.pricing.deposit)} trả online ngay. Phần còn lại {formatMoney(o.pricing.remaining)}:
                 </p>
               )}
-              <PaymentChoice order={o} onChange={(m) => setOpt(o.key, { paymentMethod: m })} />
+              <PaymentChoice order={o} selected={!!savedPreferences||!!paymentsChosen[o.key]} onChange={(m) => {setOpt(o.key, { paymentMethod: m });setPaymentsChosen(prev=>({...prev,[o.key]:true}));}} />
             </section>
           ))}
+          {plan.hasPreorder && (
+            <section className="space-y-2 rounded-2xl border border-champagne-300 bg-champagne-50 p-3 text-sm text-champagne-950">
+              <h4 className="font-bold">Điều kiện huỷ đơn đặt trước</h4>
+              {plan.orders
+                .filter((o) => o.cancelPolicy)
+                .map((o) => (
+                  <p key={o.key}>
+                    <strong>{o.coopName}</strong> (giao {formatDateKey(o.deliveryDate!)}): {o.cancelPolicy}
+                  </p>
+                ))}
+              <label className="flex min-h-11 items-center gap-2 font-semibold">
+                <input type="checkbox" className="h-5 w-5" checked={acceptedPolicy} onChange={(e) => setAcceptedPolicy(e.target.checked)} />
+                Tôi đã đọc và đồng ý điều kiện huỷ trên
+              </label>
+            </section>
+          )}
+          </CheckoutEditor>
 
           <section aria-label="Hoá đơn công ty" className="space-y-2 rounded-2xl border border-stone-200 p-3">
             <label className="flex min-h-11 items-center gap-2 text-sm font-bold text-ink">
@@ -370,26 +382,11 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
             )}
           </section>
 
-          {plan.hasPreorder && (
-            <section className="space-y-2 rounded-2xl border border-champagne-300 bg-champagne-50 p-3 text-sm text-champagne-950">
-              <h4 className="font-bold">Điều kiện huỷ đơn đặt trước</h4>
-              {plan.orders
-                .filter((o) => o.cancelPolicy)
-                .map((o) => (
-                  <p key={o.key}>
-                    <strong>{o.coopName}</strong> (giao {formatDateKey(o.deliveryDate!)}): {o.cancelPolicy}
-                  </p>
-                ))}
-              <label className="flex min-h-11 items-center gap-2 font-semibold">
-                <input type="checkbox" className="h-5 w-5" checked={acceptedPolicy} onChange={(e) => setAcceptedPolicy(e.target.checked)} />
-                Tôi đã đọc và đồng ý điều kiện huỷ trên
-              </label>
-            </section>
-          )}
+
         </>
       )}
 
-      {step === 3 && (
+      {(
         <>
           {plan.orders.map((o, i) => (
             <OrderSummary key={o.key} order={o} index={i + 1} total={plan.orders.length} />
@@ -418,7 +415,7 @@ export function CheckoutSheet({ source, preferredAddressId, onClose }: { source:
               Tôi đồng ý với giá mới đã tăng
             </label>
           )}
-          {payNow > 0 && <p className="text-sm text-stone-600">Sau khi bấm đặt hàng, bạn có {state.params.paymentHoldMinutes} phút để thanh toán ở cổng thanh toán mô phỏng. Hàng được giữ trong thời gian này.</p>}
+          {payNow > 0 && <p className="text-sm text-stone-600">Sau khi bấm đặt hàng, bạn có {state.params.paymentHoldMinutes} phút để thanh toán. Hàng được giữ trong thời gian này; trạng thái chỉ cập nhật khi cổng xác nhận.</p>}
         </>
       )}
     </BottomSheet>
@@ -434,16 +431,21 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
   );
 }
 
-function PaymentChoice({ order, onChange }: { order: PlannedOrder; onChange: (m: PaymentMethod) => void }) {
+function CheckoutEditor({title,summary,children}:{title:string;summary:string;children:ReactNode}){
+  const dialog=useRef<HTMLDialogElement>(null),heading=useId();
+  return <div className="checkout-editor-row"><button type="button" onClick={()=>dialog.current?.showModal()} className="checkout-editor-trigger"><span><strong>{title}</strong><small>{summary}</small></span><span aria-hidden="true">Sửa →</span></button><dialog ref={dialog} aria-labelledby={heading} className="checkout-editor" onKeyDown={event=>{if(event.key==='Escape')event.stopPropagation();}} onCancel={event=>{event.preventDefault();dialog.current?.close();}}><header><h2 id={heading}>{title}</h2><button type="button" aria-label={'Đóng sửa '+title} onClick={()=>dialog.current?.close()}>×</button></header><div className="checkout-editor-body">{children}</div><footer><button className="signature-primary w-full justify-center" type="button" onClick={()=>dialog.current?.close()}>Xong</button></footer></dialog></div>;
+}
+
+function PaymentChoice({ order, onChange,selected=true }: { order: PlannedOrder;selected?:boolean; onChange: (m: PaymentMethod) => void }) {
   const opt = (m: PaymentMethod, label: string, disabled = false) => (
-    <label className={`flex min-h-11 items-center gap-2 rounded-xl border px-3 text-sm ${order.paymentMethod === m ? 'border-forest-600 bg-forest-50 font-semibold' : 'border-stone-200'} ${disabled ? 'opacity-50' : ''}`}>
-      <input type="radio" name={`pay-${order.key}`} checked={order.paymentMethod === m} disabled={disabled} onChange={() => onChange(m)} />
+    <label className={`flex min-h-11 items-center gap-2 rounded-xl border px-3 text-sm ${selected&&order.paymentMethod === m ? 'border-forest-600 bg-forest-50 font-semibold' : 'border-stone-200'} ${disabled ? 'opacity-50' : ''}`}>
+      <input type="radio" name={`pay-${order.key}`} checked={selected&&order.paymentMethod === m} disabled={disabled} onChange={() => onChange(m)} />
       {label}
     </label>
   );
   return (
     <div className="space-y-1.5">
-      {opt('online', order.kind === 'preorder' ? 'Trả online khi HTX báo hàng sẵn sàng' : 'Thanh toán online (cổng mô phỏng)')}
+      {opt('online', order.kind === 'preorder' ? 'Trả online khi hàng sẵn sàng' : 'Thanh toán online')}
       {opt('cod', order.kind === 'preorder' ? 'Trả tiền mặt khi nhận hàng' : 'Thanh toán khi nhận hàng (COD)', !order.codAllowed)}
       {!order.codAllowed && <p className="text-sm text-stone-600">{order.codBlockedReason}</p>}
     </div>
@@ -456,7 +458,7 @@ function OrderSummary({ order: o, index, total }: { order: PlannedOrder; index: 
     <section className="space-y-2 rounded-2xl border border-stone-200 p-3 text-sm">
       <h4 className="font-bold text-ink">
         Đơn {index}/{total}: {o.coopName} · {ORDER_KIND_LABEL[o.kind]}
-        {o.deliveryDate ? ` · giao ${formatDateKey(o.deliveryDate)}` : ''}
+        {o.estimatedDeliveryDate ? ` · dự kiến ${formatDateKey(o.estimatedDeliveryDate)}` : ''}
       </h4>
       <p className="text-stone-600">
         Giao tới: {o.address.receiverName}, {o.address.text}
@@ -486,7 +488,7 @@ function OrderSummary({ order: o, index, total }: { order: PlannedOrder; index: 
       <div className="space-y-0.5 border-t border-stone-100 pt-2">
         <Row label="Tiền hàng" value={formatMoney(p.itemsTotal)} />
         {p.discount > 0 && <Row label="Giảm giá" value={`−${formatMoney(p.discount)}`} />}
-        <Row label="Phí giao" value={formatMoney(p.shippingFee)} />
+        <Row label={o.shippingShared?'Phí giao đã tính ở đơn cùng chuyến':'Phí giao'} value={formatMoney(p.shippingFee)} />
         {p.expressSurcharge > 0 && <Row label="Phụ phí hoả tốc" value={formatMoney(p.expressSurcharge)} />}
         {p.giftBoxFee > 0 && <Row label={`Hộp quà (${o.gift?.boxName})`} value={formatMoney(p.giftBoxFee)} />}
         <Row label="Tổng đơn" value={formatMoney(p.total)} strong />
@@ -525,7 +527,7 @@ function StepDelivery(props: {
       {props.addresses.length === 0 ? (
         <div className="space-y-2 rounded-2xl border border-dashed border-stone-300 bg-white p-4 text-center text-sm text-stone-700">
           <p className="font-semibold text-ink">Bạn chưa có địa chỉ giao hàng.</p>
-          <p>Giai đoạn 1 chỉ giao trong Hà Nội. Thêm địa chỉ rồi quay lại đây để đặt hàng.</p>
+          <p>Hiện chỉ giao trong Hà Nội. Thêm địa chỉ rồi quay lại đây để đặt hàng.</p>
           <PrimaryButton className="w-full" onClick={props.onAddAddress}>
             Thêm địa chỉ giao hàng
           </PrimaryButton>

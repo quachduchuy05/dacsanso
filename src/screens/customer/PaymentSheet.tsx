@@ -15,7 +15,7 @@ import {DemoPaymentQr} from '../../components/DemoPaymentQr';
 /** Cổng thanh toán – MÔ PHỎNG (mục 5.4). Kết quả chỉ ghi nhận qua applyGatewayResult(). */
 export function PaymentSheet({ txId, onClose }: { txId: string; onClose: () => void }) {
   const { state, run,demoMode } = useStore();
-  const { showToast, openOrders } = useUi();
+  const { showToast, openOrders,openModal } = useUi();
   const at = useNow(1000);
   const [busy,setBusy]=useState(false),[error,setError]=useState('');
   const tx = state.transactions.find((t) => t.id === txId);
@@ -29,9 +29,11 @@ export function PaymentSheet({ txId, onClose }: { txId: string; onClose: () => v
 
   const send = async (result: GatewayResult) => {
     let message = '';
+    let paid=false;
     const r = await run(
       (s, t) => applyGatewayResult(s, tx.id, result, generateId('GW'), t),
       (v) => {
+        paid=v.outcome==='paid';
         message =
           tx.kind === 'remaining' && v.outcome === 'paid'
             ? 'Đã trả phần còn lại. Đơn chuyển sang Đang chuẩn bị nếu HTX đã báo hàng sẵn sàng.'
@@ -42,6 +44,7 @@ export function PaymentSheet({ txId, onClose }: { txId: string; onClose: () => v
       },
     );
     showToast(r.ok ? message : r.error);
+    if(r.ok&&paid&&tx.checkoutId){openModal({type:'checkout_complete',checkoutId:tx.checkoutId});return;}
     onClose();
     openOrders('all');
   };
@@ -82,6 +85,7 @@ export function PaymentSheet({ txId, onClose }: { txId: string; onClose: () => v
       </p>
 
       <div className="text-center">
+        {tx.status==='pending'&&left<=0&&<p role="status" className="mb-2 text-sm text-champagne-800">Đã hết thời gian thanh toán. Hệ thống đang đối chiếu kết quả với cổng; không chuyển tiền thêm.</p>}
         <p className="text-sm text-stone-600">{isRemaining ? 'Số tiền phần còn lại' : 'Số tiền thanh toán'}</p>
         <p className="text-3xl font-extrabold tabular-nums text-ink">{formatMoney(tx.amount)}</p>
         {pending ? (

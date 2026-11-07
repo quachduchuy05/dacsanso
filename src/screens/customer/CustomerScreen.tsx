@@ -6,7 +6,7 @@ import { useStore } from '../../store/AppDataContext';
 import { AccountTab } from './AccountTab';
 import { CustomerBottomNav } from './CustomerBottomNav';
 import { CustomerTopBar } from './CustomerTopBar';
-import { StorefrontPage } from './StorefrontPage';
+import { SignatureStorefront as StorefrontPage } from './SignatureStorefront';
 import { SeasonTab } from './SeasonTab';
 import {useStorefront} from '../../app/StorefrontContext';
 import {ProductCatalogPage} from './ProductCatalogPage';

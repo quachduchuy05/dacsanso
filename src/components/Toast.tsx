@@ -1,9 +1,10 @@
+import {trackExperience} from '../store/experienceEvents';
 import { CheckCircle2 } from 'lucide-react';
 import { useUi } from '../app/UiContext';
 
 /** Thông báo nổi: xuống dòng được, đặt ở đáy màn hình phía trên thanh tab để không che thanh đầu trang. */
 export function Toast() {
-  const { toast } = useUi();
+  const { toast,toastUndo,showToast } = useUi();
   if (!toast) return null;
   return (
     <div
@@ -13,6 +14,7 @@ export function Toast() {
     >
       <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-champagne-300" />
       <span className="leading-snug">{toast}</span>
+      {toastUndo&&<button className="pointer-events-auto ml-auto min-h-11 shrink-0 px-2 font-bold underline" onClick={()=>{const undo=toastUndo;trackExperience('undo');showToast('Đang hoàn tác…');undo();}}>Hoàn tác</button>}
     </div>
   );
 }

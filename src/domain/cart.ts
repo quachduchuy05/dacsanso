@@ -74,7 +74,7 @@ export function setCartLine(state: DemoState, customerId: string, productId: str
   if (!product) return fail('Không tìm thấy sản phẩm.');
   if (patch.quantity !== undefined) {
     const remaining = remainingFor(state, product);
-    if (patch.quantity < 1) return fail('Số lượng phải từ 1 trở lên.');
+    if (!Number.isInteger(patch.quantity)||patch.quantity < 1) return fail('Số lượng phải là số nguyên từ 1 trở lên.');
     if (patch.quantity > remaining) return fail(`Chỉ còn ${remaining} ${product.unit}.`);
   }
   const next = cart.map((l) => (l.productId === productId ? { ...l, ...patch } : l));

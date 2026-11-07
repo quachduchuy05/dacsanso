@@ -1,3 +1,4 @@
+import {ProductMediaManager} from './ProductMediaManager';
 import {useEffect,useState} from 'react';
 import {useStore} from '../../store/AppDataContext';
 import {useUi} from '../../app/UiContext';
@@ -23,6 +24,7 @@ export function QualityCatalogPanel(){
     <PrimaryButton onClick={()=>openModal({type:'coop_product_form'})}>Thêm sản phẩm</PrimaryButton>
     <Field label="Sản phẩm cần quản lý"><Select value={selected} onChange={e=>setSelected(e.target.value)}><option value="">Chọn sản phẩm</option>{state.products.map(p=><option key={p.id} value={p.id}>{state.coops.find(c=>c.id===p.coopId)?.name} · {p.name} · {p.unit} · {PRODUCT_STATUS_LABEL[p.status]}</option>)}</Select></Field>
     {product&&<>
+      <ProductMediaManager productId={product.id}/>
       <div className="flex flex-wrap gap-2"><SecondaryButton onClick={()=>openModal({type:'coop_product_form',productId:product.id})}>Sửa nội dung</SecondaryButton><SecondaryButton disabled={busy} onClick={()=>act('visibility',{hidden:product.status==='active'})}>{product.status==='active'?'Ngừng bán':'Đăng bán lại'}</SecondaryButton><SecondaryButton onClick={()=>openModal({type:'trace_lot',productId:product.id})}>Xem nguồn gốc</SecondaryButton></div>
       <form className="flex flex-wrap items-end gap-3" onSubmit={e=>{e.preventDefault();void act('price',{price:Number(price)});}}><Field label="Giá bán (VND)"><Input required type="number" min={1000} max={10000000} value={price} onChange={e=>setPrice(e.target.value)}/></Field><PrimaryButton disabled={busy}>Lưu giá bán</PrimaryButton></form>
       {product.kind==='ready'?<SecondaryButton disabled={busy} onClick={()=>act('express',{enabled:!product.expressApproved})}>{product.expressApproved?'Tắt':'Bật'} hỏa tốc</SecondaryButton>:<form className="grid gap-3 sm:grid-cols-3" onSubmit={e=>{e.preventDefault();void act('preorder',{input:{totalSlots:Number(slots),deliveryFrom:from,deliveryTo:to,open:true}});}}><Field label="Tổng suất đặt trước"><Input required type="number" min={1} value={slots} onChange={e=>setSlots(e.target.value)}/></Field><Field label="Giao từ"><Input required type="date" value={from} onChange={e=>setFrom(e.target.value)}/></Field><Field label="Giao đến"><Input required type="date" value={to} onChange={e=>setTo(e.target.value)}/></Field><PrimaryButton disabled={busy}>Lưu đợt đặt trước</PrimaryButton></form>}

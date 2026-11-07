@@ -9,7 +9,7 @@
  *   lần sau tự tạo yêu cầu hoàn 100% (BR-TT-06, đề xuất của SRS).
  */
 import { addRefund, failCheckoutTransaction } from './orders';
-import { transitionOrder } from './orderStateMachine';
+import { transitionOrder,autoConfirmPlatform } from './orderStateMachine';
 import { addLedger, addMs, findOrder, HOUR_MS, iso, replaceOrder } from './state';
 import { fail, ok, type DemoState, type Order, type Result, type Transaction } from './types';
 
@@ -26,8 +26,8 @@ export type GatewayOutcome =
 
 export const GATEWAY_OUTCOME_MESSAGE: Record<GatewayOutcome, string> = {
   paid: 'Cổng mô phỏng báo thanh toán thành công. Đơn đã chuyển sang Chờ xác nhận.',
-  failed: 'Cổng mô phỏng báo thanh toán thất bại. Các đơn thanh toán online đã huỷ, sản phẩm đã quay lại giỏ.',
-  cancelled: 'Đã huỷ thanh toán. Các đơn thanh toán online đã huỷ, sản phẩm đã quay lại giỏ.',
+  failed: 'Thanh toán thất bại. Các đơn thanh toán online đã huỷ; bạn có thể mua lại từ chi tiết đơn.',
+  cancelled: 'Đã huỷ thanh toán. Các đơn thanh toán online đã huỷ; bạn có thể mua lại từ chi tiết đơn.',
   ignored_same_ref: 'Kết quả này đã được ghi nhận trước đó, không xử lý lần hai.',
   ignored_not_pending: 'Giao dịch đã kết thúc, kết quả không làm thay đổi đơn.',
   duplicate_payment_refund: 'Giao dịch đã được thanh toán trước đó. Đã tạo yêu cầu hoàn 100% cho lần trả thứ hai.',
@@ -70,7 +70,7 @@ function applySuccess(state: DemoState, tx: Transaction, at: Date): DemoState {
         paymentStatus: order.kind === 'preorder' ? (order.pricing.remaining > 0 ? 'deposit_paid' : 'paid') : 'paid',
         confirmDeadline: iso(addMs(at, order.params.coopConfirmHours * HOUR_MS)),
       };
-      next = replaceOrder(next, updated);
+      next = replaceOrder(next, autoConfirmPlatform(updated,at));
     } else {
       // Trả phần còn lại của đơn đặt trước (MHTT-07).
       let updated: Order = { ...order, amountPaidOnline: order.amountPaidOnline + paid, paymentStatus: 'paid' };

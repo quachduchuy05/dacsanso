@@ -9,7 +9,8 @@
  */
 import { generateId } from './ids';
 import { normalizeVi } from './text';
-import { audit, findProduct, iso } from './state';
+import { audit, findProduct, iso,remainingFor } from './state';
+import {isOrderableIn} from './cart';
 import { fail, ok, type Actor, type DemoState, type Product, type ProductChangeRequest, type Result } from './types';
 
 /** Tối đa số quy cách của một sản phẩm. */
@@ -18,7 +19,13 @@ export const MAX_VARIANTS = 6;
 /** Mã nhóm quy cách: mã sản phẩm gốc. */
 export const familyKey = (p: Pick<Product, 'id' | 'variantOf'>): string => p.variantOf ?? p.id;
 
-const byPrice = (a: Product, b: Product) => a.price - b.price || a.unit.localeCompare(b.unit, 'vi');
+const byPrice = (a: Product, b: Product) => (a.displayOrder??0)-(b.displayOrder??0)||a.price - b.price || a.unit.localeCompare(b.unit, 'vi');
+
+export function defaultVariant(state:DemoState,p:Product|undefined):Product|undefined {
+  if(!p)return undefined;
+  const family=listedFamilyOf(state,p);
+  return family.find(v=>v.kind==='ready'&&isOrderableIn(state,v)&&remainingFor(state,v)>0)??family.find(v=>isOrderableIn(state,v)&&remainingFor(state,v)>0)??family[0];
+}
 
 /** Mọi quy cách cùng nhóm với sản phẩm (kể cả chính nó), giá thấp trước. */
 export function familyOf(state: DemoState, product: Pick<Product, 'id' | 'variantOf'>): Product[] {

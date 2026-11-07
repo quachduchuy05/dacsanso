@@ -93,3 +93,11 @@ export function customerCancelMode(status: OrderStatus): 'immediate' | 'request'
   if (status === 'confirmed' || status === 'preparing' || status === 'awaiting_harvest') return 'request';
   return 'not_allowed';
 }
+
+export function autoConfirmPlatform<T extends StatefulOrder & {platformFulfilled?:boolean;confirmDeadline?:string}>(order:T,at:Date):T {
+  if(!order.platformFulfilled||order.kind!=='ready'||order.status!=='awaiting_confirmation')return order;
+  const result=transitionOrder(order,{to:'confirmed',actor:{kind:'system',name:'Sàn'},at,reason:'Sàn xác nhận hàng có sẵn tại kho Hà Nội'});
+  if(!result.ok)return order;
+  const preparing=transitionOrder(result.value,{to:'preparing',actor:{kind:'system',name:'Sàn'},at,reason:'Kho Hà Nội tiếp nhận chuẩn bị hàng có sẵn'});
+  return {...(preparing.ok?preparing.value:result.value),confirmDeadline:undefined};
+}

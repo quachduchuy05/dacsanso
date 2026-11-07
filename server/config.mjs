@@ -16,6 +16,6 @@ export function configuration(){
     smsUrl:env.SMS_OTP_URL,smsToken:env.SMS_OTP_TOKEN,googleClientId:env.GOOGLE_CLIENT_ID||env.VITE_GOOGLE_CLIENT_ID,mapsKey:env.GOOGLE_MAPS_API_KEY,
     webhookSecrets:{payment:env.PAYMENT_WEBHOOK_SECRET,refund:env.REFUND_WEBHOOK_SECRET,payout:env.PAYOUT_WEBHOOK_SECRET,carrier:env.CARRIER_WEBHOOK_SECRET},
     webPush:{subject:env.WEB_PUSH_SUBJECT,publicKey:env.WEB_PUSH_PUBLIC_KEY,privateKey:env.WEB_PUSH_PRIVATE_KEY},
-    paymentAdapter:{url:env.PAYMENT_SESSION_URL,token:env.PAYMENT_SESSION_TOKEN,checkoutOrigins:(env.PAYMENT_CHECKOUT_ORIGINS??'').split(',').map(value=>value.trim()).filter(Boolean)},
+    paymentAdapter:{statusUrl:env.PAYMENT_STATUS_URL,url:env.PAYMENT_SESSION_URL,token:env.PAYMENT_SESSION_TOKEN,checkoutOrigins:(env.PAYMENT_CHECKOUT_ORIGINS??'').split(',').map(value=>value.trim()).filter(Boolean)},
     allowedOrigins:(env.ALLOWED_ORIGINS||`http://localhost:3000,http://127.0.0.1:3000,http://localhost:${port}`).split(',').map(s=>s.trim())};
 }

@@ -80,7 +80,7 @@ describe('Đặt hàng (mục 5.1–5.4)', () => {
         [keyX]: { shipping: 'standard', paymentMethod: 'online' },
         [keyXPre(D)]: { shipping: 'standard', paymentMethod: 'online' },
         [keyY]: { shipping: 'standard', paymentMethod: 'cod' },
-      }),
+      }, {fromCart:true}),
       CUSTOMER,
       T0,
     );

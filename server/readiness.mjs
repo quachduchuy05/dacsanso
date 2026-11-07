@@ -11,6 +11,7 @@ export function productionReadiness(options){
   check('sms',https(options.smsUrl)&&secret(options.smsToken),'Cần SMS_OTP_URL HTTPS và SMS_OTP_TOKEN của adapter SMS.');
   check('web-push',pushConfigured(options),'Cần WEB_PUSH_SUBJECT và cặp khóa VAPID hợp lệ; nghiệm thu gửi trên thiết bị thật.');
   check('payment-session',paymentAdapterConfigured(options),'Cần URL/token adapter tạo phiên và danh sách origin checkout HTTPS; không thay cho nghiệm thu merchant.');
+  check('payment-status',https(options.paymentAdapter?.statusUrl)&&(()=>{try{return new URL(options.paymentAdapter.statusUrl).origin===new URL(options.paymentAdapter.url).origin;}catch{return false;}})(),'Cần PAYMENT_STATUS_URL cùng origin với adapter để xác minh trước khi tự hủy giao dịch đã gửi tới cổng.');
   check('account-links',https(options.accountLinkUrl)&&secret(options.accountLinkToken),'Cần adapter gửi liên kết khôi phục tài khoản qua kênh đã xác minh.');
   if(options.databaseProvider==='supabase'){
     check('database',!!options.connectionString,'Cần kết nối PostgreSQL và chạy migration mới nhất.');

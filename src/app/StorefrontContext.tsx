@@ -1,7 +1,12 @@
 import { createContext, useCallback, useContext, useState, useEffect, type ReactNode } from 'react';
 import { useUi } from './UiContext';
+import {useStore} from '../store/AppDataContext';
+import {api} from '../store/backend';
+export type FeaturedCollectionItem={productId:string;poster:string;topics:{key:string;order:number}[]};
 type Section = 'home' | 'products' | 'regions' | 'about' | 'journal' | 'contact';
 interface StorefrontValue {
+    productPosters:Record<string,string>;
+    collections:FeaturedCollectionItem[];
     query: string;
     setQuery: (query: string) => void;
     goTo: (section: Section) => void;
@@ -12,6 +17,9 @@ const Context = createContext<StorefrontValue | null>(null);
 export function StorefrontProvider({ children }: {
     children: ReactNode;
 }) {
+    const {state}=useStore();
+    const [productPosters,setProductPosters]=useState<Record<string,string>>({}),[collections,setCollections]=useState<FeaturedCollectionItem[]>([]);
+    useEffect(()=>{let active=true;void api<{posters?:Record<string,string>;items:FeaturedCollectionItem[]}>('/api/v1/products/media-catalog').then(r=>{if(active){setProductPosters(r.posters??{});setCollections(r.items??[]);}}).catch(()=>{});return()=>{active=false;};},[state.products]);
     const [query, setQuery] = useState(()=>{try{return sessionStorage.getItem('dac-san-so-lao-cai:query')??'';}catch{return '';}});
     useEffect(()=>{try{sessionStorage.setItem('dac-san-so-lao-cai:query',query);}catch{}},[query]);
     const [catalog,setCatalog]=useState(window.location.pathname==='/san-pham');
@@ -30,7 +38,7 @@ export function StorefrontProvider({ children }: {
                 document.getElementById(`shop-${section}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }));
     }, [setCustomerTab]);
-    return <Context.Provider value={{ query, setQuery, goTo, catalog, openCatalog }}>{children}</Context.Provider>;
+    return <Context.Provider value={{ query, setQuery, goTo, catalog, openCatalog,productPosters,collections }}>{children}</Context.Provider>;
 }
 export function useStorefront() { const value = useContext(Context); if (!value)
     throw new Error('Thiếu StorefrontProvider'); return value; }

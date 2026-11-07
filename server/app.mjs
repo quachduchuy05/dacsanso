@@ -21,6 +21,10 @@ import {uploadMedia,signMedia,validateMediaReferences} from './media.mjs';
 import {hashPassword,verifyPassword,validatePassword} from './passwords.mjs';
 import {accountSecurityRoute} from './account-security.mjs';
 import {productDraftRoute} from './product-drafts.mjs';
+import {mergeGuest} from './guest-cart.mjs';
+import {productMediaRoute} from './product-media.mjs';
+import {cleanProductMedia} from './product-media-storage.mjs';
+import {phase2Events} from './phase2-events.mjs';
 import {filteredReport,canExportKind} from './reporting.mjs';
 import {workbook,parseCsv} from './xlsx.mjs';
 import {ticketAction} from './ticket-actions.mjs';
@@ -50,7 +54,7 @@ async function readBody(req) {
     const chunks = [];
     for await (const chunk of req) {
         length += chunk.length;
-        assert(length <= 4000000, 413, 'Nội dung yêu cầu quá lớn.');
+        assert(length <= (/^\/api\/v1\/products\/[\w-]+\/media\/upload(?:\?|$)/.test(req.url??'')?16*1024*1024:4000000), 413, 'Nội dung yêu cầu quá lớn.');
         chunks.push(chunk);
     }
     try {
@@ -258,6 +262,15 @@ export async function createApplication(config = {}) {
             }
             const optional = path === '/api/v1/state' || path.startsWith('/api/v1/products') || path === '/api/v1/commands'||path==='/api/v1/media/sign'||(req.method==='GET'&&path.startsWith('/api/v1/lots'));
             let auth = await authenticate(db, req, !(optional||(path==='/api/v1/coop-reviews'&&req.method==='GET')),options);
+            if(path==='/api/v1/cart/merge'&&req.method==='POST')return await transactionReply(res,db,async()=>({status:200,body:await mergeGuest(body,{db,auth})}));
+            if(['/api/v1/products/events','/api/v1/products/delivery-interest'].includes(path))return await transactionReply(res,db,async()=>({status:200,body:await phase2Events(path,req.method,body,{db,auth})}));
+            if(path.startsWith('/api/v1/products/')&&(path.includes('/media')||path.endsWith('/media-catalog'))){
+                if(req.method==='GET'){const result=await productMediaRoute(path,req.method,body,{db,auth,res,headers:req.headers,options});if(result)return json(res,200,result);return;}
+                assert(auth,401,'Vui lòng đăng nhập.');assert(await db.rate('product-media:'+auth.user.id,180,900000),429,'Tải quá nhiều tệp. Thử lại sau.');
+                // Keep object-storage transfers outside the global order/payment transaction lock.
+                if(req.method==='POST'&&['start_upload','complete_upload','preview'].includes(body.action))return json(res,200,await productMediaRoute(path,req.method,body,{db,auth,res,options}));
+                return await transactionReply(res,db,async()=>({status:200,body:await productMediaRoute(path,req.method,body,{db,auth,res,options})}));
+            }
             if(path==='/api/v1/settlement-policy'&&req.method==='POST')return await transactionReply(res,db,async()=>({status:200,body:await saveSettlementPolicy(body,{db,auth})}));
             const paymentSession=path.match(/^\/api\/v1\/transactions\/([\w-]+)\/session$/);
             if(paymentSession&&req.method==='POST'){
@@ -333,7 +346,7 @@ export async function createApplication(config = {}) {
                 });
             }
             if (path === '/api/v1/state' && req.method === 'GET') {
-                await runJobs(db);
+                await runJobs(db,options);
                 const { state, version } = await db.read();
                 return json(res, 200, { state: project(state, auth?.user), version, user: auth?.user ?? null, demo: options.demo });
             }
@@ -391,7 +404,7 @@ export async function createApplication(config = {}) {
                 const commands = restCommands ?? body.commands;
                 assert(auth, 401, 'Vui lòng đăng nhập.');
                 authorizeBatch(commands, auth.user, options);
-                await runJobs(db);
+                await runJobs(db,options);
                 return await transactionReply(res, db, async () => {
                     const owner = auth?.user.id ?? `application:${ip}`, fingerprint = hash(JSON.stringify(commands));
                     // A role/account may have changed while this request waited for the database lock.
@@ -502,11 +515,14 @@ export async function createApplication(config = {}) {
             return;
         ticking = true;
         void db.withRequest(async () => {
-            await runJobs(db);
+            await runJobs(db,options);
             await processExportQueue(db);
             await db.sql.prepare("UPDATE export_jobs SET status='EXPIRED',content=NULL WHERE expires_at<? AND status!='EXPIRED'").run(Date.now());
             await db.sql.prepare("DELETE FROM feature_records WHERE kind='export-request' AND expires_at<?").run(Date.now());
-            await db.sql.prepare("DELETE FROM feature_records WHERE kind='payment-session' AND expires_at<?").run(Date.now());
+            await cleanProductMedia(db,options);
+            const expiredSessions=await db.sql.prepare("SELECT id FROM feature_records WHERE kind='payment-session' AND expires_at<?").all(Date.now());
+            const pendingPayments=new Set((await db.read()).state.transactions.filter(t=>t.status==='pending').map(t=>'payment-session:'+t.id));
+            for(const row of expiredSessions)if(!pendingPayments.has(row.id))await db.sql.prepare('DELETE FROM feature_records WHERE id=?').run(row.id);
             await db.sql.prepare('DELETE FROM sessions WHERE refresh_expires_at<?').run(Date.now());
             await db.sql.prepare('DELETE FROM revoked_tokens WHERE expires_at<?').run(Date.now());
         }).catch(e => console.error('Scheduled jobs:', e.code ?? e.name)).finally(() => { ticking = false; });

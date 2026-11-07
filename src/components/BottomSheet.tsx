@@ -15,9 +15,10 @@ interface BottomSheetProps {
   footer?: ReactNode;
   closeLabel?: string;
   wide?: boolean;
+  className?: string;
 }
 
-export function BottomSheet({ title, onClose, children, footer, closeLabel = 'Đóng', wide = false }: BottomSheetProps) {
+export function BottomSheet({ title, onClose, children, footer, closeLabel = 'Đóng', wide = false, className = '' }: BottomSheetProps) {
   const titleId = useId();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -41,7 +42,7 @@ export function BottomSheet({ title, onClose, children, footer, closeLabel = 'Đ
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`app-sheet relative flex min-h-0 min-w-0 w-full max-w-[640px] flex-col overflow-hidden rounded-t-[32px] bg-white shadow-2xl md:rounded-[32px] ${wide ? 'lg:max-w-5xl xl:max-w-6xl' : ''}`}
+        className={`app-sheet relative flex min-h-0 min-w-0 w-full max-w-[640px] flex-col overflow-hidden rounded-t-[32px] bg-white shadow-2xl md:rounded-[32px] ${wide ? 'lg:max-w-5xl xl:max-w-6xl' : ''} ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Viền vàng mảnh và hoa văn ở mép trên của sheet. */}

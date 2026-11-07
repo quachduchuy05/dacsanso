@@ -5,6 +5,7 @@ import { canReadOrder } from '../src/domain/access.ts';
 import { deriveNotifications } from '../src/domain/notifications.ts';
 import { runScheduledJobs, jobsChanged } from '../src/domain/jobs.ts';
 import { project } from './projection.mjs';
+import {verifyExpiredPayments} from './payment-verification.mjs';
 export const registry = JSON.parse(readFileSync(new URL('./commands.json', import.meta.url), 'utf8'));
 const modules = Object.fromEntries(await Promise.all([...new Set(Object.values(registry).map(c => c.module))].map(async (m) => [m, await import(`../src/domain/${m}.ts`)])));
 const customerModules = new Set(['cart', 'address', 'marketplace', 'seasonWatch', 'invoice', 'checkout', 'orderEdits', 'orderTabs']);
@@ -105,6 +106,9 @@ function validateObject(name, args, state, user) {
     }
     if (name === 'placeCheckout') {
         const i = args[1];
+        assert(i&&typeof i==='object',400,'Thiếu thông tin lần đặt.');
+        assert(i.experience===undefined||i.experience==='phase2',400,'Phiên bản đặt hàng không hợp lệ.');
+        if(i.experience==='phase2')assert(typeof i.fromCart==='boolean'&&(i.fromCart||i.lines?.length===1),400,'Mua ngay chỉ gồm một quy cách; giỏ cần có nguồn đặt rõ ràng.');
         assert(i && Array.isArray(i.lines) && i.lines.length > 0 && i.lines.length <= 100, 400, 'Danh sách đặt hàng không hợp lệ.');
         assert(new Set(i.lines.map(l => l.productId)).size === i.lines.length, 400, 'Không được lặp sản phẩm trong một lần đặt.');
         for (const l of i.lines)
@@ -151,10 +155,11 @@ function validateObject(name, args, state, user) {
     if (name === 'qualitySetCheck')
         assert(['documents', 'region', 'contact', 'products'].includes(args[3]), 400, 'Mục thẩm định không hợp lệ.');
 }
-export async function runJobs(db) {
+export async function runJobs(db,options={}) {
+    const protectedTransactions=await verifyExpiredPayments(db,options);
     return await db.transaction(async () => {
         const { state } = await db.read(), at = new Date(Date.now() + state.clockOffsetMs);
-        const result = runScheduledJobs(state, at);
+        const result = runScheduledJobs(state, at,protectedTransactions);
         if (jobsChanged(result.report)) {
             await db.save(deriveNotifications(state, result.state, at));
             await db.audit(null, 'scheduled-jobs', '', JSON.stringify(result.report));

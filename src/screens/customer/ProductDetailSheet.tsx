@@ -1,5 +1,6 @@
+import {ProductGallery} from '../../components/ProductGallery';
 import { AppImage } from '../../components/AppImage';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef,useState } from 'react';
 import { BadgeCheck, ChevronRight, FileBadge, MessageCircle, Share2, Star, Store } from 'lucide-react';
 import { useUi } from '../../app/UiContext';
 import { Ornament } from '../../components/Brand';
@@ -15,22 +16,23 @@ import { computeDeposit, formatMoney } from '../../domain/pricing';
 import { findProduct, formatDateKey, isSamplePrice, remainingFor } from '../../domain/state';
 import { CATEGORY_LABEL, ORDER_KIND_LABEL } from '../../domain/types';
 import { coopShop } from '../../store/commands/marketplace';
-import { familyKey, listedFamilyOf } from '../../domain/variants';
+import { familyKey, listedFamilyOf,defaultVariant } from '../../domain/variants';
 import { useStore } from '../../store/AppDataContext';
 import { pushViewerList } from '../../store/viewerPrefs';
 import { FavoriteButton } from './FavoriteButton';
 import { SeasonWatchButton } from './SeasonWatchButton';
 import { useCartActions } from './useCartActions';
+import {readyDeliveryEstimate} from '../../domain/deliveryEstimate';
 
-export function ProductDetailSheet({ productId, onClose }: { productId: string; onClose: () => void }) {
+export function ProductDetailSheet({ productId,listContext, onClose }: { productId: string;listContext?:string[]; onClose: () => void }) {
   const { state, now } = useStore();
   const { openModal, showToast, customerActor } = useUi();
   const { add, cart } = useCartActions();
-  const [galleryImage,setGalleryImage]=useState('');
   const [quantity, setQuantity] = useState(1);
   // Quy cách đang chọn: mở từ thẻ nào thì chọn sẵn quy cách đó.
-  const [variantId, setVariantId] = useState(productId);
+  const [variantId, setVariantId] = useState(()=>defaultVariant(state,findProduct(state,productId))?.id??productId);
   const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('all');
+  const swipe=useRef<{x:number;y:number}|null>(null);
   const product = findProduct(state, variantId) ?? findProduct(state, productId);
   // Ghi "Đã xem gần đây" trên máy này (theo nhóm quy cách).
   const viewedKey = product ? familyKey(product) : '';
@@ -39,6 +41,9 @@ export function ProductDetailSheet({ productId, onClose }: { productId: string; 
   }, [viewedKey, customerActor.id]);
   if (!product) return null;
   const family = listedFamilyOf(state, product);
+  const context=(listContext??[]).filter(id=>state.products.some(p=>p.id===id&&p.status==='active'));
+  const position=context.indexOf(productId);
+  const moveProduct=(direction:number)=>{const id=context[position+direction];if(id)openModal({type:'product_detail',productId:id,listContext:context});};
 
   const params = state.params;
   const coop = state.coops.find((c) => c.id === product.coopId);
@@ -77,12 +82,13 @@ export function ProductDetailSheet({ productId, onClose }: { productId: string; 
 
   return (
     <BottomSheet
+      className="signature-detail"
       title={
         <>
           <span className="block font-sans text-xs font-semibold uppercase tracking-[0.14em] text-champagne-700">
             {product.region} · {CATEGORY_LABEL[product.category]}
           </span>
-          <span className="block font-display text-2xl font-semibold leading-tight">{product.name}</span>
+          <span className="block font-display text-2xl font-semibold leading-tight" onTouchStart={event=>{swipe.current={x:event.touches[0].clientX,y:event.touches[0].clientY};}} onTouchEnd={event=>{const start=swipe.current,end=event.changedTouches[0];if(start&&end&&position>=0&&Math.abs(end.clientX-start.x)>60&&Math.abs(end.clientY-start.y)<40)moveProduct(end.clientX<start.x?1:-1);swipe.current=null;}}>{product.name}</span>
           <span className="block font-sans text-sm font-normal text-muted">{coop?.name}</span>
         </>
       }
@@ -105,7 +111,10 @@ export function ProductDetailSheet({ productId, onClose }: { productId: string; 
             </div>
           )}
           {blocked && <SeasonWatchButton product={product} />}
-          <div className="grid grid-cols-2 gap-2">
+          {!blocked&&product.kind==='preorder'&&<p className="text-sm font-semibold text-champagne-800">Cọc tiền hàng {formatMoney(deposit)} · phí giao xác nhận khi đặt</p>}
+          {!blocked&&product.kind==='ready'&&readyDeliveryEstimate(params,now())&&<p className="text-xs text-muted">Dự kiến giao {formatDateKey(readyDeliveryEstimate(params,now())!)}</p>}
+          {blocked&&<p role="status" className="rounded-xl bg-stone-100 p-3 text-center font-semibold">{blocked}</p>}
+          {!blocked&&<div className="grid grid-cols-2 gap-2">
             <button
               disabled={!!blocked}
               onClick={async () => { if (await add(product.id, qty)) onClose(); }}
@@ -125,26 +134,16 @@ export function ProductDetailSheet({ productId, onClose }: { productId: string; 
             >
               {blocked ?? (product.kind === 'preorder' ? 'Đặt trước' : 'Mua ngay')}
             </button>
-          </div>
+          </div>}
         </div>
       }
     >
+      {context.length>1&&position>=0&&<nav className="flex items-center justify-between gap-3 text-sm" aria-label="Chuyển sản phẩm trong danh sách"><button className="min-h-11 rounded-xl border px-3" disabled={position===0} onClick={()=>moveProduct(-1)}>← Sản phẩm trước</button><span>{position+1}/{context.length}</span><button className="min-h-11 rounded-xl border px-3" disabled={position===context.length-1} onClick={()=>moveProduct(1)}>Sản phẩm sau →</button></nav>}
       <SheetColumns
         left={
           <>
-            <div className="relative aspect-[4/3] max-h-80 w-full overflow-hidden rounded-3xl ring-1 ring-champagne-300/80 lg:max-h-none">
-              {galleryImage||product.images?.[0]?<AppImage src={galleryImage||product.images![0]} alt={product.name} className="h-full w-full object-cover"/>:<ProductImage product={product} variant="cover" className="h-full w-full" />}
-              <span aria-hidden="true" className="pointer-events-none absolute inset-2 rounded-[20px] border border-white/70" />
-              <button
-                onClick={() => openModal({ type: 'trace_lot', productId: product.id })}
-                className="absolute right-3 bottom-3 flex min-h-11 items-center gap-1.5 rounded-full bg-forest-950/90 px-4 text-sm font-semibold text-champagne-200 ring-1 ring-champagne-400/60 hover:bg-forest-900"
-              >
-                <FileBadge size={16} />
-                Xem nguồn gốc
-              </button>
-            </div>
-
-            {product.images&&<div className="flex flex-wrap gap-2">{product.images.map((src,i)=><button key={src} aria-label={'Xem ảnh sản phẩm '+(i+1)} className="h-16 w-16 overflow-hidden rounded border" onClick={()=>setGalleryImage(src)}><AppImage src={src} alt={'Ảnh '+(i+1)} className="h-full w-full object-cover"/></button>)}</div>}
+            <ProductGallery product={product}/>
+            <button className="min-h-11 rounded-xl border px-4 text-sm font-semibold" onClick={()=>openModal({type:'trace_lot',productId:product.id})}><FileBadge className="mr-2 inline" size={16}/>Xem nguồn gốc</button>
             {(product.storage||product.shelfLifeDays||product.preparationMinutes!==undefined)&&<div className="rounded-xl bg-stone-50 p-3 text-sm">{product.storage&&<p>Bảo quản: {product.storage}</p>}{product.shelfLifeDays&&<p>Hạn dùng: {product.shelfLifeDays} ngày</p>}{product.preparationMinutes!==undefined&&<p>Chuẩn bị: {product.preparationMinutes} phút</p>}</div>}
             <div className="flex items-center justify-between gap-2">
               <span className="font-display text-3xl font-semibold tabular-nums text-forest-900">
@@ -167,6 +166,7 @@ export function ProductDetailSheet({ productId, onClose }: { productId: string; 
                 onSelect={(id) => {
                   setVariantId(id);
                   setQuantity(1);
+
                 }}
               />
             )}

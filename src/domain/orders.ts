@@ -142,8 +142,9 @@ export function failCheckoutTransaction(state: DemoState, tx: Transaction, statu
   }
   if (tx.checkoutId) next = maybeReleaseVoucher(next, tx.checkoutId, false);
   // Sản phẩm quay lại giỏ.
+  if(state.checkouts.find(c=>c.id===tx.checkoutId)?.source==='buy_now')return next;
   const back = linesOfOrders(cancelledOrders);
-  const cart = [...(next.carts[tx.customerId] ?? [])];
+  const cart = (next.carts[tx.customerId] ?? []).map(line=>({...line}));
   for (const line of back) {
     const existing = cart.find((l) => l.productId === line.productId);
     if (existing) existing.quantity += line.quantity;

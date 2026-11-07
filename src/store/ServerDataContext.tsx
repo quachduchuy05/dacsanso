@@ -44,9 +44,10 @@ export function AppDataProvider({children}:{children:ReactNode}) {
   useEffect(()=>{
     void refresh();const timer=setInterval(()=>{if(document.visibilityState==='visible')void refresh();},10000);
     const login=(event:Event)=>{generation.current++;version.current=0;const r=(event as CustomEvent<LoginResponse>).detail;show(r.state,r.version);setSyncNotice(null);};
+    const external=(event:Event)=>{const r=(event as CustomEvent<{state:DemoState;version:number}>).detail;show(r.state,r.version);};
     const logout=()=>{generation.current++;version.current=0;show(emptyState(),0);void refresh();};
-    window.addEventListener('backend-login',login);window.addEventListener('backend-logout',logout);window.addEventListener('focus',refresh);
-    return()=>{clearInterval(timer);window.removeEventListener('backend-login',login);window.removeEventListener('backend-logout',logout);window.removeEventListener('focus',refresh);};
+    window.addEventListener('backend-login',login);window.addEventListener('backend-state',external);window.addEventListener('backend-logout',logout);window.addEventListener('focus',refresh);
+    return()=>{clearInterval(timer);window.removeEventListener('backend-login',login);window.removeEventListener('backend-state',external);window.removeEventListener('backend-logout',logout);window.removeEventListener('focus',refresh);};
   },[refresh,show]);
   const run=useCallback(<T,>(op:(s:DemoState,at:Date)=>Result<T>,pick?:(value:T)=>DemoState):Promise<Result<T>>=>{
     const epoch=generation.current;

@@ -15,14 +15,15 @@ import { IllustrationBackdrop, IllustrationSubject } from './ProductIllustration
  */
 type Variant = 'thumb' | 'card' | 'cover';
 
-export function ProductImage({ product, className = '', variant = 'thumb' }: { product: Product; className?: string; variant?: Variant }) {
+export function ProductImage({ product, className = '', variant = 'thumb',priority=false }: { product: Product; className?: string; variant?: Variant;priority?:boolean }) {
   const [failed, setFailed] = useState(false);
   if (product.image && !failed) {
     return (
       <AppImage
         src={product.image}
         alt={product.name}
-        loading="lazy"
+        loading={priority?'eager':'lazy'}
+        fetchPriority={priority?'high':'auto'}
         decoding="async"
         onError={() => setFailed(true)}
         className={`object-cover ${className}`}

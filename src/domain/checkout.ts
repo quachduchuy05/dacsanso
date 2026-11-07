@@ -8,9 +8,10 @@
  * - Đơn lưu bản chốt lúc tạo (BR-DAT-06). Một lần bấm chỉ tạo một lần đặt (BR-DAT-07).
  */
 import { isOrderableIn, revalidateLines, validateDeliveryDate, type RevalidationNotice } from './cart';
+import {readyDeliveryEstimate} from './deliveryEstimate';
 import { generateId, generateOrderCode } from './ids';
 import { normalizeInvoice, validateInvoice } from './invoice';
-import { initialStatus } from './orderStateMachine';
+import { initialStatus,autoConfirmPlatform } from './orderStateMachine';
 import { isValidPhone, normalizePhone, PHONE_RULE } from './phone';
 import { snapshotParams } from './params';
 import {
@@ -57,6 +58,7 @@ export interface GroupOptions {
 }
 
 export interface CheckoutInput {
+  experience?: 'phase2';
   customerId: string;
   lines: CartLine[];
   addressId: string;
@@ -69,6 +71,8 @@ export interface CheckoutInput {
 }
 
 export interface PlannedOrder {
+  estimatedDeliveryDate?:string;
+  shippingShared?:boolean;
   key: string;
   coopId: string;
   coopName: string;
@@ -162,6 +166,7 @@ export function planCheckout(state: DemoState, input: CheckoutInput, at: Date): 
   const errors: string[] = [];
   const address = state.addresses.find((a) => a.id === input.addressId && a.customerId === input.customerId);
   if (!address) errors.push('Vui lòng chọn địa chỉ giao hàng tại Hà Nội.');
+  if(address&&!findWard(state,address.wardId))errors.push('Địa chỉ không thuộc danh mục giao hàng Hà Nội hiện tại. Vui lòng chọn lại phường/xã.');
   const mainAddress = address ? snapshotAddress(state, address) : undefined;
 
   // 1. Gom dòng theo HTX + loại đơn (+ ngày giao với đơn đặt trước).
@@ -219,7 +224,8 @@ export function planCheckout(state: DemoState, input: CheckoutInput, at: Date): 
   // 3. Từng đơn: phí giao, hoả tốc, hộp quà, phương thức thanh toán, tiền.
   const orders: PlannedOrder[] = [];
   for (const [key, g] of groups) {
-    const opts: GroupOptions = input.groupOptions[key] ?? { shipping: 'standard', paymentMethod: 'online' };
+    const previous=input.experience==='phase2'?state.customers.find(c=>c.id===input.customerId)?.checkoutPreferences:undefined;
+    const opts: GroupOptions = input.groupOptions[key] ?? { shipping: g.kind==='ready'?(previous?.shipping??'standard'):'standard', paymentMethod: previous?.paymentMethod??'online' };
     const coop = state.coops.find((c) => c.id === g.coopId);
 
     // Hộp quà gắn vào đơn của một HTX.
@@ -289,6 +295,7 @@ export function planCheckout(state: DemoState, input: CheckoutInput, at: Date): 
     const pricing = priceOrder({ ...baseInput, paymentMethod }, params);
 
     orders.push({
+      estimatedDeliveryDate:g.kind==='ready'?readyDeliveryEstimate(params,at):g.deliveryDate,
       key,
       coopId: g.coopId,
       coopName: coop?.name ?? g.coopId,
@@ -315,6 +322,19 @@ export function planCheckout(state: DemoState, input: CheckoutInput, at: Date): 
   if (input.lines.length === 0) errors.push('Chưa có sản phẩm nào để đặt.');
   // Xếp đơn: mua sẵn trước, đặt trước sau; theo HTX.
   orders.sort((a, b) => (a.kind === b.kind ? a.coopName.localeCompare(b.coopName) : a.kind === 'ready' ? -1 : 1));
+  if(input.experience==='phase2'){
+    // One delivery charge per physical trip; different recipient, date or service is a different trip.
+    const charged=new Set<string>();
+    for(const order of orders){const trip=JSON.stringify([order.kind,order.deliveryDate??'',order.shipping,order.address.receiverPhone,order.address.text]);
+      if(charged.has(trip)){order.shippingShared=true;order.pricing=priceOrder({kind:order.kind,lines:order.items,discount:order.pricing.discount,shippingFee:0,expressSurcharge:0,giftBoxFee:order.pricing.giftBoxFee,paymentMethod:order.paymentMethod},params);}
+      order.codBlockedReason=order.gift?.sendToOther?'Quà gửi người khác chỉ thanh toán online.':order.pricing.total>params.codMaxOrderValue?'Đơn vượt giới hạn COD.':undefined;
+      order.codAllowed=!order.codBlockedReason;
+      const desired=input.groupOptions[order.key]?.paymentMethod??state.customers.find(c=>c.id===input.customerId)?.checkoutPreferences?.paymentMethod??'online';
+      const method=desired==='cod'&&order.codAllowed?'cod':'online';
+      if(method!==order.paymentMethod){order.paymentMethod=method;order.pricing=priceOrder({kind:order.kind,lines:order.items,discount:order.pricing.discount,shippingFee:order.pricing.shippingFee,expressSurcharge:order.pricing.expressSurcharge,giftBoxFee:order.pricing.giftBoxFee,paymentMethod:method},params);}
+      charged.add(trip);
+    }
+  }
 
   return {
     orders,
@@ -346,6 +366,7 @@ export type PlaceResult =
 
 /** Bấm Đặt hàng: kiểm tra lại, tạo các đơn, giao dịch gộp và giữ lượt mã. */
 export function placeCheckout(state: DemoState, input: PlaceInput, actor: Actor, at: Date): PlaceResult {
+  if(input.experience==='phase2'&&!input.fromCart&&input.lines.length!==1)return {ok:false,error:'Phiên Mua ngay chỉ gồm một quy cách.'};
   // BR-DAT-01: chỉ tài khoản Khách hàng được đặt hàng.
   if (actor.kind !== 'customer' || actor.id !== input.customerId) {
     return { ok: false, error: 'Chỉ tài khoản Khách hàng mới được đặt hàng.' };
@@ -353,6 +374,7 @@ export function placeCheckout(state: DemoState, input: PlaceInput, actor: Actor,
   // BR-DAT-07: bấm lặp với cùng khoá thì trả về lần đặt đã tạo.
   const existing = state.checkouts.find((c) => c.idempotencyKey === input.idempotencyKey);
   if (existing) {
+    if(existing.customerId!==input.customerId)return {ok:false,error:'Khóa lần đặt đã được sử dụng.'};
     return {
       ok: true,
       state,
@@ -381,13 +403,15 @@ export function placeCheckout(state: DemoState, input: PlaceInput, actor: Actor,
   const invoice = input.invoice ? normalizeInvoice(input.invoice) : undefined;
   const existingCodes = state.orders.map((o) => o.id);
   const params = snapshotParams(state.params);
-  const orders: Order[] = plan.orders.map((p) => {
+  const orders: Order[] = plan.orders.map<Order>((p) => {
     const payOnline = p.kind === 'preorder' || p.paymentMethod === 'online';
     const status = initialStatus(p.kind, payOnline);
     const id = generateOrderCode(at, existingCodes);
     existingCodes.push(id);
     return {
       id,
+      estimatedDeliveryDate:p.estimatedDeliveryDate,
+      platformFulfilled:input.experience==='phase2'&&p.kind==='ready',
       checkoutId,
       customerId: input.customerId,
       coopId: p.coopId,
@@ -415,7 +439,7 @@ export function placeCheckout(state: DemoState, input: PlaceInput, actor: Actor,
       deliveryAttempts: 0,
       deliveryLog: [],
     };
-  });
+  }).map(order=>autoConfirmPlatform(order,at));
 
   // Mọi đơn online và tiền cọc của lần đặt gộp thành một giao dịch, chung một đồng hồ PAR-19.
   const onlineOrders = orders.filter((o) => o.pricing.payNowOnline > 0);
@@ -438,6 +462,7 @@ export function placeCheckout(state: DemoState, input: PlaceInput, actor: Actor,
   }
 
   const checkout: Checkout = {
+    source: input.fromCart?'cart':'buy_now',
     id: checkoutId,
     idempotencyKey: input.idempotencyKey,
     customerId: input.customerId,
@@ -468,7 +493,7 @@ export function placeCheckout(state: DemoState, input: PlaceInput, actor: Actor,
     transactions: transaction ? [transaction, ...state.transactions] : state.transactions,
     voucherUsages: usage ? [usage, ...state.voucherUsages] : state.voucherUsages,
     carts: input.fromCart ? { ...state.carts, [input.customerId]: cart.filter((l) => !orderedIds.has(l.productId)) } : state.carts,
-    customers: invoice && input.saveInvoiceAsDefault ? state.customers.map((c) => (c.id === input.customerId ? { ...c, invoiceDefault: invoice } : c)) : state.customers,
+    customers: state.customers.map(c=>c.id===input.customerId?{...c,...(invoice&&input.saveInvoiceAsDefault?{invoiceDefault:invoice}:{}),...(input.experience==='phase2'&&plan.orders[0]?{checkoutPreferences:{shipping:plan.orders[0].shipping,paymentMethod:plan.orders[0].paymentMethod}}:{})}:c),
   };
   return { ok: true, state: next, checkout, transaction, notices: re.notices, reused: false };
 }

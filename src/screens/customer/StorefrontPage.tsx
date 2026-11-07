@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import {trackExperience} from '../../store/experienceEvents';
+import { useEffect,useRef,useMemo, useState } from 'react';
 import {FaqSection} from '../../components/FaqSection';
-import { ArrowDown, ArrowRight, ArrowUpRight, CheckCheck, ChevronDown, Headphones, Heart, Leaf, MapPin, Minus, PackageCheck, Plus, ShieldCheck, ShoppingBag, SlidersHorizontal, Sprout, Star, Truck, X } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, CheckCheck, ChevronDown, Headphones, Heart, Leaf, MapPin, Minus, PackageCheck, Plus, ShieldCheck, SlidersHorizontal, Sprout, Star, Truck, X } from 'lucide-react';
 import { useStorefront } from '../../app/StorefrontContext';
 import { useUi } from '../../app/UiContext';
 import { useStore } from '../../store/AppDataContext';
@@ -12,7 +13,7 @@ import { isOrderableIn } from '../../domain/cart';
 import { formatMoney } from '../../domain/pricing';
 import { regionsOf, remainingFor } from '../../domain/state';
 import { matchesSearch } from '../../domain/text';
-import { familyKey, groupFamilies, listedFamilyOf } from '../../domain/variants';
+import { familyKey, groupFamilies, listedFamilyOf, defaultVariant } from '../../domain/variants';
 import { CATEGORY_LABEL, type Category, type Product } from '../../domain/types';
 import { useCartActions } from './useCartActions';
 import { useMarketplace } from './useMarketplace';
@@ -94,21 +95,25 @@ export function StorefrontPage() {
     {policy && <BottomSheet title={policy} onClose={() => setPolicy(null)}><div className="shop-article"><p>{policy === 'Hành trình từ miền đất lành' ? 'Chúng tôi kết nối người mua với các hợp tác xã vùng cao Lào Cai, để những sản vật địa phương được biết đến bằng chính nguồn gốc và câu chuyện của mình. Bạn có thể tìm hiểu hợp tác xã ở từng sản phẩm, xem thông tin chứng nhận đã xác minh và trao đổi trước khi lựa chọn.' : policy === 'Chính sách đổi trả' ? 'Bạn có thể gửi khiếu nại từ chi tiết đơn hàng đã giao, kèm hình ảnh và lý do. Điều kiện và thời hạn áp dụng tuỳ theo loại sản phẩm và chính sách được chốt trong đơn. Bộ phận CSKH tiếp nhận, kiểm tra và thông báo kết quả xử lý.' : policy === 'Thông tin vận chuyển' ? 'Hiện hệ thống phục vụ giao hàng tại Hà Nội. Phí giao, điều kiện hoả tốc và ngày giao được thể hiện tại bước đặt hàng. Với sản phẩm đặt trước, bạn chọn ngày giao trong khoảng hợp tác xã công bố và xác nhận chính sách trước khi đặt.' : 'Thông tin tài khoản, địa chỉ và đơn hàng được sử dụng để phục vụ việc mua bán và giao nhận. Bạn chỉ xem dữ liệu thuộc phạm vi tài khoản của mình; thông tin cá nhân không được hiển thị trong báo cáo tổng hợp công khai.'}</p><button className="shop-button shop-button-dark" onClick={() => { setPolicy(null); goTo('products'); }}>Khám phá sản phẩm <ArrowRight size={16}/></button></div></BottomSheet>}
   </div>;
 }
-export function StorefrontProductCard({ product: p }: {
-    product: Product;
+export function StorefrontProductCard({ product,listContext }: {
+    product: Product;listContext?:string[];
 }) {
     const { state } = useStore();
+    const p=defaultVariant(state,product)??product;
+    const {productPosters}=useStorefront();
+    const cardRef=useRef<HTMLElement>(null);
+    useEffect(()=>{const el=cardRef.current;if(!el)return;const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){trackExperience('view_card');observer.disconnect();}},{threshold:.5});observer.observe(el);return()=>observer.disconnect();},[p.id]);
     const { openModal, user } = useUi();
     const { add, cart, update, remove } = useCartActions();
     const { isFav, toggleFav } = useMarketplace();
     const [busy, setBusy] = useState(false);
     const variants = listedFamilyOf(state, p);
-    const multi = variants.length > 1, price = familyPrice(state, p), rating = familyRating(state, p);
+    const multi = variants.filter(v=>isOrderableIn(state,v)&&remainingFor(state,v)>0).length > 1, price = p.price, rating = familyRating(state, p);
     const remaining = remainingFor(state, p), soldOut = !isOrderableIn(state, p) || remaining <= 0;
     const line = !multi ? cart.find(item => item.productId === p.id) : undefined;
-    const photo = p.image ?? (p.id === 'prod-thaoqua' ? '/images/catalog/cardamom.jpg' : p.id === 'prod-che' ? IMAGE + 'tea.jpg' : p.id === 'prod-matong' ? IMAGE + 'honey.jpg' : undefined);
+    const photo = productPosters[familyKey(p)] ?? product.image ?? p.image ?? (p.id === 'prod-thaoqua' ? '/images/catalog/cardamom.jpg' : p.id === 'prod-che' ? IMAGE + 'tea.jpg' : p.id === 'prod-matong' ? IMAGE + 'honey.jpg' : undefined);
     const addProduct = async () => { if (multi) {
-        openModal({ type: 'product_detail', productId: p.id });
+        openModal({ type: 'quick_buy', productId: p.id });
         return;
     } setBusy(true); try {
         await add(p.id, 1);
@@ -116,8 +121,8 @@ export function StorefrontProductCard({ product: p }: {
     finally {
         setBusy(false);
     } };
-    return <article className="shop-product-card"><div className="shop-product-visual"><button className="shop-product-open" aria-label={`Xem ${p.name}`} onClick={() => openModal({ type: 'product_detail', productId: p.id })}>{photo ? <AppImage src={photo} alt={p.name} loading="lazy"/> : <ProductImage product={p} variant="card" className="shop-product-illustration"/>}</button><span className="shop-product-tag">{p.kind === 'preorder' ? 'Theo mùa' : 'Đặc sản chọn lọc'}</span><button className={`shop-product-favorite ${isFav(p) ? 'is-saved' : ''}`} aria-label={isFav(p) ? `Bỏ yêu thích ${p.name}` : `Yêu thích ${p.name}`} onClick={() => { if (!user) {
+    return <article className="shop-product-card" ref={cardRef}><div className="shop-product-visual"><button className="shop-product-open" aria-label={`Xem ${p.name}`} onClick={() => openModal({ type: 'product_detail', productId: p.id,listContext })}>{photo ? <AppImage src={photo} alt={p.name} loading="lazy"/> : <ProductImage product={p} variant="card" className="shop-product-illustration"/>}</button><span className="shop-product-tag">{p.kind === 'preorder' ? 'Theo mùa' : 'Đặc sản chọn lọc'}</span><button className={`shop-product-favorite ${isFav(p) ? 'is-saved' : ''}`} aria-label={isFav(p) ? `Bỏ yêu thích ${p.name}` : `Yêu thích ${p.name}`} onClick={() => { if (!user) {
         window.dispatchEvent(new Event('show-login'));
         return;
-    } void toggleFav(p.id); }}><Heart size={17} fill={isFav(p) ? 'currentColor' : 'none'}/></button>{soldOut && <span className="shop-sold-out">{p.kind === 'preorder' ? 'Chờ mùa mới' : 'Tạm hết hàng'}</span>}</div><div className="shop-product-info"><p className="shop-product-region">{p.region}</p><h3><button onClick={() => openModal({ type: 'product_detail', productId: p.id })}>{p.name}</button></h3><div className="shop-rating" aria-label={rating.average ? `${rating.average} trên 5 sao` : 'Chưa có đánh giá'}>{Array.from({ length: 5 }, (_, i) => <Star key={i} size={13} fill={rating.average && i < Math.round(rating.average) ? 'currentColor' : 'none'}/>)}<span>{rating.count ? `(${rating.count})` : 'Mới'}</span></div><div className="shop-product-price"><div><span>{multi ? `${variants.length} quy cách · từ` : `${p.unit}`}</span><strong>{formatMoney(price)}</strong></div>{line ? <div className="shop-card-quantity"><button aria-label={`Giảm số lượng ${p.name}`} disabled={busy} onClick={() => { void (line.quantity === 1 ? remove(p.id) : update(p.id, { quantity: line.quantity - 1 })); }}><Minus size={13}/></button><span>{line.quantity}</span><button aria-label={`Tăng số lượng ${p.name}`} disabled={busy || line.quantity >= remaining} onClick={() => { void update(p.id, { quantity: line.quantity + 1 }); }}><Plus size={13}/></button></div> : <button className="shop-add-cart" disabled={soldOut || busy} onClick={() => { void addProduct(); }} aria-label={multi ? `Chọn quy cách ${p.name}` : `Thêm ${p.name} vào giỏ`}>{busy ? <span className="shop-spinner"/> : <ShoppingBag size={17}/>}</button>}</div></div></article>;
+    } void toggleFav(p.id); }}><Heart size={17} fill={isFav(p) ? 'currentColor' : 'none'}/></button>{soldOut && <span className="shop-sold-out">{p.kind === 'preorder' ? 'Chờ mùa mới' : 'Tạm hết hàng'}</span>}</div><div className="shop-product-info"><p className="shop-product-region">{p.region}</p><h3><button onClick={() => openModal({ type: 'product_detail', productId: p.id,listContext })}>{p.name}</button></h3><div className="shop-rating" aria-label={rating.average ? `${rating.average} trên 5 sao` : 'Chưa có đánh giá'}>{Array.from({ length: 5 }, (_, i) => <Star key={i} size={13} fill={rating.average && i < Math.round(rating.average) ? 'currentColor' : 'none'}/>)}<span>{rating.count ? `(${rating.count})` : 'Mới'}</span></div><div className="shop-product-price"><div><span>{multi ? `${variants.length} quy cách · từ` : `${p.unit}`}</span><strong>{formatMoney(price)}</strong></div>{line ? <div className="shop-card-quantity"><button aria-label={`Giảm số lượng ${p.name}`} disabled={busy} onClick={() => { void (line.quantity === 1 ? remove(p.id) : update(p.id, { quantity: line.quantity - 1 })); }}><Minus size={13}/></button><span>{line.quantity}</span><button aria-label={`Tăng số lượng ${p.name}`} disabled={busy || line.quantity >= remaining} onClick={() => { void update(p.id, { quantity: line.quantity + 1 }); }}><Plus size={13}/></button></div> : <button className="shop-add-cart" disabled={soldOut || busy} onClick={() => { void addProduct(); }} aria-label={multi ? `Chọn quy cách ${p.name}` : `Thêm ${p.name} vào giỏ`}>{busy ? <span className="shop-spinner"/> : <Plus size={18}/>}</button>}</div></div></article>;
 }

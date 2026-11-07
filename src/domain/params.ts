@@ -13,6 +13,7 @@ export interface ExpressTier {
 }
 
 export interface Params {
+  readyDeliveryDays?:number;
   settlementPolicy?: SettlementPolicy;
   /** PAR-02 Ngưỡng tồn thấp mặc định */
   lowStockThreshold: number;
@@ -115,6 +116,7 @@ export const DEFAULT_PARAMS: Params = {
 
 /** Danh mục tham số hiển thị ở màn Tham số, kèm cột "Tình trạng". */
 export const PARAM_CATALOG: ParamMeta[] = [
+  {key:'readyDeliveryDays',code:'P2-ETA',label:'Ngày dự kiến giao hàng có sẵn (0 = chưa công bố)',unit:'ngày',status:'Đã có'},
   { key: 'lowStockThreshold', code: 'PAR-02', label: 'Ngưỡng tồn thấp mặc định', unit: 'đơn vị', status: 'Demo' },
   { key: 'depositRoundingStep', code: 'PAR-04', label: 'Bước làm tròn tiền cọc (làm tròn lên)', unit: 'đ', status: 'Đã có trong SRS' },
   { key: 'preorderMinLeadDays', code: 'PAR-08', label: 'Số ngày tối thiểu tới ngày giao D; mốc huỷ được hoàn cọc', unit: 'ngày', status: 'Đã có' },
@@ -167,6 +169,7 @@ export function updateParam<K extends ParamKey>(
   at: Date,
 ): Result<{ params: Params; change: ParamChange }> {
   if(key==='settlementPolicy')return fail('Chính sách chi trả cần lưu qua quy trình xác nhận riêng.');
+  if(key==='readyDeliveryDays'&&(!Number.isInteger(newValue)||Number(newValue)<0||Number(newValue)>14))return fail('Ngày giao dự kiến phải là số nguyên 0–14.');
   if(!PARAM_CATALOG.some(item=>item.key===key))return fail('Tham số không được hỗ trợ.');
   if (!reason.trim()) return fail('Vui lòng nhập lý do thay đổi tham số.');
   const meta = PARAM_CATALOG.find((m) => m.key === key);

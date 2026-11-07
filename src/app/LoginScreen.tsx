@@ -1,3 +1,4 @@
+import {OtpSignIn} from './OtpSignIn';
 import {useEffect,useState,type FormEvent} from 'react';
 import {ArrowLeft,ArrowRight,Eye,EyeOff,ShieldCheck,Sprout} from 'lucide-react';
 import {api,acceptLogin,type LoginResponse} from '../store/backend';
@@ -48,6 +49,7 @@ export function LoginScreen(){
         {error&&<p className="auth-error" role="alert">{error}</p>}
         <PrimaryButton type="submit" disabled={busy} className="w-full">{busy?'Đang xử lý…':registering?'Tạo tài khoản':'Đăng nhập'} <ArrowRight size={16} className="inline ml-2"/></PrimaryButton>
       </form>
+      {!registering&&<OtpSignIn/>}
       {!registering&&<details className="auth-demo"><summary>Quên mật khẩu?</summary><PasswordTools mode="forgot"/><ForgotOtpTools/></details>}
       <p className="auth-switch">{registering?'Đã có tài khoản?':'Bạn chưa có tài khoản?'} <button onClick={()=>switchPage(!registering)}>{registering?'Đăng nhập':'Đăng ký ngay'}</button></p>
       {supabaseConfigured&&<SupabaseSignIn key={String(registering)} registering={registering}/>}

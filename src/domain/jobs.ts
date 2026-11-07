@@ -18,14 +18,15 @@ export interface JobReport {
 
 const SYSTEM = { kind: 'system' as const, name: 'Hệ thống' };
 
-export function runScheduledJobs(state: DemoState, at: Date): { state: DemoState; report: JobReport } {
+export function runScheduledJobs(state: DemoState, at: Date, protectedTransactions:ReadonlySet<string>=new Set()): { state: DemoState; report: JobReport } {
   const report: JobReport = { expiredTransactions: 0, confirmTimeouts: 0, remainingDeadlines: 0, autoDelivered: 0, reminders: 0 };
   let next = state;
   const t = at.getTime();
+  const protectedOrders=new Set(state.transactions.filter(tx=>protectedTransactions.has(tx.id)).flatMap(tx=>tx.orderIds));
 
   // 1. Giao dịch quá PAR-19 phút: hết hạn, huỷ các đơn online, nhả hàng/suất/mã.
   for (const tx of state.transactions) {
-    if (tx.status === 'pending' && t >= new Date(tx.expiresAt).getTime()) {
+    if (tx.status === 'pending' && !protectedTransactions.has(tx.id) && t >= new Date(tx.expiresAt).getTime()) {
       next = expireTransaction(next, next.transactions.find((x) => x.id === tx.id)!, at);
       report.expiredTransactions++;
     }
@@ -57,6 +58,7 @@ export function runScheduledJobs(state: DemoState, at: Date): { state: DemoState
     if (
       order.status === 'awaiting_harvest' &&
       order.remainingDueAt &&
+      !protectedOrders.has(order.id) &&
       order.paymentStatus === 'deposit_paid' &&
       order.paymentMethod === 'online' &&
       t >= new Date(order.remainingDueAt).getTime()

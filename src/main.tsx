@@ -36,3 +36,6 @@ import './auth.css';
 
 import './catalog.css';
 import './responsive.css';
+import './signature.css';
+import './admin.css';
+import './phase2.css';

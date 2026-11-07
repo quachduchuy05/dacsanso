@@ -11,6 +11,7 @@ import { useStore } from '../../store/AppDataContext';
 
 function formatValue(key: ParamKey, params: Params, unit: string): string {
   const value = params[key];
+  if(key==='readyDeliveryDays'&&!value)return 'Chưa công bố';
   if (key === 'expressTiers') {
     const tiers = params.expressTiers;
     return tiers.map((t, i) => `${i === 0 ? 0 : tiers[i - 1].maxKm}–${t.maxKm} km: ${formatMoney(t.fee)}`).join('; ') + `; trên ${tiers[tiers.length - 1].maxKm} km: không có hoả tốc`;
@@ -127,7 +128,7 @@ function DemoCodeSection() {
 function ParamRow({ meta: m, canEdit }: { meta: ParamMeta; canEdit: boolean }) {
   const { state, run } = useStore();
   const { adminActor, showToast } = useUi();
-  const current = state.params[m.key];
+  const current = m.key==='readyDeliveryDays'?(state.params.readyDeliveryDays??0):state.params[m.key];
   const [value, setValue] = useState('');
   const [reason, setReason] = useState('');
   const editable = typeof current === 'number' || typeof current === 'boolean' || typeof current === 'string';

@@ -87,7 +87,7 @@ export function AppShell() {
   }, [user?.id, state.products]);
 
   return (
-    <div className={`flex min-h-dvh flex-col text-ink ${storefront ? 'shop-shell' : 'bg-stone-100'}`}>
+    <div className={`flex min-h-dvh flex-col text-ink ${storefront ? 'shop-shell' : user?.role==='admin' ? 'admin-shell bg-stone-100' : 'bg-stone-100'}`}>
       <header ref={headerRef} className={storefront ? "shop-site-header" : "sticky top-0 z-40 bg-forest-950 text-forest-100"}>{storefront ? <StorefrontHeader /> : <><DemoBand />
 
         <div className={`flex w-full items-center gap-1 py-1.5 ${PAGE_X}`}>
@@ -140,7 +140,7 @@ export function AppShell() {
       </>}</header>
 
       <main className={`flex w-full flex-1 flex-col ${storefront ? '' : 'bg-ivory'}`}>
-        {user&&user.role!=='customer'&&<AccountSecuritySettings/>}
+        {user&&user.role!=='customer'&&user.role!=='admin'&&<AccountSecuritySettings/>}
         <ListBoundary key={user?.id ?? 'guest'} label="màn này" resetKey={state}>
           <Suspense fallback={<p className="p-6 text-center text-sm text-stone-600">Đang tải…</p>}>
             {!user && !guestBrowsing && <LoginScreen />}

@@ -28,6 +28,9 @@ import { ORDER_KIND_LABEL, ORDER_STATUS_LABEL, REFUND_SOURCE_LABEL } from '../..
 import { useStore } from '../../store/AppDataContext';
 import { InvoiceSummary } from '../../components/InvoiceFields';
 import { CoopNameButton } from './CoopNameButton';
+import {useCartActions} from './useCartActions';
+import {isOrderableIn} from '../../domain/cart';
+import {remainingFor} from '../../domain/state';
 
 const CANCEL_REASONS = ['Đặt nhầm sản phẩm', 'Muốn đổi địa chỉ / thời gian', 'Tìm được nơi khác', 'Không còn nhu cầu', 'Lý do khác'];
 
@@ -35,6 +38,8 @@ const CANCEL_REASONS = ['Đặt nhầm sản phẩm', 'Muốn đổi địa ch�
 export function OrderDetailSheet({ orderId, onClose }: { orderId: string; onClose: () => void }) {
   const { state, run, now } = useStore();
   const { customerActor, openModal, showToast } = useUi();
+  const {add,cart}=useCartActions();
+  const [reordering,setReordering]=useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [cancelling, setCancelling] = useState(false);
   const [editing, setEditing] = useState<null | 'address' | 'date' | 'gift'>(null);
@@ -93,6 +98,7 @@ export function OrderDetailSheet({ orderId, onClose }: { orderId: string; onClos
       }
       onClose={onClose}
       wide
+      footer={['delivered','cancelled'].includes(order.status)?<PrimaryButton disabled={reordering} className="w-full" onClick={async()=>{setReordering(true);let added=0,skipped=0;try{for(const item of order.items){const product=findProduct(state,item.productId),available=product?remainingFor(state,product)-(cart.find(l=>l.productId===product.id)?.quantity??0):0;if(!product||!isOrderableIn(state,product)||available<1){skipped++;continue;}if(await add(product.id,Math.min(item.quantity,available),false))added++;else skipped++;}showToast(`Đã thêm ${added} món theo giá hiện tại${skipped?`; bỏ qua ${skipped} món không còn mua được`:''}.`);if(added)openModal({type:'cart'});}finally{setReordering(false);}}}>{reordering?'Đang thêm…':'Mua lại theo giá hiện tại'}</PrimaryButton>:undefined}
     >
       <SheetColumns
         left={

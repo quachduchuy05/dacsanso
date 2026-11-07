@@ -88,6 +88,7 @@ export function CartSheet({ onClose }: { onClose: () => void }) {
 
   return (
     <BottomSheet
+      className="signature-detail"
       title={`Giỏ hàng (${cart.length})`}
       onClose={onClose}
       footer={

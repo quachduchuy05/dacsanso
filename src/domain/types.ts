@@ -111,6 +111,7 @@ export interface PreorderConfig {
 }
 
 export interface Product {
+  displayOrder?:number;
   traceUrl?: string;
   harvestMonths?: number[];
   catalogCategoryId?: string;
@@ -244,6 +245,7 @@ export interface BankAccount {
 }
 
 export interface Customer {
+  checkoutPreferences?: {shipping:'standard'|'express';paymentMethod:'online'|'cod'};
   id: string;
   name: string;
   phone: string;
@@ -445,6 +447,8 @@ export interface CodRemittance {
 }
 
 export interface Order {
+  estimatedDeliveryDate?:string;
+  platformFulfilled?: boolean;
   pickupPoint?: {name:string;address:string;contactName:string;contactPhone:string;note:string;updatedAt:string;updatedBy:string};
   reconciledCod?: {reference:string;at:string;sessionId:string};
   id: string;
@@ -562,6 +566,7 @@ export interface DirectMessage {
 }
 
 export interface Checkout {
+  source?: 'cart'|'buy_now';
   id: string;
   idempotencyKey: string;
   customerId: string;

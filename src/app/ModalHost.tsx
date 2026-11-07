@@ -13,6 +13,8 @@ import { TraceLotSheet } from '../screens/customer/TraceLotSheet';
 import { useStore } from '../store/AppDataContext';
 import { lazyWithReload } from './chunkReload';
 import { useUi } from './UiContext';
+import {QuickBuySheet} from '../screens/customer/QuickBuySheet';
+import {CheckoutCompleteSheet} from '../screens/customer/CheckoutCompleteSheet';
 
 // Sheet ít mở hoặc chỉ dùng ở màn HTX: tải khi mở lần đầu, để phần tải ban đầu của app nhẹ hơn.
 const CheckoutSheet = lazy(lazyWithReload(() => import('../screens/customer/CheckoutSheet').then((m) => ({ default: m.CheckoutSheet }))));
@@ -39,6 +41,8 @@ export function ModalHost() {
   const { modal, closeModal } = useUi();
   const { state } = useStore();
   if (!modal) return null;
+  if(modal.type==='quick_buy')return <QuickBuySheet productId={modal.productId} onClose={closeModal}/>;
+  if(modal.type==='checkout_complete')return <CheckoutCompleteSheet checkoutId={modal.checkoutId} onClose={closeModal}/>;
   // Sheet gặp lỗi thì hiện sheet báo lỗi thay vì làm trắng cả app (mục 10.5).
   return (
     <ListBoundary
@@ -63,13 +67,13 @@ function ModalContent() {
   if (!modal) return null;
   switch (modal.type) {
     case 'product_detail':
-      return <ProductDetailSheet key={modal.productId} productId={modal.productId} onClose={closeModal} />;
+      return <ProductDetailSheet key={modal.productId} productId={modal.productId} listContext={modal.listContext} onClose={closeModal} />;
     case 'trace_lot':
       return <TraceLotSheet lotId={modal.lotId} productId={modal.productId} onClose={closeModal} />;
     case 'cart':
       return <CartSheet onClose={closeModal} />;
     case 'checkout':
-      return <CheckoutSheet source={modal.source} preferredAddressId={modal.addressId} onClose={closeModal} />;
+      return <CheckoutSheet source={modal.source} preferredAddressId={modal.addressId} draft={modal.draft} skipAddressPrompt={modal.skipAddressPrompt} onClose={closeModal} />;
     case 'payment':
       return <PaymentSheet txId={modal.txId} onClose={closeModal} />;
     case 'order_detail':
