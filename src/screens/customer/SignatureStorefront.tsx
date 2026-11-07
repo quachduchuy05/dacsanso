@@ -13,9 +13,11 @@ import { formatMoney } from '../../domain/pricing';
 import { type Product } from '../../domain/types';
 import { StorefrontProductCard } from './StorefrontPage';
 import {FeaturedCollections} from './FeaturedCollections';
+import { useSignatureMotion } from './useSignatureMotion';
 
 /** Product-led storefront; images and quantities always come from the live catalog. */
 export function SignatureStorefront() {
+  const motionRoot = useSignatureMotion();
   const { state } = useStore();
   const { openCatalog, setQuery, goTo,productPosters } = useStorefront();
   const { openModal, user, setCustomerTab } = useUi();
@@ -27,7 +29,8 @@ export function SignatureStorefront() {
   const regions = [...new Set(families.flatMap(regionsOf))];
   const searchRegion = (region: string) => { setQuery(region); openCatalog(); };
   const account = () => user ? setCustomerTab('account') : window.dispatchEvent(new Event('show-login'));
-  return <div className="shop-page signature-home">
+  return <div className="shop-page signature-home" ref={motionRoot}>
+    <div className="signature-reading-progress" aria-hidden="true"/>
     <section className="signature-stage" id="shop-home" aria-labelledby="signature-title">
       <div className="shop-container signature-stage-inner">
         <div className="signature-intro"><span className="signature-kicker"><span /> LÀO CAI · TUYỂN TẬP HƯƠNG VỊ</span>

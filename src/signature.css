@@ -1,4 +1,47 @@
 /* Phase 2: indigo display, warm ivory reading surfaces and a single bronze accent. */
+/* Motion uses transforms and opacity; every editorial section remains readable at rest. */
+.signature-reading-progress{position:fixed;inset:0 0 auto;height:2px;z-index:60;pointer-events:none;background:linear-gradient(90deg,#96733d,#efd8a7);transform:scaleX(var(--reading-progress,0));transform-origin:left}
+.signature-stage:after{content:'';position:absolute;z-index:-1;pointer-events:none;width:65%;aspect-ratio:1;right:-12%;top:-30%;border-radius:50%;background:radial-gradient(circle,#d8b8791f,transparent 67%)}
+.signature-exhibit-product:after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 25%,#fff3 48%,transparent 70%);transform:translateX(-140%)}
+.signature-primary{position:relative;overflow:hidden;box-shadow:0 6px 22px #00000012}
+.signature-primary svg,.signature-text-link svg,.signature-exhibit-link svg{transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.signature-primary:hover svg,.signature-text-link:hover svg{transform:translate(3px,-3px)}
+.signature-text-link{position:relative}.signature-text-link:after{content:'';position:absolute;bottom:5px;left:0;right:32px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.signature-text-link:hover:after{transform:scaleX(1)}
+.shop-shell .shop-product-visual{isolation:isolate;transition:box-shadow .5s,border-radius .5s}
+.shop-shell .shop-product-visual img{transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.shop-shell .shop-add-cart,.signature-rail-controls button{transition:background .25s,color .25s,transform .25s,box-shadow .25s}
+.signature-region-list button{position:relative;transition:padding .4s,color .4s,background .4s}.signature-region-list svg{transition:transform .4s}
+.signature-provenance-art{box-shadow:inset 0 0 80px #0002,0 22px 55px #49391e12}
+.signature-provenance-art>svg{filter:drop-shadow(0 4px 15px #d9ba8444)}
+@media(prefers-reduced-motion:no-preference){
+ .signature-intro>.signature-kicker{animation:signature-rise .8s both}
+ .signature-intro h1{animation:signature-rise 1s .1s both}
+ .signature-intro>p{animation:signature-rise 1s .2s both}
+ .signature-intro>.signature-primary,.signature-intro>.signature-origin{animation:signature-rise 1s .3s both}
+ .signature-exhibit-product{animation:signature-unveil 1.3s .1s both}
+ .signature-exhibit-caption{animation:signature-rise 1s .45s both}
+ .signature-orbit{animation:signature-orbit-in 1.8s .2s both}
+ .signature-stage:after{animation:signature-light 4.8s ease-in-out both}
+ .signature-stage-foot button svg{animation:signature-scroll-cue 1.5s 1s 2}
+ .signature-arrived{animation:signature-rise .85s cubic-bezier(.2,.7,.2,1) both}
+ .signature-provenance-art.signature-arrived>svg{animation:signature-leaf 2s .3s both}
+}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+ .signature-exhibit-product:hover:after{transition:transform 1s;transform:translateX(140%)}
+ .shop-shell .shop-product-card:hover .shop-product-visual{box-shadow:0 18px 40px #49391e1c}
+ .shop-shell .shop-product-card:hover .shop-product-visual img{transform:scale(1.055)}
+ .shop-shell .shop-add-cart:hover,.signature-rail-controls button:hover{background:#946d39;color:#fff5e6;transform:translateY(-3px);box-shadow:0 7px 16px #49391e22}
+ .signature-region-list button:hover{padding-left:14px;padding-right:10px;background:linear-gradient(90deg,#d6c19b1c,transparent)}
+ .signature-region-list button:hover svg{transform:translate(3px,-3px)}
+}
+@keyframes signature-rise{from{opacity:.35;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes signature-unveil{from{opacity:.3;transform:translateY(28px) rotate(-9deg) scale(.96)}to{opacity:1;transform:translateY(0) rotate(-5deg) scale(1)}}
+@keyframes signature-orbit-in{from{opacity:0;transform:scale(.87) rotate(-18deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes signature-light{0%{opacity:.2;transform:translate(-8%,8%)}100%{opacity:1;transform:translate(0,0)}}
+@keyframes signature-scroll-cue{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+@keyframes signature-leaf{0%{transform:rotate(-12deg)}60%{transform:rotate(6deg)}100%{transform:rotate(0)}}
+@media(prefers-reduced-motion:reduce){.signature-home *,.signature-home *:before,.signature-home *:after,.shop-shell .shop-product-visual,.shop-shell .shop-product-visual img,.shop-shell .shop-add-cart{animation:none!important;transition:none!important;scroll-behavior:auto!important}.signature-reading-progress{display:none}}
 .shop-shell{--signature-indigo:#171d30;--signature-ink:#23283a;--signature-paper:#f5f0e7;--signature-bronze:#946d39;background:var(--signature-paper);color:var(--signature-ink)}
 .shop-shell .shop-container{width:min(1320px,calc(100% - 96px))}
 .shop-site-header{background:#f5f0e7f2;border-bottom-color:#c9baa144}
