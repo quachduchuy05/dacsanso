@@ -116,11 +116,11 @@ export function AppShell() {
           )}
           <button
             onClick={() => openModal({ type: 'demo_panel' })}
-            aria-label="Công cụ demo: tua thời gian, mô phỏng cổng thanh toán, khôi phục dữ liệu mẫu"
+            aria-label="Công cụ thử nghiệm: tua thời gian, mô phỏng cổng thanh toán, khôi phục dữ liệu mẫu"
             className="flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 rounded-xl border border-champagne-400/50 px-2.5 text-sm font-semibold text-champagne-300 hover:bg-forest-900"
           >
             <FlaskConical size={16} />
-            <span className="hidden sm:inline">Công cụ demo</span>
+            <span className="hidden sm:inline">Công cụ thử nghiệm</span>
           </button>
           {user && (
             <button

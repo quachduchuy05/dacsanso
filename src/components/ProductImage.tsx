@@ -21,11 +21,10 @@ export function ProductImage({ product, className = '', variant = 'thumb',priori
   const concept=productConcept(product);
   const source=[product.image,concept].find(src=>src&&!failed.includes(src));
   if(source&&source===concept)return <div className={`relative overflow-hidden bg-paper ${className}`}>
-    <AppImage src={source} alt={`Ảnh minh hoạ 3D: ${product.name}`} loading={priority?'eager':'lazy'} fetchPriority={priority?'high':'auto'}
+    <AppImage src={source} alt={product.name} loading={priority?'eager':'lazy'} fetchPriority={priority?'high':'auto'}
       srcSet={`${source.replace('.webp','-480.webp')} 480w, ${source.replace('.webp','-960.webp')} 960w, ${source} 1122w`}
       sizes={variant==='thumb'?'80px':variant==='card'?'(max-width: 767px) 78vw, 360px':'(max-width: 767px) 100vw, 640px'}
       className="absolute inset-0 h-full w-full object-cover" onError={()=>setFailed(old=>[...old,source])}/>
-    {variant!=='thumb'&&<span className="absolute top-3 left-3 rounded-full bg-ivory/90 px-2.5 py-1 text-xs font-semibold text-stone-700">Ảnh minh hoạ 3D</span>}
   </div>;
   if (source) {
     return (
@@ -42,12 +41,9 @@ export function ProductImage({ product, className = '', variant = 'thumb',priori
     );
   }
   return (
-    <div role="img" aria-label={`Ảnh minh hoạ: ${product.name}`} className={`relative overflow-hidden bg-paper ${className}`}>
+    <div role="img" aria-label={product.name} className={`relative overflow-hidden bg-paper ${className}`}>
       <IllustrationBackdrop />
       <IllustrationSubject product={product} glow={variant !== 'thumb'} />
-      {variant === 'cover' && (
-        <span className="absolute top-3 left-3 rounded-full bg-ivory/90 px-2.5 py-1 text-xs font-semibold text-stone-700 shadow-xs">Ảnh minh hoạ</span>
-      )}
     </div>
   );
 }

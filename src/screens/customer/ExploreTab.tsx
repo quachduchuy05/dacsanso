@@ -328,7 +328,6 @@ export function ExploreTab() {
           <BrandEmblem size={34} />
           <BrandWordmark tone="light" />
         </div>
-        <p className="mx-auto max-w-sm text-xs leading-relaxed text-muted">Bản demo – dữ liệu mẫu. Sản phẩm, giá và HTX là mẫu, chờ HTX xác nhận.</p>
       </footer>
     </div>
   );
