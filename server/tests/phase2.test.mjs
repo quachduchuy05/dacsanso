@@ -12,6 +12,21 @@ import {createApplication} from '../app.mjs';
 import {issueSession} from '../security.mjs';
 import {beginMediaUpload,completeMediaUpload,cleanProductMedia} from '../product-media-storage.mjs';
 const PNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGNk+M/AwMDAxMDAwMDAAAAZNAIBWxOnMQAAAABJRU5ErkJggg==','base64');
+test('responsive assets share approval and access checks with the full image',async t=>{
+  const {db,state,root}=fixture(t),path='/api/v1/products/'+state.products[0].id+'/media';
+  const webp=Buffer.concat([Buffer.from('RIFF'),Buffer.alloc(4),Buffer.from('WEBP'),Buffer.from('full')]);
+  const small=Buffer.concat([Buffer.from('RIFF'),Buffer.alloc(4),Buffer.from('WEBP'),Buffer.from('small')]);
+  const call=body=>productMediaRoute(path+'/upload','POST',body,{db,auth:root});
+  await assert.rejects(call({mime:'image/webp',base64:webp.toString('base64'),variants:[{width:100,base64:small.toString('base64')}]}),e=>e.status===400);
+  const asset=await call({mime:'image/webp',base64:webp.toString('base64'),variants:[{width:480,base64:small.toString('base64')}]});
+  let output;const res={writeHead:()=>{},end:bytes=>{output=bytes;}};
+  const get=()=>productMediaRoute('/api/v1/products/media-assets/'+asset.id,'GET',{}, {db,auth:null,res,imageWidth:'480'});
+  await assert.rejects(get(),e=>e.status===404);
+  const result=await productMediaRoute(path,'POST',{action:'submit',item:{kind:'image',group:'main',order:0,alt:'Responsive product',files:[asset.id],source:'self'}},{db,auth:root});
+  await productMediaRoute(path,'POST',{action:'review',id:result.entries[0].id,status:'approved'},{db,auth:root});
+  await get();assert.deepEqual(output,small);
+  await productMediaRoute('/api/v1/products/media-assets/'+asset.id,'GET',{}, {db,auth:null,res});assert.deepEqual(output,webp);
+});
 function fixture(t){const db=new Database(':memory:',{demo:true,encryptionKey:'ab'.repeat(32)});t.after(()=>db.close());const state=db.read().state;return {db,state,root:{user:state.users.find(u=>u.adminGroup==='root')},customer:{user:state.users.find(u=>u.role==='customer')}};}
 
 test('guest merge caps combined stock, preserves unrelated lines and deduplicates retries',async t=>{

@@ -11,5 +11,8 @@ export function AppImage({src,...props}:ImgHTMLAttributes<HTMLImageElement>){
     refresh();const timer=setInterval(refresh,240000);
     return()=>{stopped=true;clearInterval(timer);};
   },[src]);
-  return <img {...props} src={resolved}/>;
+  const productAsset=resolved&&/^\/api\/v1\/products\/media-assets\/[\w-]+$/.test(resolved);
+  return <img decoding="async" {...props} src={resolved}
+    srcSet={props.srcSet??(productAsset?`${resolved}?w=480 480w, ${resolved}?w=960 960w, ${resolved} 1600w`:undefined)}
+    sizes={props.sizes??(productAsset?'(max-width: 767px) 100vw, 640px':undefined)}/>;
 }

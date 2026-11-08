@@ -2,6 +2,7 @@ import { AppImage } from './AppImage';
 import { useState } from 'react';
 import type { Product } from '../domain/types';
 import { IllustrationBackdrop, IllustrationSubject } from './ProductIllustration';
+import { productConcept } from '../domain/productConcept';
 
 /**
  * Ảnh sản phẩm.
@@ -16,16 +17,26 @@ import { IllustrationBackdrop, IllustrationSubject } from './ProductIllustration
 type Variant = 'thumb' | 'card' | 'cover';
 
 export function ProductImage({ product, className = '', variant = 'thumb',priority=false }: { product: Product; className?: string; variant?: Variant;priority?:boolean }) {
-  const [failed, setFailed] = useState(false);
-  if (product.image && !failed) {
+  const [failed, setFailed] = useState<string[]>([]);
+  const concept=productConcept(product);
+  const source=[product.image,concept].find(src=>src&&!failed.includes(src));
+  if(source&&source===concept)return <div className={`relative overflow-hidden bg-paper ${className}`}>
+    <AppImage src={source} alt={`Ảnh minh hoạ 3D: ${product.name}`} loading={priority?'eager':'lazy'} fetchPriority={priority?'high':'auto'}
+      srcSet={`${source.replace('.webp','-480.webp')} 480w, ${source.replace('.webp','-960.webp')} 960w, ${source} 1122w`}
+      sizes={variant==='thumb'?'80px':variant==='card'?'(max-width: 767px) 78vw, 360px':'(max-width: 767px) 100vw, 640px'}
+      className="absolute inset-0 h-full w-full object-cover" onError={()=>setFailed(old=>[...old,source])}/>
+    {variant!=='thumb'&&<span className="absolute top-3 left-3 rounded-full bg-ivory/90 px-2.5 py-1 text-xs font-semibold text-stone-700">Ảnh minh hoạ 3D</span>}
+  </div>;
+  if (source) {
     return (
       <AppImage
-        src={product.image}
+        src={source}
         alt={product.name}
         loading={priority?'eager':'lazy'}
         fetchPriority={priority?'high':'auto'}
         decoding="async"
-        onError={() => setFailed(true)}
+        sizes={variant==='thumb'?'80px':variant==='card'?'(max-width: 767px) 78vw, 360px':'(max-width: 767px) 100vw, 640px'}
+        onError={() => setFailed(old=>[...old,source])}
         className={`object-cover ${className}`}
       />
     );

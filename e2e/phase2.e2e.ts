@@ -52,6 +52,25 @@ function triangle(){
 }
 function card(page:Page,name:string){return page.locator('.signature-rail .shop-product-card').filter({has:page.getByRole('button',{name,exact:true})});}
 
+test('Mobile cart closes on a downward header swipe but not on a short drag',async({browser})=>{
+  const f=await app(browser);try{
+    await f.page.locator('.shop-header-actions').getByRole('button',{name:/giỏ hàng/i}).click();
+    const header=f.page.locator('.sheet-swipe-header');await expect(header).toBeVisible();
+    const swipe=async(distance:number)=>{await header.dispatchEvent('pointerdown',{pointerType:'touch',pointerId:1,clientX:90,clientY:90});await header.dispatchEvent('pointermove',{pointerType:'touch',pointerId:1,clientX:90,clientY:90+distance});await header.dispatchEvent('pointerup',{pointerType:'touch',pointerId:1,clientX:90,clientY:90+distance});};
+    // Synthetic pointers cannot be captured; DOM dispatch still exercises the gesture threshold.
+    await header.evaluate(el=>{el.setPointerCapture=()=>{};});
+    await swipe(35);await expect(header).toBeVisible();await swipe(110);await expect(header).toHaveCount(0);expect(f.errors).toEqual([]);
+  }finally{await f.context.close();}
+});
+
+test('A failed model switches automatically to approved 360 media',async({browser})=>{
+  const f=await app(browser);try{
+    await f.context.route('**/api/v1/products/*/media',route=>route.fulfill({json:{items:[{id:'model',kind:'model',group:'main',order:0,alt:'Product model',files:['/synthetic.glb'],poster:PNG},{id:'spin',kind:'spin',group:'main',order:1,alt:'Product angles',files:Array.from({length:24},()=>PNG),poster:PNG}]}}));
+    await card(f.page,f.single.name).getByRole('heading').getByRole('button').click();await f.page.getByRole('button',{name:'Xem 3D',exact:true}).first().click();await expect(f.page.locator('model-viewer')).toBeVisible();
+    await f.page.locator('model-viewer').dispatchEvent('error');await expect(f.page.locator('.product-spin')).toBeVisible();await expect(f.page.locator('model-viewer')).toHaveCount(0);await expect(f.page.getByRole('button',{name:'Góc tiếp theo',exact:true})).toBeVisible();await f.page.getByRole('button',{name:'Đóng 360°',exact:true}).click();await expect(f.page.locator('.product-spin')).toHaveCount(0);expect(f.errors).toEqual([]);
+  }finally{await f.context.close();}
+});
+
 test('Guest can add, undo exactly one increment, reload cart and resume checkout after login',async({browser})=>{
   const f=await app(browser);try{
     const c=card(f.page,f.single.name);await c.getByRole('button',{name:`Thêm ${f.single.name} vào giỏ`,exact:true}).click();

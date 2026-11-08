@@ -30,7 +30,7 @@ export function validateAsset(mime,bytes){
   else assert(false,400,'Định dạng tệp không hỗ trợ.');
 }
 const loadManifest=async(db,id)=>{const row=await db.sql.prepare('SELECT data FROM feature_records WHERE id=? AND kind=?').get(id,manifestKind);return row?db.decodeJSON(row.data):{entries:[]};};
-export async function productMediaRoute(path,method,body,{db,auth,res,headers={},options={}}){
+export async function productMediaRoute(path,method,body,{db,auth,res,headers={},options={},imageWidth}){
   if(path==='/api/v1/products/media-catalog'&&method==='GET'){
     const {state}=await db.read(),rows=await db.sql.prepare('SELECT owner_id,data FROM feature_records WHERE kind=?').all(manifestKind),items=[],posters={};
     for(const row of rows){const manifest=db.decodeJSON(row.data),active=state.products.some(p=>familyKey(p)===row.owner_id&&p.status==='active'),images=manifest.entries.map(e=>e.approved).filter(e=>e?.kind==='image');if(active&&images.length){const poster=assetUrl(sortMedia(images)[0].files[0]);posters[row.owner_id]=poster;if(images.length>=5)items.push({productId:row.owner_id,poster,topics:manifest.topics??[]});}}
@@ -43,7 +43,8 @@ export async function productMediaRoute(path,method,body,{db,auth,res,headers={}
     if(!allowed){const {state}=await db.read();if(state.products.some(p=>familyKey(p)===file.productId&&p.status==='active')){const manifest=await loadManifest(db,'media-'+file.productId);allowed=manifest.entries.some(e=>e.approved&&(e.approved.files.includes(assetMatch[1])||e.approved.poster===assetMatch[1]));}}
     assert(allowed,404,'Không tìm thấy tệp đã duyệt.');
     if(file.storagePath){const url=await signProductAsset(file,options);res.writeHead(307,{Location:url,'Cache-Control':'private, no-store'});res.end();return null;}
-    const bytes=Buffer.from(file.base64,'base64'),common={'Content-Type':file.mime,'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Content-Disposition':'inline','Accept-Ranges':'bytes'};
+    const responsive=file.variants?.find(v=>v.width===Number(imageWidth));
+    const bytes=Buffer.from(responsive?.base64??file.base64,'base64'),common={'Content-Type':file.mime,'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Content-Disposition':'inline','Accept-Ranges':'bytes'};
     if(headers.range){const match=String(headers.range).match(/^bytes=(\d*)-(\d*)$/);let start=match?.[1]?Number(match[1]):Math.max(0,bytes.length-Number(match?.[2])),end=match?.[1]&&match?.[2]?Number(match[2]):bytes.length-1;end=Math.min(end,bytes.length-1);
       if(!match||!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start<0||start>end||start>=bytes.length){res.writeHead(416,{...common,'Content-Range':'bytes */'+bytes.length});res.end();return null;}
       const chunk=bytes.subarray(start,end+1);res.writeHead(206,{...common,'Content-Length':chunk.length,'Content-Range':`bytes ${start}-${end}/${bytes.length}`});res.end(chunk);return null;
@@ -60,7 +61,10 @@ export async function productMediaRoute(path,method,body,{db,auth,res,headers={}
   assert(admin(auth),403,'Chỉ Admin phụ trách chất lượng được quản lý phương tiện.');
   if(match[2]==='upload'&&method==='POST'){
     assert(typeof body.base64==='string'&&/^[A-Za-z0-9+/]+={0,2}$/.test(body.base64),400,'Dữ liệu tải lên không hợp lệ.');const bytes=Buffer.from(body.base64,'base64');validateAsset(body.mime,bytes);const id=randomUUID();
-    await db.sql.prepare('INSERT INTO feature_records VALUES(?,?,?,?,?)').run(id,assetKind,auth.user.id,db.encodeJSON({mime:body.mime,size:bytes.length,base64:bytes.toString('base64'),productId:root}),Date.now()+86400000);await db.audit(auth.user.id,'product-media-upload',root);return {id,size:bytes.length};
+    const variants=body.variants??[];
+    assert(Array.isArray(variants)&&variants.length<=2&&(!variants.length||body.mime==='image/webp')&&new Set(variants.map(v=>v.width)).size===variants.length,400,'Bộ ảnh thu nhỏ không hợp lệ.');
+    for(const v of variants){assert([480,960].includes(v.width)&&typeof v.base64==='string'&&/^[A-Za-z0-9+/]+={0,2}$/.test(v.base64),400,'Ảnh thu nhỏ không hợp lệ.');validateAsset(body.mime,Buffer.from(v.base64,'base64'));}
+    await db.sql.prepare('INSERT INTO feature_records VALUES(?,?,?,?,?)').run(id,assetKind,auth.user.id,db.encodeJSON({mime:body.mime,size:bytes.length,base64:bytes.toString('base64'),variants,productId:root}),Date.now()+86400000);await db.audit(auth.user.id,'product-media-upload',root);return {id,size:bytes.length};
   }
   assert(method==='POST',405,'Thao tác không hỗ trợ.');
   if(body.action==='start_upload')return beginMediaUpload(root,body,{db,auth,options});

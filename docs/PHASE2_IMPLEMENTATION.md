@@ -1,5 +1,12 @@
 # Phase 2 — chức năng và điều kiện nghiệm thu
 
+## Bổ sung ngày 08/11/2026
+
+- Giỏ và bảng chọn nhanh trên màn hình nhỏ hỗ trợ kéo vùng tiêu đề xuống ít nhất 85 px để đóng; kéo ngắn trả về vị trí cũ, kéo ngang và nút bấm không kích hoạt đóng. Cuộn nội dung không bị chiếm cử chỉ.
+- Khi 3D không khởi tạo hoặc tải thất bại, tự thay bằng bộ 360° đã duyệt nếu có; nếu không có thì giữ ảnh đại diện, không hiển thị lỗi kỹ thuật. Mô hình cũ được gỡ khỏi DOM và bỏ nguồn khi chuyển sang bản dự phòng.
+- Ảnh WebP mới tải bằng công cụ quản trị có thêm bản 480/960 px khi ảnh gốc đủ lớn, dùng `srcSet`/`sizes` cho thẻ, ảnh đại diện và thư viện. Bản thu nhỏ lưu chung với asset gốc, cùng kiểm tra quyền và phê duyệt; không tạo đường truy cập công khai cho ảnh chờ duyệt. Ảnh cũ chưa có bản thu nhỏ vẫn dùng ảnh gốc; cần tải lại để có lợi ích dung lượng. Ảnh URL ngoài hệ thống chưa được tự chuyển đổi. Bộ xoay giữ giới hạn dung lượng riêng.
+
+
 Đối chiếu SRS “Trải nghiệm chọn mua hàng”, bản 1.1 ngày 04/11/2026. Tài liệu này thay thế ghi chú “chưa triển khai nghiệp vụ Phase 2” trong tài liệu thiết kế giao diện trước đó. Có mã chức năng không đồng nghĩa đã nghiệm thu dịch vụ thật và mọi chỉ tiêu hiệu năng trên thiết bị thật.
 
 ## Ma trận chức năng
