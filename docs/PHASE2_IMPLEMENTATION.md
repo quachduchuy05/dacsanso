@@ -2,6 +2,8 @@
 
 ## Bổ sung ngày 08/11/2026
 
+- FR-MHTT-18 đã triển khai bổ sung: đăng ký theo đúng mã quy cách hàng có sẵn đang hết hàng, bắt buộc đồng ý nhận tin, chống trùng. Khách có tài khoản nhận thông báo trong app tự động qua tác vụ `runJobs` khi hàng thực sự còn bán; ghi thông báo và trạng thái đã báo trong cùng transaction, không báo lặp. Khách vãng lai nhập SĐT hợp lệ; Vận hành xem riêng danh sách tại Nội dung trang chủ → Trải nghiệm chọn mua → Đăng ký báo khi có hàng, liên hệ ngoài hệ thống rồi ghi kênh/kết quả. Không giả lập SMS đã gửi. Không báo khi sản phẩm/HTX ngừng bán hoặc chưa có hàng; không giữ tồn và không tạo đơn. Đăng ký lại được khi hết hàng ở đợt sau.
+
 - Giỏ và bảng chọn nhanh trên màn hình nhỏ hỗ trợ kéo vùng tiêu đề xuống ít nhất 85 px để đóng; kéo ngắn trả về vị trí cũ, kéo ngang và nút bấm không kích hoạt đóng. Cuộn nội dung không bị chiếm cử chỉ.
 - Khi 3D không khởi tạo hoặc tải thất bại, tự thay bằng bộ 360° đã duyệt nếu có; nếu không có thì giữ ảnh đại diện, không hiển thị lỗi kỹ thuật. Mô hình cũ được gỡ khỏi DOM và bỏ nguồn khi chuyển sang bản dự phòng.
 - Ảnh WebP mới tải bằng công cụ quản trị có thêm bản 480/960 px khi ảnh gốc đủ lớn, dùng `srcSet`/`sizes` cho thẻ, ảnh đại diện và thư viện. Bản thu nhỏ lưu chung với asset gốc, cùng kiểm tra quyền và phê duyệt; không tạo đường truy cập công khai cho ảnh chờ duyệt. Ảnh cũ chưa có bản thu nhỏ vẫn dùng ảnh gốc; cần tải lại để có lợi ích dung lượng. Ảnh URL ngoài hệ thống chưa được tự chuyển đổi. Bộ xoay giữ giới hạn dung lượng riêng.
@@ -29,7 +31,7 @@
 | FR-MHTT-15 | Dùng địa chỉ mặc định và phương thức/cách giao gần nhất; chưa có địa chỉ tự mở form, trở lại giữ nội dung checkout. Lần đầu phải chọn thanh toán. |
 | FR-MHTT-16 | Xác nhận mã lần đặt, mã đơn, trạng thái, online đã ghi nhận, COD, theo dõi/mua tiếp. Ngày đặt trước lấy lịch chọn; ETA hàng có sẵn lấy P2-ETA nếu Vận hành đã công bố. |
 | FR-MHTT-17 (Should) | Mua lại từ chi tiết đơn đã giao/đã hủy; giá hiện tại; bỏ món không còn bán, giới hạn lượng còn mua được và báo kết quả. |
-| FR-MHTT-18 (Could) | Đăng ký báo khi có hàng chưa mở trong đợt này, theo trạng thái “làm sau đợt 2” của SRS. Theo dõi mùa vụ đã có tiếp tục hoạt động. |
+| FR-MHTT-18 (Could) | Đã bổ sung theo yêu cầu hoàn thiện: khách tài khoản nhận thông báo trong app; khách vãng lai đăng ký SĐT và Vận hành ghi nhận liên hệ. SMS tự động cần nhà cung cấp thật. Theo dõi mùa vụ giữ riêng. |
 | FR-SP-10 | Tải/nén ảnh, MP4, bộ 360°, GLB + USDZ, ảnh đại diện; nhóm/thứ tự/quy cách, nguồn và phiếu đồng ý; xem trước; duyệt/cần sửa có lý do. Thay tệp giữ bản đã duyệt đến khi bản mới được duyệt. |
 
 ## Quy tắc backend
@@ -67,4 +69,4 @@ Kiểm thử thuần nghiệp vụ, backend và trình duyệt nằm trong các 
 
 Kết quả chạy 06/11/2026: TypeScript và build đạt; 265 unit test, 110 backend test, 7 kịch bản trình duyệt Phase 2/Admin đạt. Các trường hợp gồm tồn cuối, giữ nguyên giỏ Mua ngay, gộp giỏ/chống gộp trùng, rollback phản hồi chậm, ảnh chờ duyệt không công khai, HTTP Range, tải Storage trực tiếp, đối chiếu thanh toán quá hạn và 3D chỉ tải khi kích hoạt. Backend local đã khởi động lại ở `http://localhost:3000`, health báo Supabase và `demo=false`.
 
-Cần cung cấp bộ ảnh có quyền sử dụng, video, 24–36 khung xoay và cặp GLB/USDZ đúng bao bì để nghiệm thu nội dung thật. Cần danh mục phường/xã Hà Nội đã kiểm tra, cấu hình ETA, merchant/SMS thật và thử iPhone/Android thật. NFR 2,5 giây/3 giây trên 4G, 60 fps và ổn định sau 10 mô hình chưa được chứng nhận từ các bài chạy Chromium desktop. AR và đăng ký báo hết hàng vẫn ngoài phạm vi đang bật, đúng phần quyết định/đề xuất của SRS.
+Cần cung cấp bộ ảnh có quyền sử dụng, video, 24–36 khung xoay và cặp GLB/USDZ đúng bao bì để nghiệm thu nội dung thật. Cần danh mục phường/xã Hà Nội đã kiểm tra, cấu hình ETA, merchant/SMS thật và thử iPhone/Android thật. NFR 2,5 giây/3 giây trên 4G, 60 fps và ổn định sau 10 mô hình chưa được chứng nhận từ các bài chạy Chromium desktop. AR remains excluded by D17. Restock subscription is now implemented as documented above.

@@ -11,6 +11,7 @@ import {placeCheckout} from '../../src/domain/checkout.ts';
 import {createApplication} from '../app.mjs';
 import {issueSession} from '../security.mjs';
 import {beginMediaUpload,completeMediaUpload,cleanProductMedia} from '../product-media-storage.mjs';
+import {restockInterest,processRestock} from '../restock-interest.mjs';
 const PNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGNk+M/AwMDAxMDAwMDAAAAZNAIBWxOnMQAAAABJRU5ErkJggg==','base64');
 test('responsive assets share approval and access checks with the full image',async t=>{
   const {db,state,root}=fixture(t),path='/api/v1/products/'+state.products[0].id+'/media';
@@ -28,6 +29,36 @@ test('responsive assets share approval and access checks with the full image',as
   await productMediaRoute('/api/v1/products/media-assets/'+asset.id,'GET',{}, {db,auth:null,res});assert.deepEqual(output,webp);
 });
 function fixture(t){const db=new Database(':memory:',{demo:true,encryptionKey:'ab'.repeat(32)});t.after(()=>db.close());const state=db.read().state;return {db,state,root:{user:state.users.find(u=>u.adminGroup==='root')},customer:{user:state.users.find(u=>u.role==='customer')}};}
+
+test('restock opt-in is private, deduplicated and sends exactly one in-app notification on replenishment',async t=>{
+  const {db,state,customer,root}=fixture(t),p=state.products.find(p=>p.kind==='ready'&&p.status==='active');state.orders=[];p.stockOnHand=0;await db.save(state);
+  const call=(method,body,auth=customer)=>db.transaction(()=>restockInterest(method,body,{db,auth}));
+  await assert.rejects(call('POST',{productId:p.id,consent:false}),e=>e.status===400);
+  await call('POST',{productId:p.id,consent:true});await call('POST',{productId:p.id,consent:true});
+  await assert.rejects(call('GET',{},customer),e=>e.status===403);await assert.rejects(call('GET',{},null),e=>e.status===403);
+  assert.equal((await call('GET',{},root)).items.length,1);
+  await db.transaction(()=>processRestock(db));assert.equal((await call('GET',{},root)).items[0].status,'waiting');
+  const current=db.read().state;current.products.find(x=>x.id===p.id).stockOnHand=5;await db.save(current);
+  const before=db.read().state.notifications.length;
+  await db.transaction(()=>processRestock(db));await db.transaction(()=>processRestock(db));
+  const notifications=db.read().state.notifications;assert.equal(notifications.length,before+1);assert.equal(notifications[0].userId,customer.user.id);assert.equal(notifications[0].link.id,p.id);
+  assert.equal((await call('GET',{},root)).items[0].status,'notified');
+  await assert.rejects(call('POST',{productId:p.id,consent:true}),e=>e.status===409);
+});
+
+test('guest restock requires a valid phone and consent; manual confirmation needs stock and evidence',async t=>{
+  const {db,state,root,customer}=fixture(t),p=state.products.find(p=>p.kind==='ready'&&p.status==='active');state.orders=[];p.stockOnHand=0;await db.save(state);
+  const call=(method,body,auth=null)=>db.transaction(()=>restockInterest(method,body,{db,auth}));
+  await assert.rejects(call('POST',{productId:p.id,phone:'bad',consent:true}),e=>e.status===400);
+  await call('POST',{productId:p.id,phone:'0901234567',consent:true});const item=(await call('GET',{},root)).items[0];
+  await assert.rejects(call('POST',{action:'mark_notified',id:item.id,note:'Called'},customer),e=>e.status===403);
+  await assert.rejects(call('POST',{action:'mark_notified',id:item.id,note:'Called'},root),e=>e.status===409);
+  await db.transaction(()=>processRestock(db));assert.equal((await call('GET',{},root)).items[0].status,'waiting');
+  const current=db.read().state;current.products.find(x=>x.id===p.id).stockOnHand=3;await db.save(current);
+  await assert.rejects(call('POST',{action:'mark_notified',id:item.id,note:''},root),e=>e.status===400);
+  await call('POST',{action:'mark_notified',id:item.id,note:'Called and informed customer'},root);
+  assert.equal((await call('GET',{},root)).items[0].status,'notified');
+});
 
 test('guest merge caps combined stock, preserves unrelated lines and deduplicates retries',async t=>{
   const {db,state,customer}=fixture(t),p=state.products.find(p=>p.kind==='ready');p.stockOnHand=5;state.orders=[];state.carts[customer.user.customerId]=[{productId:p.id,quantity:3,seenPrice:p.price}];await db.save(state);

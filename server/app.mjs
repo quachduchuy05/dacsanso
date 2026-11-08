@@ -1,3 +1,4 @@
+import {restockInterest} from './restock-interest.mjs';
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
@@ -263,6 +264,7 @@ export async function createApplication(config = {}) {
             const optional = path === '/api/v1/state' || path.startsWith('/api/v1/products') || path === '/api/v1/commands'||path==='/api/v1/media/sign'||(req.method==='GET'&&path.startsWith('/api/v1/lots'));
             let auth = await authenticate(db, req, !(optional||(path==='/api/v1/coop-reviews'&&req.method==='GET')),options);
             if(path==='/api/v1/cart/merge'&&req.method==='POST')return await transactionReply(res,db,async()=>({status:200,body:await mergeGuest(body,{db,auth})}));
+            if(path==='/api/v1/products/restock-interest')return await transactionReply(res,db,async()=>({status:200,body:await restockInterest(req.method,body,{db,auth})}));
             if(['/api/v1/products/events','/api/v1/products/delivery-interest'].includes(path))return await transactionReply(res,db,async()=>({status:200,body:await phase2Events(path,req.method,body,{db,auth})}));
             if(path.startsWith('/api/v1/products/')&&(path.includes('/media')||path.endsWith('/media-catalog'))){
                 if(req.method==='GET'){const result=await productMediaRoute(path,req.method,body,{db,auth,res,headers:req.headers,options,imageWidth:url.searchParams.get('w')});if(result)return json(res,200,result);return;}

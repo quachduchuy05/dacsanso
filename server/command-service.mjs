@@ -1,3 +1,4 @@
+import {processRestock} from './restock-interest.mjs';
 import { readFileSync } from 'node:fs';
 import {requireProductLock} from './product-locks.mjs';
 import { assert, ApiError } from './security.mjs';
@@ -164,6 +165,7 @@ export async function runJobs(db,options={}) {
             await db.save(deriveNotifications(state, result.state, at));
             await db.audit(null, 'scheduled-jobs', '', JSON.stringify(result.report));
         }
+        await processRestock(db);
     });
 }
 export async function executeBatch(db, commands, user, actor, options) {

@@ -50,6 +50,7 @@
     "axe-core": "4.10.2",
     "esbuild": "^0.27.0",
     "tailwindcss": "^4.3.3",
+    "three": "^0.183.2",
     "typescript": "^7.0.2",
     "typescript-api": "npm:typescript@5.9.3",
     "vitest": "^5.0.4"

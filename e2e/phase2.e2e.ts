@@ -52,6 +52,21 @@ function triangle(){
 }
 function card(page:Page,name:string){return page.locator('.signature-rail .shop-product-card').filter({has:page.getByRole('button',{name,exact:true})});}
 
+test('An unavailable ready SKU offers a consent-based guest restock subscription',async({browser})=>{
+  const f=await app(browser);try{
+    f.state().products.find(p=>p.id===f.single.id)!.stockOnHand=0;
+    let submitted:any;
+    await f.context.route('**/api/v1/products/restock-interest',route=>{submitted=route.request().postDataJSON();return route.fulfill({json:{ok:true}});});
+    await f.page.reload();await card(f.page,f.single.name).getByRole('heading').getByRole('button').click();
+    await f.page.getByText('Báo tôi khi có hàng',{exact:true}).click();
+    await f.page.getByLabel('Số điện thoại nhận tin',{exact:true}).fill('0901234567');
+    await f.page.getByLabel('Tôi đồng ý nhận tin khi sản phẩm này có hàng.').check();
+    await f.page.getByRole('button',{name:'Đăng ký báo có hàng',exact:true}).click();
+    await expect(f.page.getByText('Đã ghi nhận đăng ký báo có hàng.',{exact:true})).toBeVisible();
+    expect(submitted).toMatchObject({productId:f.single.id,phone:'0901234567',consent:true});expect(f.errors).toEqual([]);
+  }finally{await f.context.close();}
+});
+
 test('Mobile cart closes on a downward header swipe but not on a short drag',async({browser})=>{
   const f=await app(browser);try{
     await f.page.locator('.shop-header-actions').getByRole('button',{name:/giỏ hàng/i}).click();

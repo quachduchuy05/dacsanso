@@ -1,3 +1,4 @@
+import {RestockInterest} from '../../components/RestockInterest';
 import {ProductGallery} from '../../components/ProductGallery';
 import { AppImage } from '../../components/AppImage';
 import { useEffect, useRef,useState } from 'react';
@@ -111,6 +112,7 @@ export function ProductDetailSheet({ productId,listContext, onClose }: { product
             </div>
           )}
           {blocked && <SeasonWatchButton product={product} />}
+          {remaining<=0&&product.kind==='ready'&&product.status==='active'&&<RestockInterest key={product.id} productId={product.id}/>}
           {!blocked&&product.kind==='preorder'&&<p className="text-sm font-semibold text-champagne-800">Cọc tiền hàng {formatMoney(deposit)} · phí giao xác nhận khi đặt</p>}
           {!blocked&&product.kind==='ready'&&readyDeliveryEstimate(params,now())&&<p className="text-xs text-muted">Dự kiến giao {formatDateKey(readyDeliveryEstimate(params,now())!)}</p>}
           {blocked&&<p role="status" className="rounded-xl bg-stone-100 p-3 text-center font-semibold">{blocked}</p>}

@@ -9,6 +9,8 @@ import '@fontsource/fraunces/500.css';
 import '@fontsource/fraunces/600.css';
 import '@fontsource/fraunces/500-italic.css';
 import App from './App';
+import {lazy,Suspense} from 'react';
+const ModelStudio=lazy(()=>import('./screens/customer/ModelStudio'));
 import { AppCrashBoundary } from './app/AppCrashBoundary';
 import { reloadOnceForNewVersion } from './app/chunkReload';
 import './index.css';
@@ -21,7 +23,7 @@ window.addEventListener('vite:preloadError', (event) => {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppCrashBoundary>
-      <App />
+      {window.location.pathname==='/xem-mo-hinh-3d'?<Suspense fallback={<p role="status">Đang mở bộ sưu tập 3D…</p>}><ModelStudio/></Suspense>:<App />}
     </AppCrashBoundary>
   </StrictMode>,
 );
