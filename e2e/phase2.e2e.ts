@@ -52,6 +52,40 @@ function triangle(){
 }
 function card(page:Page,name:string){return page.locator('.signature-rail .shop-product-card').filter({has:page.getByRole('button',{name,exact:true})});}
 
+test('Preorder checkout presents the 30 percent deposit and creates a pending deposit transaction',async({browser})=>{
+  const f=await app(browser,true);try{
+    const product=f.state().products.find(p=>p.id===f.single.id)!;
+    const future=(days:number)=>{const d=new Date();d.setDate(d.getDate()+days);return d.toISOString().slice(0,10);};
+    product.kind='preorder';product.price=500000;product.preorder={totalSlots:20,deliveryFrom:future(15),deliveryTo:future(30),open:true};
+    f.state().params.depositPercent=30;await f.page.reload();
+    await card(f.page,f.single.name).getByRole('heading').getByRole('button').click();await f.page.getByRole('button',{name:'Đặt trước',exact:true}).click();
+    const schedule=f.page.getByRole('region',{name:'Lịch thanh toán đặt trước'});
+    await expect(schedule).toBeVisible();await expect(schedule).toContainText('cọc 30%');await expect(schedule).toContainText('150.000');
+    await f.page.locator('.checkout-editor-trigger').filter({hasText:'Chọn phương thức thanh toán'}).click();
+    const editor=f.page.locator('dialog.checkout-editor[open]');await editor.getByLabel('Trả online khi hàng sẵn sàng',{exact:true}).check();
+    await editor.getByLabel('Tôi đã đọc và đồng ý điều kiện huỷ trên').check();await editor.getByRole('button',{name:'Xong',exact:true}).click();
+    const place=f.page.getByRole('button',{name:/^Trả ngay /});await expect(place).toBeEnabled();await place.click();
+    await expect.poll(()=>f.state().transactions.length).toBe(1);const tx=f.state().transactions[0],order=f.state().orders[0];expect(tx.amount).toBe(150000);expect(tx.status).toBe('pending');expect(order.amountPaidOnline).toBe(0);expect(order.pricing.deposit+order.pricing.remaining).toBe(order.pricing.total);expect(order.params.depositPercent).toBe(30);
+  }finally{await f.context.close();}
+});
+
+test('Product detail loads the local concept model only on activation when no approved model exists',async({browser})=>{
+  const f=await app(browser);try{
+    let requests=0;
+    await f.context.route('**/api/v1/products/*/media',route=>route.fulfill({json:{items:[]}}));
+    await f.context.route('**/models/concepts/*.glb',async route=>{requests++;await route.continue();});
+    await card(f.page,f.single.name).getByRole('heading').getByRole('button').click();
+    await expect(f.page.getByRole('button',{name:'Xem 3D',exact:true}).first()).toBeVisible();expect(requests).toBe(0);
+    await f.page.getByRole('button',{name:'Xem 3D',exact:true}).first().click();
+    await expect.poll(()=>requests).toBe(1);
+    await expect.poll(()=>f.page.locator('model-viewer').evaluate((el:any)=>el.loaded),{timeout:15000}).toBe(true);
+    await expect(f.page.getByRole('note').filter({hasText:'Bản dựng theo loại sản phẩm'})).toBeVisible();
+    await f.page.emulateMedia({reducedMotion:'reduce'});
+    await expect.poll(()=>f.page.locator('model-viewer').evaluate((el:any)=>el.autoRotate)).toBe(false);
+    await f.page.getByRole('button',{name:'Đóng 3D',exact:true}).click();await expect(f.page.locator('model-viewer')).toHaveCount(0);expect(f.errors).toEqual([]);
+  }finally{await f.context.close();}
+});
+
 test('An unavailable ready SKU offers a consent-based guest restock subscription',async({browser})=>{
   const f=await app(browser);try{
     f.state().products.find(p=>p.id===f.single.id)!.stockOnHand=0;

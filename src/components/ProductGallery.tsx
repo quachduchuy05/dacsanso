@@ -7,24 +7,32 @@ import {familyKey} from '../domain/variants';
 import {assetUrl,sortMedia,type ProductMedia,type MediaEntry} from '../domain/productMedia';
 import type {Product} from '../domain/types';
 import {trackExperience} from '../store/experienceEvents';
+import {productConceptModel} from '../domain/productConcept';
 type PublicMedia=Pick<ProductMedia,'id'|'kind'|'group'|'order'|'alt'|'variantId'|'files'|'poster'>;
 const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 export function ProductGallery({product}:{product:Product}){
   const [items,setItems]=useState<PublicMedia[]>([]),[index,setIndex]=useState(0),[active,setActive]=useState<string|null>(null),[fullscreen,setFullscreen]=useState(false);
+  const [loadedFamily,setLoadedFamily]=useState<string|null>(null);
   const rail=useRef<HTMLDivElement>(null),dialog=useRef<HTMLDialogElement>(null);
   const drag=useRef<{x:number;scroll:number;moved:boolean}|null>(null);
-  useEffect(()=>{let cancelled=false;setActive(null);setIndex(0);setItems([]);
-    void api<{items?:PublicMedia[];entries?:MediaEntry[]}>('/api/v1/products/'+product.id+'/media').then(result=>{if(cancelled)return;setItems(result.items??sortMedia((result.entries??[]).map(e=>e.approved).filter((m):m is ProductMedia=>!!m)).map(m=>({...m,files:m.files.map(assetUrl),poster:m.poster?assetUrl(m.poster):undefined})));}).catch(()=>{});
+  useEffect(()=>{let cancelled=false;setActive(null);setIndex(0);setItems([]);setLoadedFamily(null);
+    void api<{items?:PublicMedia[];entries?:MediaEntry[]}>('/api/v1/products/'+product.id+'/media').then(result=>{if(cancelled)return;setItems(result.items??sortMedia((result.entries??[]).map(e=>e.approved).filter((m):m is ProductMedia=>!!m)).map(m=>({...m,files:m.files.map(assetUrl),poster:m.poster?assetUrl(m.poster):undefined})));setLoadedFamily(familyKey(product));}).catch(()=>{if(!cancelled)setLoadedFamily(familyKey(product));});
     return()=>{cancelled=true;};
   },[familyKey(product)]);
   const legacy=[...new Set([product.image,...(product.images??[])].filter((s):s is string=>!!s))];
-  const media:PublicMedia[]=items.length?items:legacy.map((url,i)=>({id:'legacy-'+i,kind:'image',group:'main',order:i,alt:product.name,files:[url]}));
+  const concept=productConceptModel(product);
+  const media:PublicMedia[]=items.length?[...items]:legacy.map((url,i)=>({id:'legacy-'+i,kind:'image',group:'main',order:i,alt:product.name,files:[url]}));
+  if(loadedFamily===familyKey(product)&&concept&&!media.some(m=>m.kind==='model')){
+    if(!media.length)media.push({id:'concept-photo',kind:'image',group:'main',order:0,alt:product.name,files:[concept.poster]});
+    media.push({id:'concept-model-'+product.id,kind:'model',group:'main',order:1,alt:`Bản dựng tham khảo: ${product.name}`,files:[concept.src],poster:concept.poster});
+  }
   const selected=media[index];
   const activateAt=(i:number)=>{rail.current?.scrollTo({left:i*(rail.current?.clientWidth??0),behavior:'instant'});setIndex(i);setActive(media[i].id);};
   const move=(i:number)=>{setActive(null);rail.current?.scrollTo({left:Math.max(0,Math.min(i,media.length-1))*(rail.current?.clientWidth??0),behavior:reduced()?'instant':'smooth'});};
   useEffect(()=>{setActive(null);const i=items.findIndex(m=>m.variantId===product.id);const next=i>=0?i:0;setIndex(next);rail.current?.scrollTo({left:next*rail.current.clientWidth,behavior:'instant'});},[product.id,items]);
   useEffect(()=>{if(fullscreen)dialog.current?.showModal();else dialog.current?.close();},[fullscreen]);
   return <div className="product-gallery">
+    {active?.startsWith('concept-model-')&&<p className="mb-2 text-xs text-muted" role="note">Bản dựng theo loại sản phẩm; hình dáng bao bì có thể khác hàng thực tế.</p>}
     {!media.length?<ProductImage product={product} variant="cover" className="product-gallery-placeholder"/>:<div className="product-gallery-rail" ref={rail} style={{overflowX:active?'hidden':undefined}} onScroll={event=>{const el=event.currentTarget;const next=Math.round(el.scrollLeft/el.clientWidth);if(next!==index){setIndex(next);setActive(null);}}} role="region" aria-label="Thư viện sản phẩm" tabIndex={0} onKeyDown={event=>{if(event.target!==event.currentTarget||!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();move(index+(event.key==='ArrowRight'?1:-1));}}
       onPointerDown={event=>{delete event.currentTarget.dataset.dragged;if(!active&&event.pointerType==='mouse'&&event.button===0)drag.current={x:event.clientX,scroll:event.currentTarget.scrollLeft,moved:false};}}
       onPointerMove={event=>{const d=drag.current;if(!d||active)return;if(Math.abs(event.clientX-d.x)>7){d.moved=true;event.currentTarget.setPointerCapture(event.pointerId);event.currentTarget.style.scrollSnapType='none';event.currentTarget.scrollLeft=d.scroll-event.clientX+d.x;}}}
@@ -66,7 +74,17 @@ export function ModelDisplay({item,onClose,fallback}:{item:PublicMedia;onClose:(
   const [loaded,setLoaded]=useState(false),[progress,setProgress]=useState(0),[error,setError]=useState('');
   const viewer=useRef<HTMLElement & {cameraOrbit:string;autoRotate:boolean;jumpCameraToGoal:()=>void}|null>(null);
   useEffect(()=>{let alive=true;trackExperience('open_3d');void import('@google/model-viewer').then(({ModelViewerElement})=>{ModelViewerElement.modelCacheSize=0;if(alive)setLoaded(true);}).catch(()=>{if(alive)setError('Thiết bị chưa mở được 3D. Bạn vẫn có thể xem ảnh sản phẩm.');});return()=>{alive=false;};},[]);
-  useEffect(()=>{const el=viewer.current;if(!el)return;const update=(event:Event)=>setProgress(Math.round((event as CustomEvent).detail.totalProgress*100));const fail=()=>setError('Không tải được mô hình. Đóng để tiếp tục xem ảnh.');el.addEventListener('progress',update);el.addEventListener('error',fail);return()=>{el.removeEventListener('progress',update);el.removeEventListener('error',fail);el.removeAttribute('src');};},[loaded,error]);
+  useEffect(()=>{
+    const el=viewer.current;if(!el)return;
+    const update=(event:Event)=>setProgress(Math.round((event as CustomEvent).detail.totalProgress*100));
+    const fail=()=>setError('3D unavailable');
+    const timer=setTimeout(fail,30000),ready=()=>clearTimeout(timer);
+    const preference=matchMedia('(prefers-reduced-motion: reduce)');
+    const pause=()=>{if(preference.matches||document.hidden)el.autoRotate=false;};
+    el.addEventListener('progress',update);el.addEventListener('error',fail);el.addEventListener('load',ready);
+    preference.addEventListener('change',pause);document.addEventListener('visibilitychange',pause);pause();
+    return()=>{clearTimeout(timer);el.removeEventListener('progress',update);el.removeEventListener('error',fail);el.removeEventListener('load',ready);preference.removeEventListener('change',pause);document.removeEventListener('visibilitychange',pause);el.removeAttribute('src');};
+  },[loaded,error]);
   if(error&&fallback?.kind==='spin')return <SpinDisplay item={fallback} onClose={onClose}/>;
   return <div className="product-model">{error?<><AppImage src={item.poster} alt={item.alt}/><p role="status">Ảnh sản phẩm · {item.alt}</p></>:<>{!loaded&&<AppImage src={item.poster} alt={item.alt}/>} {loaded&&createElement('model-viewer',{ref:viewer,src:item.files[0],poster:item.poster,alt:item.alt,'camera-controls':'','auto-rotate':reduced()?undefined:'','interaction-prompt':'none','environment-image':'neutral',onPointerDown:()=>{if(viewer.current)viewer.current.autoRotate=false;trackExperience('rotate_3d');},style:{width:'100%',height:'100%'}})}{progress<100&&<div className="product-model-loading" role="status">Đang tải 3D… {progress}%</div>}</>}
     <div className="product-model-tools">{!error&&<button aria-label="Đặt lại góc nhìn 3D" onClick={()=>{if(viewer.current){viewer.current.cameraOrbit='0deg 75deg auto';viewer.current.jumpCameraToGoal();}}}><RotateCcw size={18}/> Đặt lại</button>}<button onClick={onClose}><X size={18}/> {error?'Đóng':'Đóng 3D'}</button></div>

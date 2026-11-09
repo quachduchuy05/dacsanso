@@ -22,7 +22,7 @@ export function PaymentSheet({ txId, onClose }: { txId: string; onClose: () => v
   if (!tx) return null;
 
   const left = secondsLeft(tx, at);
-  const mm = String(Math.floor(left / 60)).padStart(2, '0');
+  const mm = String(Math.floor(left / 60) % 60).padStart(2, '0');
   const ss = String(left % 60).padStart(2, '0');
   const pending = tx.status === 'pending' && left > 0;
   const isRemaining = tx.kind === 'remaining';
@@ -110,7 +110,8 @@ export function PaymentSheet({ txId, onClose }: { txId: string; onClose: () => v
               <span>
                 <span className="block font-mono text-xs font-bold">{o.id}</span>
                 {o.coopName} · {ORDER_KIND_LABEL[o.kind]}
-                {o.kind === 'preorder' && !isRemaining ? ' (tiền cọc)' : ''}
+                {o.kind === 'preorder' && !isRemaining ? ` (cọc ${o.params.depositPercent}%)` : ''}
+                {o.kind==='preorder'&&<span className="mt-1 block text-xs leading-relaxed text-muted">{isRemaining?'Đây là phần còn lại, không thu lại tiền cọc.':`Còn ${formatMoney(o.pricing.remaining)} ${o.paymentMethod==='cod'?'trả khi nhận':'trả online khi hàng sẵn sàng'}. Phần này đã gồm phí giao.`}</span>}
               </span>
               <span className="font-bold tabular-nums">{formatMoney(tx.amounts[id] ?? 0)}</span>
             </div>

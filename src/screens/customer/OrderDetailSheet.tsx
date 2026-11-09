@@ -1,3 +1,4 @@
+import {PreorderPaymentSchedule} from '../../components/PreorderPaymentSchedule';
 import { useState } from 'react';
 import { useUi } from '../../app/UiContext';
 import { BottomSheet, SheetColumns } from '../../components/BottomSheet';
@@ -172,6 +173,7 @@ export function OrderDetailSheet({ orderId, onClose }: { orderId: string; onClos
               </div>
             </section>
 
+            {order.kind==='preorder'&&<PreorderPaymentSchedule pricing={p} percent={order.params.depositPercent} step={order.params.depositRoundingStep} method={order.paymentMethod}/>}
             {order.cancelPolicy && <p className="rounded-xl bg-champagne-50 p-2.5 text-sm text-champagne-950">Điều kiện huỷ đã đồng ý: {order.cancelPolicy}</p>}
 
             {refunds.length > 0 && (

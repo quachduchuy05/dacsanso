@@ -32,6 +32,7 @@ export function SignatureStorefront() {
   return <div className="shop-page signature-home" ref={motionRoot}>
     <div className="signature-reading-progress" aria-hidden="true"/>
     <section className="signature-stage" id="shop-home" aria-labelledby="signature-title">
+      <picture className="warm-hero-picture"><source media="(max-width: 767px)" srcSet="/images/concepts/warm-specialties-hero-v1-768.webp"/><img src="/images/concepts/warm-specialties-hero-v1.webp" alt="Mật ong, chè và mận trên bàn đá sáng" fetchPriority="high" decoding="async"/></picture>
       <div className="shop-container signature-stage-inner">
         <div className="signature-intro"><span className="signature-kicker"><span /> LÀO CAI · TUYỂN TẬP HƯƠNG VỊ</span>
           <h1 id="signature-title">{state.homepage?.title||'Thức quà của đất.'}<br/><em>{state.homepage?.subtitle||'Dư vị của lòng.'}</em></h1>
@@ -39,16 +40,14 @@ export function SignatureStorefront() {
           <button className="signature-primary" onClick={openCatalog}>Tìm thức quà của bạn <ArrowUpRight size={20}/></button>
           <span className="signature-origin"><MapPin size={14}/> Sản vật Lào Cai · Giao tại Hà Nội</span>
         </div>
-        <div className="signature-exhibit">
-          <span className="signature-orbit" aria-hidden="true"/>
+        <div className="signature-exhibit warm-featured-product">
           {chosen ? <>
             <button className="signature-exhibit-product" onClick={() => openModal({ type: 'product_detail', productId: chosen.id })} aria-label={`Khám phá ${chosen.name}`}>
-              <ProductImage product={{...chosen,image:productPosters[chosen.variantOf??chosen.id]??chosen.image}} variant="cover" priority className="signature-product-image"/>
+              <ProductImage product={{...chosen,image:productPosters[chosen.variantOf??chosen.id]??chosen.image}} variant="card" className="signature-product-image"/>
               <span className="signature-exhibit-link"><ArrowUpRight size={26}/></span>
             </button>
             <div className="signature-exhibit-caption"><span>{chosen.region}</span><h2>{chosen.name}</h2><p>{chosen.unit} <span>—</span> <strong>{formatMoney(chosen.price)}</strong></p></div>
           </> : <div className="signature-awaiting"><Sprout size={64} strokeWidth={1}/><h2>Đợi một mùa hương mới.</h2><p>Danh mục đang được cập nhật.</p></div>}
-          <span className="signature-edition">NGUYÊN BẢN TỪ NGUỒN CỘI</span>
         </div>
         <div className="signature-stage-foot"><span>ĐẶC SẢN SỐ / TỪ MIỀN ĐẤT LÀNH</span><button onClick={() => goTo('products')}>Chậm lại, khám phá thêm <ArrowDown size={16}/></button></div>
       </div>

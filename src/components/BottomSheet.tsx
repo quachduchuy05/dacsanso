@@ -53,7 +53,7 @@ export function BottomSheet({ title, onClose, children, footer, closeLabel = 'Đ
         {/* Viền vàng mảnh và hoa văn ở mép trên của sheet. */}
         <div aria-hidden="true" className="brocade-light h-2 shrink-0 opacity-80" />
         <div className={`app-sheet-header relative flex shrink-0 items-start justify-between gap-3 border-b border-champagne-200/70 px-5 pt-2 pb-2 ${swipeToClose?'sheet-swipe-header':''}`}
-          style={swipeToClose?{touchAction:'pan-x'}:undefined}
+          style={swipeToClose?{touchAction:'pan-x pinch-zoom'}:undefined}
           onPointerDown={event=>{if(!swipeToClose||event.pointerType!=='touch'||!matchMedia('(max-width: 767px)').matches||(event.target as HTMLElement).closest('button,input,a,select,textarea'))return;gesture.current={x:event.clientX,y:event.clientY,distance:0};event.currentTarget.setPointerCapture(event.pointerId);}}
           onPointerMove={event=>{const g=gesture.current;if(!g)return;const dx=event.clientX-g.x,dy=event.clientY-g.y;if(Math.abs(dx)>24&&Math.abs(dx)>Math.abs(dy)){resetDrag();return;}g.distance=Math.max(0,dy);if(sheet.current)sheet.current.style.transform=`translateY(${Math.min(g.distance,240)}px)`;}}
           onPointerUp={()=>{const close=(gesture.current?.distance??0)>=85;resetDrag();if(close)onClose();}}

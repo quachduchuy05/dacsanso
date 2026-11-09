@@ -172,6 +172,8 @@ export function updateParam<K extends ParamKey>(
   if(key==='readyDeliveryDays'&&(!Number.isInteger(newValue)||Number(newValue)<0||Number(newValue)>14))return fail('Ngày giao dự kiến phải là số nguyên 0–14.');
   if(!PARAM_CATALOG.some(item=>item.key===key))return fail('Tham số không được hỗ trợ.');
   if (!reason.trim()) return fail('Vui lòng nhập lý do thay đổi tham số.');
+  if(key==='depositPercent'&&(typeof newValue!=='number'||!Number.isFinite(newValue)||newValue<=0||newValue>100))return fail('Tỷ lệ cọc phải lớn hơn 0 và không vượt 100%.');
+  if(key==='depositRoundingStep'&&(!Number.isSafeInteger(newValue)||Number(newValue)<1))return fail('Bước làm tròn tiền cọc phải là số nguyên dương.');
   const meta = PARAM_CATALOG.find((m) => m.key === key);
   if (typeof newValue === 'number' && (!Number.isFinite(newValue) || newValue < 0)) {
     return fail('Giá trị tham số không hợp lệ.');

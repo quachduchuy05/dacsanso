@@ -7,3 +7,10 @@ export function productConcept(product: Pick<Product,'name'>): string | undefine
   const slug=entries.find(([pattern])=>pattern.test(name))?.[1];
   return slug?`/images/concepts/${slug}-3d-v1.webp`:undefined;
 }
+
+export function productConceptModel(product: Pick<Product,'name'>): {src:string;poster:string}|undefined {
+  const poster=productConcept(product);
+  if(!poster)return;
+  const slug=poster.split('/').at(-1)!.replace('-3d-v1.webp','');
+  return {src:`/models/concepts/${slug}-v1.glb`,poster};
+}

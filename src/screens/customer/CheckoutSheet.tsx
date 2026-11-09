@@ -1,3 +1,4 @@
+import {PreorderPaymentSchedule} from '../../components/PreorderPaymentSchedule';
 import {trackExperience} from '../../store/experienceEvents';
 import {DeliveryInterest} from '../../components/DeliveryInterest';
 import {api} from '../../store/backend';
@@ -211,6 +212,7 @@ export function CheckoutSheet({ source, preferredAddressId, draft,skipAddressPro
             {placing ? 'Đang đặt…' : 'Trả ngay '+formatMoney(payNow)}
           </PrimaryButton>
           {plan.totals.payOnDelivery>0&&<p className="text-center text-sm">Trả khi nhận {formatMoney(plan.totals.payOnDelivery)}</p>}
+          {plan.totals.remainingLater>0&&<p className="text-center text-sm">Trả online khi hàng sẵn sàng {formatMoney(plan.totals.remainingLater)}</p>}
 
         </div>
       }
@@ -389,7 +391,7 @@ export function CheckoutSheet({ source, preferredAddressId, draft,skipAddressPro
       {(
         <>
           {plan.orders.map((o, i) => (
-            <OrderSummary key={o.key} order={o} index={i + 1} total={plan.orders.length} />
+            <OrderSummary key={o.key} order={o} index={i + 1} total={plan.orders.length} percent={state.params.depositPercent} step={state.params.depositRoundingStep} />
           ))}
           <section className="space-y-1 rounded-2xl bg-stone-900 p-3 text-sm text-white">
             <Row label="Tổng lần đặt" value={formatMoney(plan.totals.grandTotal)} />
@@ -452,7 +454,7 @@ function PaymentChoice({ order, onChange,selected=true }: { order: PlannedOrder;
   );
 }
 
-function OrderSummary({ order: o, index, total }: { order: PlannedOrder; index: number; total: number }) {
+function OrderSummary({ order: o, index, total,percent,step }: { order: PlannedOrder; index: number; total: number;percent:number;step:number }) {
   const p = o.pricing;
   return (
     <section className="space-y-2 rounded-2xl border border-stone-200 p-3 text-sm">
@@ -460,6 +462,7 @@ function OrderSummary({ order: o, index, total }: { order: PlannedOrder; index: 
         Đơn {index}/{total}: {o.coopName} · {ORDER_KIND_LABEL[o.kind]}
         {o.estimatedDeliveryDate ? ` · dự kiến ${formatDateKey(o.estimatedDeliveryDate)}` : ''}
       </h4>
+      {o.kind==='preorder'&&<PreorderPaymentSchedule pricing={p} percent={percent} step={step} method={o.paymentMethod}/>}
       <p className="text-stone-600">
         Giao tới: {o.address.receiverName}, {o.address.text}
       </p>
