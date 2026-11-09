@@ -186,3 +186,16 @@ body:has(.shop-shell) .app-sheet{background:var(--brand-paper);color:var(--brand
  .catalog-close-filters{display:flex;align-items:center;justify-content:space-between;gap:15px;min-height:44px;width:100%;margin:-15px 0 15px;color:var(--brand-forest);font-size:12px;border-bottom:1px solid var(--brand-line)}
 }
 @media(prefers-reduced-motion:reduce){.shop-header-inner,.editorial-region-image img{transition:none}.editorial-region:hover .editorial-region-image img{transform:none}}
+
+/* A single edge-to-edge photograph under both the headline and product area. */
+.signature-stage.hero-fullbleed .warm-hero-picture{inset:0;width:100%;height:100%;clip-path:none}
+.signature-stage.hero-fullbleed .warm-hero-picture img{width:100%;height:100%;object-fit:cover;object-position:center 65%;opacity:1}
+.signature-stage.hero-fullbleed:before{display:block;content:'';position:absolute;inset:0;z-index:0;pointer-events:none;opacity:1;background:linear-gradient(90deg,#f7f4eceb 0%,#f7f4ecb5 34%,#f7f4ec38 52%,transparent 68%)}
+.hero-fullbleed .signature-stage-inner{min-height:clamp(610px,78svh,850px);z-index:1}
+.hero-fullbleed .signature-stage-foot{background:transparent;border-color:#163d2b33}
+@media(max-width:767px){
+ .hero-fullbleed .signature-stage-inner{min-height:700px}
+ .signature-stage.hero-fullbleed .warm-hero-picture img{object-position:67% center}
+ .signature-stage.hero-fullbleed:before{background:linear-gradient(180deg,#f7f4ecf2 0%,#f7f4ece8 24%,#f7f4ecb0 46%,#f7f4ec22 73%,#f7f4ec80 100%)}
+ .hero-fullbleed .signature-stage-foot{background:#f7f4ecb8}
+}

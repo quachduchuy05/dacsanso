@@ -32,7 +32,7 @@ export function SignatureStorefront() {
   const account = () => user ? setCustomerTab('account') : window.dispatchEvent(new Event('show-login'));
   return <div className="shop-page signature-home" ref={motionRoot}>
     <div className="signature-reading-progress" aria-hidden="true"/>
-    <section className="signature-stage" id="shop-home" aria-labelledby="signature-title">
+    <section className="signature-stage hero-fullbleed" id="shop-home" aria-labelledby="signature-title">
       <picture className="warm-hero-picture"><source media="(max-width: 767px)" srcSet="/images/concepts/warm-specialties-hero-v1-768.webp"/><img src="/images/concepts/warm-specialties-hero-v1.webp" alt="Mật ong, chè và mận trên bàn đá sáng" fetchPriority="high" decoding="async"/></picture>
       <div className="shop-container signature-stage-inner">
         <div className="signature-intro"><span className="signature-kicker"><span /> LÀO CAI · TUYỂN TẬP HƯƠNG VỊ</span>
