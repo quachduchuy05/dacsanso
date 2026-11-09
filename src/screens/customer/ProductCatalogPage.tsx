@@ -1,3 +1,4 @@
+import {CommerceFooter} from './CommerceFooter';
 import {FeaturedCollections} from './FeaturedCollections';
 import {SignatureRail} from './SignatureStorefront';
 import {useEffect,useMemo,useState} from 'react';
@@ -20,7 +21,7 @@ const KEY='dac-san-so-lao-cai:catalog-view';
 function restored(){try{return JSON.parse(sessionStorage.getItem(KEY)??'null');}catch{return null;}}
 function restoreFilters(){const value=restored()?.applied;return value&&Array.isArray(value.categories)&&Array.isArray(value.regions)?{...empty(),...value}:empty();}
 export function ProductCatalogPage(){
-  const {state}=useStore();const {query,setQuery,goTo}=useStorefront();const {user,openModal}=useUi();
+  const {state,sync,syncNow}=useStore();const {query,setQuery,goTo}=useStorefront();const {user,openModal}=useUi();
   const [draft,setDraft]=useState<Filters>(restoreFilters),[applied,setApplied]=useState<Filters>(restoreFilters),[sort,setSort]=useState<SortKey>(()=>restored()?.sort??'relevant'),[page,setPage]=useState(()=>restored()?.page??1),[mobileFilters,setMobileFilters]=useState(false);
   useEffect(()=>{setPage(1);},[query]);
   useEffect(()=>{try{sessionStorage.setItem(KEY,JSON.stringify({applied,sort,page}));}catch{}},[applied,sort,page]);
@@ -31,17 +32,20 @@ export function ProductCatalogPage(){
     return (!applied.onlyAvailable||(isOrderableIn(state,p)&&remainingFor(state,p)>0))&&(!applied.categories.length||applied.categories.includes(p.category))&&(!applied.regions.length||regionsOf(p).some(r=>applied.regions.includes(r)))&&(!band||(price>=band.min&&price<=band.max))&&(!applied.catalogCategoryId||p.catalogCategoryId===applied.catalogCategoryId)&&(!applied.kind||p.kind===applied.kind)&&(!applied.coop||p.coopId===applied.coop)&&(!applied.express||p.expressApproved)&&(!applied.stars||(familyRating(state,p).average??0)>=applied.stars)&&(!applied.cert||p.certifications?.some(c=>c.verified&&c.label===applied.cert&&c.validUntil>=new Date().toISOString().slice(0,10)))&&matchesSearch(query,[p.name,p.region,p.unit,CATEGORY_LABEL[p.category],state.coops.find(c=>c.id===p.coopId)?.name]);
   }),sort);
   const pages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE)),current=Math.min(page,pages),shown=filtered.slice((current-1)*PAGE_SIZE,current*PAGE_SIZE);
-  const reset=()=>{const next={...empty(),categories:applied.categories,catalogCategoryId:applied.catalogCategoryId};setDraft(next);setApplied(next);setPage(1);};
+  const reset=()=>{const next=empty();setDraft(next);setApplied(next);setQuery('');setPage(1);};
   const toggleCategory=(category:Category)=>setDraft(f=>({...f,categories:f.categories.includes(category)?f.categories.filter(c=>c!==category):[...f.categories,category]}));
   const toggleRegion=(region:string)=>setDraft(f=>({...f,regions:f.regions.includes(region)?f.regions.filter(r=>r!==region):[...f.regions,region]}));
   const remove=(kind:'categories'|'regions'|'price',value:string)=>{const next={...applied,[kind]:kind==='price'?'':applied[kind].filter(v=>v!==value)} as Filters;setApplied(next);setDraft(next);setPage(1);};
-  const changePage=(value:number)=>{setPage(value);document.getElementById('catalog-results')?.scrollIntoView({behavior:'smooth',block:'start'});};
+  const changePage=(value:number)=>{setPage(value);document.getElementById('catalog-results')?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});};
   return <div className="shop-page catalog-page">
     <section className="catalog-banner"><img src="/images/stitch/specialties-hero-v2.jpg" alt="Các thức quà đặc sản"/><div className="catalog-banner-shade"/><div className="shop-container catalog-banner-inner"><div><nav aria-label="Đường dẫn" className="catalog-breadcrumb"><button onClick={()=>goTo('home')}>TRANG CHỦ</button><ChevronRight size={12}/><span>SẢN PHẨM ĐẶC SẢN</span></nav><h1>Tinh Hoa Đặc Sản Vùng Miền</h1><p>Khám phá những sản vật nguyên bản từ các hợp tác xã vùng cao.<br/>Chọn một hương vị quê nhà, gửi gắm một chút thương.</p></div><span className="catalog-result-count"><SlidersHorizontal size={16}/> Hiển thị {shown.length} trên {filtered.length} sản phẩm</span></div></section>
     <div className="shop-container"><FeaturedCollections renderRail={(products,label)=><SignatureRail products={products} label={label} onViewAll={()=>document.getElementById('catalog-results')?.scrollIntoView({block:'start'})}/>}/></div>
+    {sync.mode==='checking'&&<div role="status" className="shop-container commerce-catalog-notice">Đang tải danh mục đặc sản…</div>}
+    {sync.mode==='shared'&&['offline','error'].includes(sync.phase)&&<div role="alert" className="shop-container commerce-catalog-notice"><span>Chưa cập nhật được danh mục. Vui lòng kiểm tra kết nối.</span><button onClick={syncNow}>Thử lại</button></div>}
     <div className="shop-container catalog-layout">
-      <button className="catalog-mobile-toggle" aria-expanded={mobileFilters} onClick={()=>setMobileFilters(!mobileFilters)}><SlidersHorizontal size={17}/> Bộ lọc tìm kiếm {mobileFilters?<X size={17}/>:null}</button>
-      <aside className={`catalog-sidebar ${mobileFilters?'is-open':''}`} aria-label="Bộ lọc sản phẩm"><div className="catalog-filter-title"><h2><SlidersHorizontal size={18}/> Bộ lọc tìm kiếm</h2><button onClick={reset}>Đặt lại</button></div>
+      <button className="catalog-mobile-toggle" aria-controls="catalog-filters" aria-expanded={mobileFilters} onClick={()=>setMobileFilters(!mobileFilters)}><SlidersHorizontal size={17}/> Bộ lọc tìm kiếm {mobileFilters?<X size={17}/>:null}</button>
+      <aside id="catalog-filters" onKeyDown={e=>{if(e.key==='Escape')setMobileFilters(false);}} className={`catalog-sidebar ${mobileFilters?'is-open':''}`} aria-label="Bộ lọc sản phẩm"><div className="catalog-filter-title"><h2><SlidersHorizontal size={18}/> Bộ lọc tìm kiếm</h2><button onClick={reset}>Đặt lại</button></div>
+        <button className="catalog-close-filters" onClick={()=>setMobileFilters(false)}>Đóng bộ lọc <X size={16}/></button>
         <fieldset><legend>DANH MỤC SẢN PHẨM</legend><label><input type="checkbox" checked={!draft.categories.length} onChange={()=>setDraft(f=>({...f,categories:[]}))}/><span>Tất cả sản phẩm</span><small>{families.length}</small></label>{(['dry','processed','fresh'] as const).map(category=><label key={category}><input type="checkbox" checked={draft.categories.includes(category)} onChange={()=>toggleCategory(category)}/><span>{CATEGORY_LABEL[category]}</span><small>{families.filter(p=>p.category===category).length}</small></label>)}</fieldset>
         <fieldset><legend>VÙNG MIỀN</legend>{regions.map(region=><label key={region}><input type="checkbox" checked={draft.regions.includes(region)} onChange={()=>toggleRegion(region)}/><span>{region}</span><small>{families.filter(p=>regionsOf(p).includes(region)).length}</small></label>)}</fieldset>
         <fieldset><legend>KHOẢNG GIÁ</legend>{BANDS.map(band=><label key={band.id}><input type="radio" name="catalog-price" checked={draft.price===band.id} onChange={()=>setDraft(f=>({...f,price:band.id}))}/><span>{band.label}</span></label>)}</fieldset>
@@ -55,6 +59,6 @@ export function ProductCatalogPage(){
         {filtered.length>0&&<nav className="catalog-pagination" aria-label="Phân trang sản phẩm"><button aria-label="Trang trước" disabled={current===1} onClick={()=>changePage(current-1)}><ChevronLeft size={17}/></button>{Array.from({length:pages},(_,i)=><button key={i} aria-label={`Trang ${i+1}`} aria-current={current===i+1?'page':undefined} onClick={()=>changePage(i+1)}>{i+1}</button>)}<button aria-label="Trang sau" disabled={current===pages} onClick={()=>changePage(current+1)}><ChevronRight size={17}/></button></nav>}
       </section>
     </div>
-    <footer className="shop-footer"><div className="shop-container"><div className="shop-footer-grid"><div className="shop-footer-brand"><span>Đặc Sản Số</span><p>Mang hương vị tinh hoa từ những miền đất lành đến ngôi nhà của bạn, cùng sự trân trọng dành cho con người và nguồn cội.</p></div><div><h3>Liên kết nhanh</h3><button onClick={()=>goTo('about')}>Về chúng tôi</button><button onClick={()=>goTo('home')}>Trang chủ</button><button onClick={()=>goTo('journal')}>Câu chuyện vùng miền</button></div><div><h3>Thông tin & hỗ trợ</h3><button onClick={()=>user?openModal({type:'chat'}):window.dispatchEvent(new Event('show-login'))}>Liên hệ hợp tác xã</button><button onClick={()=>user?openModal({type:'cart'}):window.dispatchEvent(new Event('show-login'))}>Giỏ hàng của tôi</button><button onClick={()=>goTo('contact')}>Thông tin cửa hàng</button></div><div className="shop-footer-connect"><h3>Gắn kết những hương vị</h3><p>Đăng nhập để lưu đặc sản yêu thích và theo dõi mùa vụ mới.</p><button className="shop-button shop-button-sage" onClick={()=>user?openModal({type:'favorites'}):window.dispatchEvent(new Event('show-login'))}>{user?'Đặc sản yêu thích':'Đồng hành cùng chúng tôi'} <ArrowRight size={16}/></button></div></div><div className="shop-footer-bottom"><span>© {new Date().getFullYear()} Đặc Sản Số. Trân trọng từng hương vị.</span><span><Sprout size={14}/> Từ những miền đất lành.</span></div></div></footer>
+    <CommerceFooter/>
   </div>;
 }

@@ -52,6 +52,17 @@ function triangle(){
 }
 function card(page:Page,name:string){return page.locator('.signature-rail .shop-product-card').filter({has:page.getByRole('button',{name,exact:true})});}
 
+test('Editorial regions open a real catalog search and mobile filters close without losing the query',async({browser})=>{
+  const f=await app(browser);try{
+    await expect.poll(()=>f.page.locator('.signature-rail').first().evaluate(el=>el.scrollLeft)).toBe(0);
+    const region=f.page.locator('.editorial-region').first();const name=await region.locator('strong').innerText();await region.click();
+    await expect(f.page.locator('.catalog-page')).toBeVisible();await expect(f.page.locator('.shop-search input')).toHaveValue(name);
+    await f.page.getByRole('button',{name:'Bộ lọc tìm kiếm',exact:true}).click();await expect(f.page.locator('#catalog-filters')).toBeVisible();
+    await f.page.getByRole('button',{name:'Đóng bộ lọc',exact:true}).click();await expect(f.page.locator('#catalog-filters')).not.toBeVisible();
+    await f.page.locator('.commerce-footer').getByRole('button',{name:'Giao hàng & thanh toán'}).click();await expect(f.page.getByRole('dialog')).toContainText('30%');expect(f.errors).toEqual([]);
+  }finally{await f.context.close();}
+});
+
 test('Preorder checkout presents the 30 percent deposit and creates a pending deposit transaction',async({browser})=>{
   const f=await app(browser,true);try{
     const product=f.state().products.find(p=>p.id===f.single.id)!;

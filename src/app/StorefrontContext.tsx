@@ -31,9 +31,10 @@ export function StorefrontProvider({ children }: {
         window.dispatchEvent(new Event('browse-catalog'));
         if(window.location.pathname==='/san-pham')history.pushState(null,'','/');
         setCatalog(false);
+        const behavior=matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth';
         requestAnimationFrame(() => requestAnimationFrame(() => {
             if (section === 'home')
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior });
             else
                 document.getElementById(`shop-${section}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }));

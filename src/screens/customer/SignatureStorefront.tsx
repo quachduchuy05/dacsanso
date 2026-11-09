@@ -1,5 +1,7 @@
+import {CommerceFooter} from './CommerceFooter';
+import {EditorialRegions} from './EditorialRegions';
 import {trackExperience} from '../../store/experienceEvents';
-import { useMemo, useRef, useState } from 'react';
+import { useLayoutEffect,useMemo, useRef, useState } from 'react';
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Leaf, MapPin, PackageCheck, ShieldCheck, Sprout, Truck } from 'lucide-react';
 import { useStorefront } from '../../app/StorefrontContext';
 import { useUi } from '../../app/UiContext';
@@ -8,7 +10,7 @@ import { ProductImage } from '../../components/ProductImage';
 import { FaqSection } from '../../components/FaqSection';
 import { groupFamilies } from '../../domain/variants';
 import { isOrderableIn } from '../../domain/cart';
-import { remainingFor, regionsOf } from '../../domain/state';
+import { remainingFor } from '../../domain/state';
 import { formatMoney } from '../../domain/pricing';
 import { type Product } from '../../domain/types';
 import { StorefrontProductCard } from './StorefrontPage';
@@ -26,7 +28,6 @@ export function SignatureStorefront() {
     .map(items => items.find(p => isOrderableIn(state, p) && remainingFor(state, p) > 0) ?? items[0]), [state]);
   const chosen = families.find(p => (productPosters[p.variantOf??p.id]||p.image) && isOrderableIn(state, p)) ?? families[0];
   const shown = families.filter(p => selection === 'all' || p.kind === selection);
-  const regions = [...new Set(families.flatMap(regionsOf))];
   const searchRegion = (region: string) => { setQuery(region); openCatalog(); };
   const account = () => user ? setCustomerTab('account') : window.dispatchEvent(new Event('show-login'));
   return <div className="shop-page signature-home" ref={motionRoot}>
@@ -37,7 +38,8 @@ export function SignatureStorefront() {
         <div className="signature-intro"><span className="signature-kicker"><span /> LÀO CAI · TUYỂN TẬP HƯƠNG VỊ</span>
           <h1 id="signature-title">{state.homepage?.title||'Thức quà của đất.'}<br/><em>{state.homepage?.subtitle||'Dư vị của lòng.'}</em></h1>
           <p>{state.homepage?.description||<>Chọn một hương vị để thưởng thức.<br/>Giữ một câu chuyện để trao đi.</>}</p>
-          <button className="signature-primary" onClick={openCatalog}>Tìm thức quà của bạn <ArrowUpRight size={20}/></button>
+          <button className="signature-primary" onClick={openCatalog}>Khám phá đặc sản <ArrowUpRight size={20}/></button>
+          <button className="signature-text-link editorial-story-link" onClick={()=>goTo('about')}>Câu chuyện của chúng tôi <ArrowRight size={16}/></button>
           <span className="signature-origin"><MapPin size={14}/> Sản vật Lào Cai · Giao tại Hà Nội</span>
         </div>
         <div className="signature-exhibit warm-featured-product">
@@ -65,7 +67,7 @@ export function SignatureStorefront() {
       </section>
 
       <section className="shop-container signature-provenance" id="shop-about" aria-labelledby="signature-provenance-title">
-        <div className="signature-provenance-art"><span className="signature-monogram" aria-hidden="true">ĐS</span><Leaf size={42} strokeWidth={1}/><p>Đất lành<br/><em>gửi vị.</em></p><span>LÀO CAI, VIỆT NAM</span></div>
+        <div className="signature-provenance-art editorial-story-photo"><img src="/images/concepts/honey-tea-3d-v1.webp" alt="Chè và mật ong trên bàn đá" loading="lazy" width="1122" height="1402"/><span className="signature-monogram" aria-hidden="true">ĐS</span><Leaf size={42} strokeWidth={1}/><p>Đất lành<br/><em>gửi vị.</em></p><span>LÀO CAI, VIỆT NAM</span></div>
         <div className="signature-provenance-copy"><p className="signature-kicker">02 / ĐIỀU LÀM NÊN GIÁ TRỊ</p><h2 id="signature-provenance-title">Mua bằng cảm xúc.<br/><em>An tâm bằng thông tin.</em></h2><p>Vẻ đẹp của một thức quà bắt đầu từ điều chân thật. Tìm hiểu nơi sản xuất, đọc câu chuyện phía sau và chọn quy cách phù hợp ngay trong từng sản phẩm.</p>
           <div className="signature-value"><span>01</span><div><h3>Biết nguồn, hiểu vị</h3><p>Vùng sản xuất và nhà cung cấp được trình bày cùng sản phẩm. Chứng nhận có thể xem khi hồ sơ đã được xác minh.</p></div></div>
           <div className="signature-value"><span>02</span><div><h3>Trọn vẹn trước khi chọn</h3><p>Xem giá, quy cách, tình trạng hàng và thông tin đặt trước. Kiểm tra phí giao cùng số tiền tại bước đặt hàng.</p></div></div>
@@ -73,17 +75,25 @@ export function SignatureStorefront() {
         </div>
       </section>
 
-      <section className="shop-container signature-terroir" id="shop-regions" aria-labelledby="signature-regions-title"><div><p className="signature-kicker">03 / MỖI MIỀN MỘT PHONG VỊ</p><h2 id="signature-regions-title">Tìm về <em>nơi vị bắt đầu.</em></h2></div><div className="signature-region-list">{regions.length ? regions.map((region, index) => <button key={region} onClick={() => searchRegion(region)}><span>{String(index + 1).padStart(2, '0')}</span>{region}<ArrowUpRight size={20}/></button>) : <p>Thông tin vùng sản xuất sẽ xuất hiện khi có sản phẩm.</p>}</div></section>
+      <EditorialRegions products={families} onSelect={searchRegion}/>
 
       <section className="shop-container signature-journal" id="shop-journal" aria-labelledby="signature-journal-title"><span className="signature-kicker">MỘT GỢI Ý THƯỞNG THỨC</span><h2 id="signature-journal-title">Một ấm chè. Một món ngọt.<br/><em>Một cuộc chuyện trò thật lâu.</em></h2><p>Đôi khi, món quà đáng quý nhất là một khoảng thời gian dành cho nhau.<br/>Bắt đầu từ những hương vị thân thuộc của Lào Cai.</p><button className="signature-text-link" onClick={() => {setQuery('chè'); openCatalog();}}>Chọn hương chè cho bạn <ArrowRight size={18}/></button><Leaf className="signature-journal-mark" size={200} strokeWidth={.5} aria-hidden="true"/></section>
       <FaqSection/>
     </div>
-    <footer className="signature-footer" id="shop-contact"><div className="shop-container"><div className="signature-footer-top"><div><Sprout size={28} strokeWidth={1.2}/><h2>Đặc Sản Số</h2><p>Trân trọng đất lành.<br/>Gìn giữ hương vị. Kết nối con người.</p></div><div><p className="signature-kicker">TIẾP TỤC KHÁM PHÁ</p><button onClick={openCatalog}>Danh mục đặc sản <ArrowUpRight size={15}/></button><button onClick={() => setCustomerTab('season')}>Theo nhịp mùa vụ <ArrowUpRight size={15}/></button><button onClick={account}>{user ? 'Tài khoản của bạn' : 'Đăng nhập'} <ArrowUpRight size={15}/></button></div><div><p className="signature-kicker">LUÔN TRONG TẦM TAY</p><button onClick={() => openModal({type:'cart'})}>Giỏ hàng của bạn <ArrowUpRight size={15}/></button><button onClick={() => user ? openModal({type:'chat'}) : account()}>Liên hệ & hỗ trợ <ArrowUpRight size={15}/></button><p className="signature-delivery"><ShieldCheck size={17}/> Xem chính sách và thông tin<br/>giao hàng trước khi đặt.</p></div></div><div className="signature-footer-bottom"><span>© {new Date().getFullYear()} Đặc Sản Số</span><span>TỪ MIỀN ĐẤT LÀNH, ĐẾN BÊN BẠN.</span></div></div></footer>
+    <CommerceFooter/>
   </div>;
 }
 
 export function SignatureRail({ products, label, onViewAll }: { products: Product[]; label: string; onViewAll: () => void }) {
   const rail = useRef<HTMLDivElement>(null);
+  const productKey=products.map(p=>p.id).join('|');
+  useLayoutEffect(()=>{
+    const el=rail.current;if(!el)return;
+    // The initial empty rail contains only "view all". Do not retain that snap anchor when data arrives.
+    el.style.scrollSnapType='none';el.scrollLeft=0;
+    const frame=requestAnimationFrame(()=>{el.scrollLeft=0;el.style.scrollSnapType='';});
+    return()=>{cancelAnimationFrame(frame);el.style.scrollSnapType='';};
+  },[productKey]);
   const lastSwipe=useRef(0);
   const drag = useRef<{x:number; scroll:number; moved:boolean} | null>(null);
   const move = (direction:number) => {const el=rail.current; if(el) el.scrollBy({left:direction*((el.firstElementChild?.getBoundingClientRect().width ?? 280)+24),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});};

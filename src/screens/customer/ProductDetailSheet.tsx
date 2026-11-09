@@ -1,3 +1,4 @@
+import {RelatedProducts} from './RelatedProducts';
 import {RestockInterest} from '../../components/RestockInterest';
 import {ProductGallery} from '../../components/ProductGallery';
 import { AppImage } from '../../components/AppImage';
@@ -263,6 +264,7 @@ export function ProductDetailSheet({ productId,listContext, onClose }: { product
               </ul>
             )}
 
+            <RelatedProducts product={product}/>
             {reviews.length > 0 && (
               <section className="space-y-2 border-t border-stone-100 pt-3">
                 <h4 className="text-sm font-bold text-stone-800">Đánh giá của khách</h4>
