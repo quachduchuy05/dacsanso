@@ -37,9 +37,9 @@ export function SignatureStorefront() {
       <div className="shop-container signature-stage-inner">
         <div className="signature-intro"><span className="signature-kicker"><span /> LÀO CAI · TUYỂN TẬP HƯƠNG VỊ</span>
           <h1 id="signature-title">{state.homepage?.title||'Thức quà của đất.'}<br/><em>{state.homepage?.subtitle||'Dư vị của lòng.'}</em></h1>
-          <p>{state.homepage?.description||<>Chọn một hương vị để thưởng thức.<br/>Giữ một câu chuyện để trao đi.</>}</p>
+          <p className="compact-hero-description">{state.homepage?.description||'Đặc sản vùng miền, chọn theo vị bạn.'}</p>
           <button className="signature-primary" onClick={openCatalog}>Khám phá đặc sản <ArrowUpRight size={20}/></button>
-          <button className="signature-text-link editorial-story-link" onClick={()=>goTo('about')}>Câu chuyện của chúng tôi <ArrowRight size={16}/></button>
+          <button className="signature-text-link editorial-story-link" onClick={()=>goTo('about')}>Về chúng tôi <ArrowRight size={16}/></button>
           <span className="signature-origin"><MapPin size={14}/> Sản vật Lào Cai · Giao tại Hà Nội</span>
         </div>
         <div className="signature-exhibit warm-featured-product">
@@ -51,34 +51,36 @@ export function SignatureStorefront() {
             <div className="signature-exhibit-caption"><span>{chosen.region}</span><h2>{chosen.name}</h2><p>{chosen.unit} <span>—</span> <strong>{formatMoney(chosen.price)}</strong></p></div>
           </> : <div className="signature-awaiting"><Sprout size={64} strokeWidth={1}/><h2>Đợi một mùa hương mới.</h2><p>Danh mục đang được cập nhật.</p></div>}
         </div>
-        <div className="signature-stage-foot"><span>ĂN ĐẶC SẢN / TỪ MIỀN ĐẤT LÀNH</span><button onClick={() => goTo('products')}>Chậm lại, khám phá thêm <ArrowDown size={16}/></button></div>
+        <div className="signature-stage-foot"><span>ĂN ĐẶC SẢN</span><button onClick={() => goTo('products')}>Xem sản phẩm <ArrowDown size={16}/></button></div>
       </div>
     </section>
 
     <div className="signature-content">
       <div className="shop-container signature-assurances" aria-label="Thông tin mua hàng">
-        <span><MapPin size={18}/> Tìm hiểu nơi làm ra</span><span><PackageCheck size={18}/> Chọn rõ từng quy cách</span><span><Truck size={18}/> Theo dõi hành trình giao</span>
+        <span><MapPin size={18}/> Xem nguồn gốc</span><span><PackageCheck size={18}/> Chọn quy cách</span><span><Truck size={18}/> Theo dõi đơn</span>
       </div>
       <div className="shop-container"><FeaturedCollections renderRail={(products,label)=><SignatureRail products={products} label={label} onViewAll={openCatalog}/>}/></div>
       <section className="shop-container signature-selection" id="shop-products" aria-labelledby="signature-selection-title">
-        <div className="signature-heading"><div><p className="signature-kicker">01 / CHỌN THEO VỊ RIÊNG</p><h2 id="signature-selection-title">Một chút tinh hoa,<br/><em>cho ngày thường thêm quý.</em></h2></div><p>Không chỉ là một món ngon.<br/>Là vùng đất, mùa vụ và người làm ra nó.</p></div>
-        <div className="signature-selection-tools"><div role="group" aria-label="Chọn hình thức mua">{([['all', 'Tất cả thức quà'], ['ready', 'Có sẵn hôm nay'], ['preorder', 'Hẹn một mùa ngon']] as const).map(([key, label]) => <button key={key} aria-pressed={selection === key} onClick={() => setSelection(key)}>{label}</button>)}</div><button className="signature-text-link" onClick={openCatalog}>Xem danh mục <ArrowUpRight size={16}/></button></div>
+        <div className="signature-heading"><h2 id="signature-selection-title">Chọn vị bạn thích.</h2></div>
+        <div className="signature-selection-tools"><div role="group" aria-label="Chọn hình thức mua">{([['all', 'Tất cả'], ['ready', 'Có sẵn'], ['preorder', 'Hàng đặt trước']] as const).map(([key, label]) => <button key={key} aria-pressed={selection === key} onClick={() => setSelection(key)}>{label}</button>)}</div><button className="signature-text-link" onClick={openCatalog}>Xem tất cả <ArrowUpRight size={16}/></button></div>
         <SignatureRail products={shown} label="Danh mục thức quà" onViewAll={openCatalog}/>
       </section>
 
       <section className="shop-container signature-provenance" id="shop-about" aria-labelledby="signature-provenance-title">
         <div className="signature-provenance-art editorial-story-photo"><img src="/images/concepts/honey-tea-3d-v1.webp" alt="Chè và mật ong trên bàn đá" loading="lazy" width="1122" height="1402"/><span className="signature-monogram" aria-hidden="true">ĐS</span><Leaf size={42} strokeWidth={1}/><p>Đất lành<br/><em>gửi vị.</em></p><span>LÀO CAI, VIỆT NAM</span></div>
-        <div className="signature-provenance-copy"><p className="signature-kicker">02 / ĐIỀU LÀM NÊN GIÁ TRỊ</p><h2 id="signature-provenance-title">Mua bằng cảm xúc.<br/><em>An tâm bằng thông tin.</em></h2><p>Vẻ đẹp của một thức quà bắt đầu từ điều chân thật. Tìm hiểu nơi sản xuất, đọc câu chuyện phía sau và chọn quy cách phù hợp ngay trong từng sản phẩm.</p>
+        <div className="signature-provenance-copy"><h2 id="signature-provenance-title">Biết nguồn, hiểu vị.</h2><p>Xem nguồn gốc, quy cách và giá trước khi chọn.</p>
+          <details className="compact-story"><summary>Tìm hiểu thêm</summary>
           <div className="signature-value"><span>01</span><div><h3>Biết nguồn, hiểu vị</h3><p>Vùng sản xuất và nhà cung cấp được trình bày cùng sản phẩm. Chứng nhận có thể xem khi hồ sơ đã được xác minh.</p></div></div>
           <div className="signature-value"><span>02</span><div><h3>Trọn vẹn trước khi chọn</h3><p>Xem giá, quy cách, tình trạng hàng và thông tin đặt trước. Kiểm tra phí giao cùng số tiền tại bước đặt hàng.</p></div></div>
-          <button className="signature-text-link" onClick={openCatalog}>Gặp những thức quà nguyên bản <ArrowRight size={18}/></button>
+          </details>
+          <button className="signature-text-link" onClick={openCatalog}>Chọn đặc sản <ArrowRight size={18}/></button>
         </div>
       </section>
 
       <EditorialRegions products={families} onSelect={searchRegion}/>
 
-      <section className="shop-container signature-journal" id="shop-journal" aria-labelledby="signature-journal-title"><span className="signature-kicker">MỘT GỢI Ý THƯỞNG THỨC</span><h2 id="signature-journal-title">Một ấm chè. Một món ngọt.<br/><em>Một cuộc chuyện trò thật lâu.</em></h2><p>Đôi khi, món quà đáng quý nhất là một khoảng thời gian dành cho nhau.<br/>Bắt đầu từ những hương vị thân thuộc của Lào Cai.</p><button className="signature-text-link" onClick={() => {setQuery('chè'); openCatalog();}}>Chọn hương chè cho bạn <ArrowRight size={18}/></button><Leaf className="signature-journal-mark" size={200} strokeWidth={.5} aria-hidden="true"/></section>
-      <FaqSection/>
+      <section className="shop-container signature-journal" id="shop-journal" aria-labelledby="signature-journal-title"><h2 id="signature-journal-title">Chè ngon, chuyện dài.</h2><button className="signature-text-link" onClick={() => {setQuery('chè'); openCatalog();}}>Khám phá chè <ArrowRight size={18}/></button><Leaf className="signature-journal-mark" size={160} strokeWidth={.5} aria-hidden="true"/></section>
+      <details className="shop-container compact-help"><summary>Câu hỏi thường gặp</summary><FaqSection/></details>
     </div>
     <CommerceFooter/>
   </div>;

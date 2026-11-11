@@ -196,7 +196,7 @@ export function ProductDetailSheet({ productId,listContext, onClose }: { product
           <>
             <Ornament className="mx-auto" />
 
-            <p className="drop-cap text-sm leading-relaxed text-stone-700">{product.description}</p>
+            {product.description&&<details className="compact-product-description"><summary>Mô tả sản phẩm</summary><p className="text-sm leading-relaxed text-stone-700">{product.description}</p></details>}
 
             {/* Thông tin sản phẩm, lấy từ dữ liệu sản phẩm. */}
             <dl className="space-y-1.5 rounded-2xl border border-champagne-200 bg-champagne-50/60 p-3.5 text-sm">

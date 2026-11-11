@@ -188,6 +188,13 @@ body:has(.shop-shell) .app-sheet{background:var(--brand-paper);color:var(--brand
 @media(prefers-reduced-motion:reduce){.shop-header-inner,.editorial-region-image img{transition:none}.editorial-region:hover .editorial-region-image img{transform:none}}
 
 /* A single edge-to-edge photograph under both the headline and product area. */
+.compact-story{margin-top:20px;border-top:1px solid var(--brand-line)}
+.compact-story>summary,.compact-product-description>summary{min-height:48px;padding-block:14px;cursor:pointer;font-size:13px;color:var(--brand-forest)}
+.compact-product-description{border-block:1px solid var(--brand-line)}.compact-product-description>p{padding-bottom:16px;white-space:pre-line}
+.compact-help{padding-block:8px 32px}.compact-help>summary{cursor:pointer;min-height:54px;padding-block:15px;border-top:1px solid var(--brand-line);font:25px Newsreader,Georgia,serif;color:var(--brand-forest)}
+.compact-help #shop-help{padding-bottom:10px}.compact-help #shop-help>h2{display:none}
+.signature-provenance:has(.compact-story) .editorial-story-photo{min-height:380px}
+.signature-journal:has(#signature-journal-title){padding-block:35px}.signature-journal #signature-journal-title{margin-block:15px}
 .signature-stage.hero-fullbleed .warm-hero-picture{inset:0;width:100%;height:100%;clip-path:none}
 .signature-stage.hero-fullbleed .warm-hero-picture img{width:100%;height:100%;object-fit:cover;object-position:center 65%;opacity:1}
 .signature-stage.hero-fullbleed:before{display:block;content:'';position:absolute;inset:0;z-index:0;pointer-events:none;opacity:1;background:linear-gradient(90deg,#f7f4eceb 0%,#f7f4ecb5 34%,#f7f4ec38 52%,transparent 68%)}

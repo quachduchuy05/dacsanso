@@ -4,7 +4,7 @@ import { useStorefront } from '../../app/StorefrontContext';
 import { useUi } from '../../app/UiContext';
 import { useStore } from '../../store/AppDataContext';
 import {useCartActions} from './useCartActions';
-const LINKS = [['home', 'Trang chủ'], ['products', 'Sản phẩm'], ['regions', 'Đặc sản vùng miền'], ['about', 'Giới thiệu'], ['journal', 'Câu chuyện'], ['contact', 'Liên hệ']] as const;
+const LINKS = [['home', 'Trang chủ'], ['products', 'Sản phẩm'], ['regions', 'Vùng miền'], ['about', 'Giới thiệu'], ['journal', 'Câu chuyện'], ['contact', 'Liên hệ']] as const;
 export function StorefrontHeader() {
     useEffect(()=>{const header=document.querySelector<HTMLElement>('.shop-site-header');if(!header)return;const update=()=>{header.dataset.scrolled=String(window.scrollY>20);};update();window.addEventListener('scroll',update,{passive:true});return()=>{window.removeEventListener('scroll',update);delete header.dataset.scrolled;};},[]);
     const { query, setQuery, goTo, openCatalog } = useStorefront();
