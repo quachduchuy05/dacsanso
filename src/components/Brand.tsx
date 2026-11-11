@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 /**
  * Nhận diện của app: biểu tượng (núi, mặt trời, ruộng bậc thang trong vòng tròn viền vàng),
- * chữ "Đặc Sản Số / Lào Cai", đường trang trí và tiêu đề mục. Chỉ để trang trí, không mang thông tin.
+ * chữ "Ăn Đặc Sản / Lào Cai", đường trang trí và tiêu đề mục. Chỉ để trang trí, không mang thông tin.
  */
 export function BrandEmblem({ size = 36, className = '' }: { size?: number; className?: string }) {
   return (
@@ -24,7 +24,7 @@ export function BrandWordmark({ tone = 'dark', size = 'md' }: { tone?: 'dark' | 
   const bottom = tone === 'dark' ? 'text-white' : 'text-forest-900';
   return (
     <span className="flex min-w-0 flex-col leading-none">
-      <span className={`text-xs font-semibold uppercase tracking-[0.22em] ${top}`}>Đặc Sản Số</span>
+      <span className={`text-xs font-semibold uppercase tracking-[0.22em] ${top}`}>Ăn Đặc Sản</span>
       <span className={`font-display font-medium italic ${size === 'lg' ? 'mt-1 text-3xl' : 'mt-0.5 text-lg'} ${bottom}`}>Lào Cai</span>
     </span>
   );

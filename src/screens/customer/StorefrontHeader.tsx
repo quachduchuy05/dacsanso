@@ -25,7 +25,7 @@ export function StorefrontHeader() {
     } };
     return <>
     <div className="shop-header-inner shop-container">
-      <button className="shop-brand" onClick={() => { setQuery(''); goTo('home'); }} aria-label="Đặc Sản Số — Trang chủ"><span className="shop-brand-mark"><Sprout size={23} strokeWidth={1.7}/></span><span>Đặc Sản Số<span className="shop-brand-caption">TỪ MIỀN ĐẤT LÀNH</span></span></button>
+      <button className="shop-brand" onClick={() => { setQuery(''); goTo('home'); }} aria-label="Ăn Đặc Sản — Trang chủ"><span className="shop-brand-mark"><Sprout size={23} strokeWidth={1.7}/></span><span>Ăn Đặc Sản<span className="shop-brand-caption">TỪ MIỀN ĐẤT LÀNH</span></span></button>
       <nav className="shop-desktop-nav" aria-label="Điều hướng chính">{LINKS.map(([key, label]) => <button key={key} onClick={() => key==='products'?openCatalog():goTo(key)}>{label}</button>)}</nav>
       <div className="shop-header-actions">
         <form className={`shop-search ${search ? 'is-open' : ''}`} role="search" onSubmit={e => { e.preventDefault(); saveSearch(); openCatalog(); }}><input list="shop-search-suggestions" minLength={2} maxLength={100} aria-label="Tìm kiếm đặc sản" placeholder="Tìm kiếm đặc sản…" value={query} onChange={e => setQuery(e.target.value)}/><button aria-label="Tìm kiếm" type="submit"><Search size={17}/></button><datalist id="shop-search-suggestions">{suggestions.map(s=><option key={s} value={s}/>)}</datalist></form>

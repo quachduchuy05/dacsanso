@@ -1,7 +1,7 @@
 /* Only notifications: no offline cache of account or order data. */
 self.addEventListener('push',event=>{
   let data={};try{data=event.data?.json()??{};}catch{/* Use a generic visible notification. */}
-  event.waitUntil(self.registration.showNotification('Đặc Sản Số',{
+  event.waitUntil(self.registration.showNotification('Ăn Đặc Sản',{
     body:'Bạn có thông báo mới. Mở ứng dụng để xem.',
     tag:typeof data.tag==='string'?data.tag.slice(0,150):'dac-san-so',
     data:{url:'/'},

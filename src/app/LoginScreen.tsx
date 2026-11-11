@@ -38,7 +38,7 @@ export function LoginScreen(){
   return <div className="auth-page"><div className="auth-layout">
     <aside className="auth-intro"><img src="/images/stitch/specialties-hero-v2.jpg" alt="Chè, mật ong và các món đặc sản vùng cao"/><div className="auth-intro-shade"/><div className="auth-intro-copy"><Sprout size={38}/><p>TỪ MIỀN ĐẤT LÀNH</p><h1>Một chút quê hương.<br/><em>Một chút thương gửi bạn.</em></h1><p>Gắn kết cùng những người làm ra đặc sản, lưu lại hương vị yêu thích và đón chờ những mùa vụ mới.</p><span><ShieldCheck size={18}/> Tài khoản của bạn, hành trình của bạn.</span></div></aside>
     <div className="auth-form-panel"><button className="auth-back" onClick={()=>window.dispatchEvent(new Event('browse-catalog'))}><ArrowLeft size={16}/> Trở về cửa hàng</button>
-      <p className="auth-eyebrow">ĐẶC SẢN SỐ</p><h2>{registering?'Đăng ký':'Đăng nhập'}</h2><p className="auth-description">{registering?'Tạo tài khoản để bắt đầu khám phá những hương vị quê nhà.':'Chào mừng bạn trở lại với những miền đất lành.'}</p>
+      <p className="auth-eyebrow">ĂN ĐẶC SẢN</p><h2>{registering?'Đăng ký':'Đăng nhập'}</h2><p className="auth-description">{registering?'Tạo tài khoản để bắt đầu khám phá những hương vị quê nhà.':'Chào mừng bạn trở lại với những miền đất lành.'}</p>
       <GoogleSignIn/><div className="auth-divider"><span/>hoặc dùng số điện thoại<span/></div>
       <form onSubmit={submit} className="auth-form" aria-label={registering?'Đăng ký bằng số điện thoại':'Đăng nhập bằng số điện thoại'}>
         {registering&&<Field label="Họ tên"><Input required minLength={2} maxLength={100} autoComplete="name" value={name} onChange={e=>setName(e.target.value)} placeholder="Họ và tên của bạn"/></Field>}

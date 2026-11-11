@@ -51,7 +51,7 @@ export function SignatureStorefront() {
             <div className="signature-exhibit-caption"><span>{chosen.region}</span><h2>{chosen.name}</h2><p>{chosen.unit} <span>—</span> <strong>{formatMoney(chosen.price)}</strong></p></div>
           </> : <div className="signature-awaiting"><Sprout size={64} strokeWidth={1}/><h2>Đợi một mùa hương mới.</h2><p>Danh mục đang được cập nhật.</p></div>}
         </div>
-        <div className="signature-stage-foot"><span>ĐẶC SẢN SỐ / TỪ MIỀN ĐẤT LÀNH</span><button onClick={() => goTo('products')}>Chậm lại, khám phá thêm <ArrowDown size={16}/></button></div>
+        <div className="signature-stage-foot"><span>ĂN ĐẶC SẢN / TỪ MIỀN ĐẤT LÀNH</span><button onClick={() => goTo('products')}>Chậm lại, khám phá thêm <ArrowDown size={16}/></button></div>
       </div>
     </section>
 

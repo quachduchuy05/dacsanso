@@ -84,7 +84,7 @@ export async function processPushQueue(db,options,{send=webpush.sendNotification
     });
     if(!active)continue;
     // Do not put order/customer/message details on a lock screen or a shared device.
-    const payload=JSON.stringify({title:'Đặc Sản Số',body:'Bạn có thông báo mới. Mở ứng dụng để xem.',tag:'dss-'+task.notificationId,url:'/'});
+    const payload=JSON.stringify({title:'Ăn Đặc Sản',body:'Bạn có thông báo mới. Mở ứng dụng để xem.',tag:'dss-'+task.notificationId,url:'/'});
     let status='sent',expired=false;
     try{await send(task.subscription,payload,{vapidDetails:options.webPush,TTL:86400,timeout:5000,urgency:'normal'});sent++;}
     catch(error){expired=[404,410].includes(error.statusCode);status=expired||task.job.attempts>=5?'failed':'pending';}

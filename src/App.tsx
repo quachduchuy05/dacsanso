@@ -1,5 +1,5 @@
 /**
- * ĐẶC SẢN SỐ LÀO CAI – prototype.
+ * ĂN ĐẶC SẢN LÀO CAI – prototype.
  * Cấu trúc: src/domain (nghiệp vụ, hàm thuần) · src/data (dữ liệu mẫu) · src/store (localStorage)
  * · src/screens (màn theo vai trò) · src/components (thành phần dùng chung) · src/app (khung app).
  */
