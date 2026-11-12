@@ -2,16 +2,13 @@ import {CommerceFooter} from './CommerceFooter';
 import {EditorialRegions} from './EditorialRegions';
 import {trackExperience} from '../../store/experienceEvents';
 import { useLayoutEffect,useMemo, useRef, useState } from 'react';
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Leaf, MapPin, PackageCheck, ShieldCheck, Sprout, Truck } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Leaf, MapPin, PackageCheck, Truck } from 'lucide-react';
 import { useStorefront } from '../../app/StorefrontContext';
-import { useUi } from '../../app/UiContext';
 import { useStore } from '../../store/AppDataContext';
-import { ProductImage } from '../../components/ProductImage';
 import { FaqSection } from '../../components/FaqSection';
 import { groupFamilies } from '../../domain/variants';
 import { isOrderableIn } from '../../domain/cart';
 import { remainingFor } from '../../domain/state';
-import { formatMoney } from '../../domain/pricing';
 import { type Product } from '../../domain/types';
 import { StorefrontProductCard } from './StorefrontPage';
 import {FeaturedCollections} from './FeaturedCollections';
@@ -21,15 +18,12 @@ import { useSignatureMotion } from './useSignatureMotion';
 export function SignatureStorefront() {
   const motionRoot = useSignatureMotion();
   const { state } = useStore();
-  const { openCatalog, setQuery, goTo,productPosters } = useStorefront();
-  const { openModal, user, setCustomerTab } = useUi();
+  const { openCatalog, setQuery, goTo } = useStorefront();
   const [selection, setSelection] = useState<'all' | 'ready' | 'preorder'>('all');
   const families = useMemo(() => groupFamilies(state.products.filter(p => p.status === 'active'))
     .map(items => items.find(p => isOrderableIn(state, p) && remainingFor(state, p) > 0) ?? items[0]), [state]);
-  const chosen = families.find(p => (productPosters[p.variantOf??p.id]||p.image) && isOrderableIn(state, p)) ?? families[0];
   const shown = families.filter(p => selection === 'all' || p.kind === selection);
   const searchRegion = (region: string) => { setQuery(region); openCatalog(); };
-  const account = () => user ? setCustomerTab('account') : window.dispatchEvent(new Event('show-login'));
   return <div className="shop-page signature-home" ref={motionRoot}>
     <div className="signature-reading-progress" aria-hidden="true"/>
     <section className="signature-stage hero-fullbleed" id="shop-home" aria-labelledby="signature-title">
@@ -41,15 +35,6 @@ export function SignatureStorefront() {
           <button className="signature-primary" onClick={openCatalog}>Khám phá đặc sản <ArrowUpRight size={20}/></button>
           <button className="signature-text-link editorial-story-link" onClick={()=>goTo('about')}>Về chúng tôi <ArrowRight size={16}/></button>
           <span className="signature-origin"><MapPin size={14}/> Sản vật Lào Cai · Giao tại Hà Nội</span>
-        </div>
-        <div className="signature-exhibit warm-featured-product">
-          {chosen ? <>
-            <button className="signature-exhibit-product" onClick={() => openModal({ type: 'product_detail', productId: chosen.id })} aria-label={`Khám phá ${chosen.name}`}>
-              <ProductImage product={{...chosen,image:productPosters[chosen.variantOf??chosen.id]??chosen.image}} variant="card" className="signature-product-image"/>
-              <span className="signature-exhibit-link"><ArrowUpRight size={26}/></span>
-            </button>
-            <div className="signature-exhibit-caption"><span>{chosen.region}</span><h2>{chosen.name}</h2><p>{chosen.unit} <span>—</span> <strong>{formatMoney(chosen.price)}</strong></p></div>
-          </> : <div className="signature-awaiting"><Sprout size={64} strokeWidth={1}/><h2>Đợi một mùa hương mới.</h2><p>Danh mục đang được cập nhật.</p></div>}
         </div>
         <div className="signature-stage-foot"><span>ĂN ĐẶC SẢN</span><button onClick={() => goTo('products')}>Xem sản phẩm <ArrowDown size={16}/></button></div>
       </div>
