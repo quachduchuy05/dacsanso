@@ -1,0 +1,31 @@
+.signature-stage.hero-product-orbit{background:radial-gradient(ellipse at 76% 42%,#ead39b66,transparent 55%),#f7f4ec}
+.signature-stage.hero-product-orbit .warm-hero-picture{display:none}
+.signature-stage.hero-product-orbit:before{display:none}
+.hero-product-orbit .signature-stage-inner{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:12px 4%;align-items:center}
+.hero-product-orbit .signature-intro{position:relative;z-index:2}
+.hero-product-orbit .signature-stage-foot{grid-column:1/-1;position:relative;align-self:end;width:100%}
+.product-orbit{min-width:0;width:100%;align-self:center;position:relative}
+.product-orbit-scene{height:560px;position:relative;perspective:1000px;touch-action:pan-y pinch-zoom;cursor:grab;isolation:isolate}
+.product-orbit-scene:active{cursor:grabbing}
+.product-orbit-halo{position:absolute;inset:12% 8%;border:1px solid #b69a6429;border-radius:50%;background:radial-gradient(ellipse,#e8d6a755,transparent 70%);pointer-events:none}
+.product-orbit-card{position:absolute;left:calc(50% - 68px);top:calc(50% - 80px);width:136px;height:160px;padding:5px;background:#fffdf5;border:1px solid #b69a6440;box-shadow:0 10px 24px #75603c20;border-radius:3px;overflow:hidden;will-change:transform;cursor:pointer;color:#163d2b;text-align:left;user-select:none}
+.product-orbit-photo{display:block;width:100%;height:119px;object-fit:cover;pointer-events:none;border-radius:1px}
+.product-orbit-card>span{display:block;font-size:10px;line-height:1.4;padding:7px 3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.product-orbit-card:focus-visible{outline:3px solid #163d2b;outline-offset:4px;opacity:1!important;z-index:1000!important}
+.product-orbit-controls{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:18px;color:#65705b;font-size:11px;letter-spacing:.03em;padding:12px 0 20px}
+.product-orbit-controls>div{display:flex;gap:5px}
+.product-orbit-controls button{display:grid;place-items:center;width:36px;height:36px;border:1px solid #b69a6455;border-radius:50%;background:#fffdf566;color:#163d2b}
+.product-orbit-controls button:hover{background:#e8d6a7}
+@media(max-width:1100px) and (min-width:768px){.product-orbit-scene{height:440px}.product-orbit-card{width:110px;height:136px;left:calc(50% - 55px);top:calc(50% - 68px)}.product-orbit-photo{height:95px}}
+@media(max-width:767px){
+ .hero-product-orbit .signature-stage-inner{display:flex;gap:0;min-height:0;padding-top:28px}
+ .hero-product-orbit .signature-intro{padding-bottom:0}
+ .hero-product-orbit .signature-intro h1{font-size:clamp(40px,10vw,62px)}
+ .hero-product-orbit .signature-origin{margin-top:16px}
+ .product-orbit-scene{height:365px;perspective:850px}
+ .product-orbit-card{width:96px;height:120px;left:calc(50% - 48px);top:calc(50% - 60px)}
+ .product-orbit-photo{height:82px}.product-orbit-card>span{font-size:9px}
+ .product-orbit-controls{gap:8px;font-size:10px;padding-bottom:24px}
+ .hero-product-orbit .signature-stage-foot{padding-block:18px;margin-top:0}
+}
+@media(prefers-reduced-motion:reduce){.product-orbit-card{will-change:auto}}

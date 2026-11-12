@@ -13,6 +13,7 @@ import { type Product } from '../../domain/types';
 import { StorefrontProductCard } from './StorefrontPage';
 import {FeaturedCollections} from './FeaturedCollections';
 import { useSignatureMotion } from './useSignatureMotion';
+import { ProductOrbit } from './ProductOrbit';
 
 /** Product-led storefront; images and quantities always come from the live catalog. */
 export function SignatureStorefront() {
@@ -26,7 +27,7 @@ export function SignatureStorefront() {
   const searchRegion = (region: string) => { setQuery(region); openCatalog(); };
   return <div className="shop-page signature-home" ref={motionRoot}>
     <div className="signature-reading-progress" aria-hidden="true"/>
-    <section className="signature-stage hero-fullbleed" id="shop-home" aria-labelledby="signature-title">
+    <section className="signature-stage hero-fullbleed hero-product-orbit" id="shop-home" aria-labelledby="signature-title">
       <picture className="warm-hero-picture"><source media="(max-width: 767px)" srcSet="/images/concepts/warm-specialties-hero-v1-768.webp"/><img src="/images/concepts/warm-specialties-hero-v1.webp" alt="Mật ong, chè và mận trên bàn đá sáng" fetchPriority="high" decoding="async"/></picture>
       <div className="shop-container signature-stage-inner">
         <div className="signature-intro"><span className="signature-kicker"><span /> LÀO CAI · TUYỂN TẬP HƯƠNG VỊ</span>
@@ -36,6 +37,7 @@ export function SignatureStorefront() {
           <button className="signature-text-link editorial-story-link" onClick={()=>goTo('about')}>Về chúng tôi <ArrowRight size={16}/></button>
           <span className="signature-origin"><MapPin size={14}/> Sản vật Lào Cai · Giao tại Hà Nội</span>
         </div>
+        <ProductOrbit products={families}/>
         <div className="signature-stage-foot"><span>ĂN ĐẶC SẢN</span><button onClick={() => goTo('products')}>Xem sản phẩm <ArrowDown size={16}/></button></div>
       </div>
     </section>

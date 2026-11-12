@@ -6,6 +6,32 @@ import {groupFamilies} from '../src/domain/variants';
 import type {DemoState} from '../src/domain/types';
 const PNG='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGNk+M/AwMDAxMDAwMDAAAAZNAIBWxOnMQAAAABJRU5ErkJggg==';
 test.setTimeout(45000);
+test('Product orbit supports reduced motion, drag, keyboard controls and product details without mobile overflow',async({browser})=>{
+  const f=await app(browser);
+  try{
+    const scene=f.page.locator('.product-orbit-scene');
+    const first=scene.locator('.product-orbit-card').first();
+    await expect(first).toBeVisible();
+    await expect.poll(()=>first.evaluate(el=>el.style.transform)).not.toBe('');
+    const initial=await first.evaluate(el=>el.style.transform);
+    await f.page.waitForTimeout(150);
+    expect(await first.evaluate(el=>el.style.transform)).toBe(initial);
+    await f.page.locator('.product-orbit-controls button').last().click();
+    await expect.poll(()=>first.evaluate(el=>el.style.transform)).not.toBe(initial);
+    const box=(await scene.boundingBox())!;
+    await f.page.mouse.move(box.x+box.width/2,box.y+box.height/2);
+    await f.page.mouse.down();await f.page.mouse.move(box.x+box.width/2+65,box.y+box.height/2,{steps:8});await f.page.mouse.up();
+    await expect(f.page.locator('.sheet-overlay')).toHaveCount(0);
+    for(const width of [320,390,768,1440]){
+      await f.page.setViewportSize({width,height:900});
+      expect(await f.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      if(width===390||width===1440)await f.page.screenshot({path:`artifacts/product-orbit-${width}.png`});
+    }
+    await first.focus();await f.page.keyboard.press('Enter');
+    await expect(f.page.getByRole('button',{name:'Xem 3D',exact:true}).first()).toBeVisible();
+    expect(f.errors).toEqual([]);
+  }finally{await f.context.close();}
+});
 async function app(browser:Browser,loggedIn=false){
   let state=createSeedState(new Date()),version=1;state.orders=[];state.transactions=[];
   const user=state.users.find(u=>u.role==='customer')!,cid=user.customerId!;
